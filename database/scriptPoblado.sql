@@ -1,4 +1,6 @@
-﻿
+﻿/********** SCRIPT DE POBLADO DE LA BASE ***************/
+
+
 INSERT INTO CUSTOMER VALUES(2014068784,'Fabian','Solano','Madriz','88833746','fasm2296@gmail.com','fasm22','123',True);
 INSERT INTO CUSTOMER VALUES(2014033001,'Lenin','Torres','Valverde','85853232','ttvleninn@gmail.com','tvlenin','123',True);
 INSERT INTO CUSTOMER VALUES(2014022421,'Abraham,','Arias','Chinchilla','88833746','abrahamon@gmail.com','abrahamon','123',True);
@@ -43,10 +45,3 @@ INSERT INTO PRODUCT VALUES(DEFAULT,'Madera de calidad media',True,'Madera',3200)
 INSERT INTO PROJECT VALUES(DEFAULT,'Casa de Fabian','Paraiso',304980022,2014068784,'','',True);
 
 INSERT INTO PROJECT_STAGE VALUES(DEFAULT,1,1,'5/5/2020','10/5/2020','Etapa inicial',False,'');
-
-
---SELECT STAGE_NAME.Name FROM STAGE_NAME,PROJECT_STAGE WHERE PROJECT_STAGE.ID_STAGE=STAGE_NAME.ID_Stage_Name;
---SELECT * FROM ENGINEER right JOIN PROJECT ON PROJECT.ID_Engineer=ENGINEER.ID_Engineer;
-
-
---SELECT ENGINEER.Name FROM ENGINEER,PROJECT WHERE PROJECT.ID_Engineer=ENGINEER.ID_Engineer;

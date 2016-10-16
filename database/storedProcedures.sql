@@ -142,4 +142,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to insert a new project stage
+--SELECT add_project_stage('Casa de David','Coronado',201505054,2014078784,'','')
+CREATE OR REPLACE FUNCTION add_project_stage(pIDProject int,pStageName varchar(50),pStartDate date,pEndDate date,pDetails varchar(255),pComments varchar(255))
+RETURNS TEXT AS $$
+BEGIN
+	
+	INSERT INTO PROJECT_STAGE VALUES (DEFAULT,
+					(SELECT ID_Stage_name FROM STAGE_NAME WHERE STAGE_NAME.Name = pStageName),
+					pIDProject,
+					pStartDate,
+					pEndDate,
+					pDetails,
+					False,
+					pComments);
+	RETURN 'SUCCESS';
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
 
