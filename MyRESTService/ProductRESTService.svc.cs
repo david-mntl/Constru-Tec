@@ -130,6 +130,31 @@ namespace MyRESTService
             return msg;
         }
 
+        public string DeleteCustomer(Customer str)
+        {
+            string query = "SELECT delete_customer(@ID_Customer)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Customer", str.ID_Customer);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+
         public string PostEngineer(Engineer str)
         {
             string query = "SELECT add_engineer(@ID_Engineer,@Name,@Lastname_1,@Lastname_2, @Phone,@Email,@Eng_Code,@Username,@Password,@Role)";
@@ -184,6 +209,79 @@ namespace MyRESTService
                 msg += "Error:";
                 msg += ex.Message;
             }finally{
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string DeleteEngineer(Engineer str)
+        {
+            string query = "SELECT delete_engineer(@ID_Engineer)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Engineer", str.ID_Engineer);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string AddNewRole(Role str)
+        {
+            string query = "SELECT add_new_role(@Name)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@Name", str.Name);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string AddNewRoleToEngineer(Engineer str)
+        {
+            string query = "SELECT add_role_to_engineer(@ID_Engineer,@Role)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Engineer", str.ID_Engineer);
+                sqlcmd.Parameters.AddWithValue("@Role", str.Role);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
                 this.disconnect();
             }
             return msg;
@@ -265,7 +363,55 @@ namespace MyRESTService
             }
             return msg;
         }
-        
+
+        public string DeleteProject(Project str)
+        {
+            string query = "SELECT delete_project(@ID_Project)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string AddStageName(Stage str)
+        {
+            string query = "SELECT add_new_stage_name(@Stage_Name)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@Stage_Name", str.Stage_Name);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
         public string CreateStage(Stage str)
         {
             string query = "SELECT add_project_stage(@ID_Project, @Stage_Name, @Start_Date, @End_Date, @Details, @Comments)";
