@@ -113,6 +113,12 @@ public class MainActivity extends ActionBarActivity
                 Intent browserIntent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(browserIntent);
                 break;
+
+            case 5:
+                mTitle = getString(R.string.title_section5);
+                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                break;
         }
     }
 
