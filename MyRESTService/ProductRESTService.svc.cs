@@ -19,6 +19,7 @@ namespace MyRESTService
         public bool connect() {
             try {
                 conn.Open();
+                conn.CreateCommand();
                 return true;
             } catch (Exception ee) {
                 return false;
@@ -45,31 +46,7 @@ namespace MyRESTService
 
         public string GetAll()
         {
-            string msg = "";
-            string query = "SELECT add_customer(201505054,'Ricardo','Flores','Obando','88855692','ricardo@gmail.com','richard','123');";
-            //DateTime bdate = Convert.ToDateTime(str.BDate);
-            List<Object> lstSelect = new List<Object>();
-            try
-            {
-                this.connect();
-                NpgsqlCommand command = new NpgsqlCommand(query, conn);
-                NpgsqlDataReader dr = command.ExecuteReader();
-                while (dr.Read())
-                {
-                    for (int i = 0; i < dr.FieldCount; i++)
-                    {
-                        msg += dr[i];
-                        //lstSelect.Add(dr[i]);
-                    }
-                    Console.WriteLine();
-                }
-                this.disconnect();
-            }
-            catch (Exception ee)
-            {
-                msg += ee;
-                //lstSelect.Add("Error" + ee);
-            }
+            string msg = "todo bien";
             return msg;
         }
 
@@ -252,7 +229,7 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += "Error:";
+                msg += "Error in New Role Function:";
                 msg += ex.Message;
             }
             finally
@@ -364,6 +341,30 @@ namespace MyRESTService
             return msg;
         }
 
+        public string CompleteProject(Project str)
+        {
+            string query = "SELECT complete_project(@ID_Project)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+        
         public string DeleteProject(Project str)
         {
             string query = "SELECT delete_project(@ID_Project)";
@@ -412,6 +413,30 @@ namespace MyRESTService
             return msg;
         }
 
+        public string CompleteStage(Stage str)
+        {
+            string query = "SELECT complete_stage(@ID_Project)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+        
         public string CreateStage(Stage str)
         {
             string query = "SELECT add_project_stage(@ID_Project, @Stage_Name, @Start_Date, @End_Date, @Details, @Comments)";

@@ -108,6 +108,13 @@ namespace MyRESTService
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/CompleteProject")]
+        string CompleteProject(Project str);
+        
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/DeleteProject")]
         string DeleteProject(Project str);
 
@@ -117,7 +124,14 @@ namespace MyRESTService
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/AddStageName")]
         string AddStageName(Stage str);
-        
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/CompleteStage")]
+        string CompleteStage(Stage str);
+
         [OperationContract] 
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
