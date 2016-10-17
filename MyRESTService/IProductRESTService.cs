@@ -69,6 +69,12 @@ namespace MyRESTService
             UriTemplate = "/PostProjectCommentDel")]
         string PostProjectCommentDel(Project str);
 
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/CreateStage")]
+        string CreateStage(Stage str);
 
     }
 }

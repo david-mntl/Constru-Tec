@@ -92,7 +92,7 @@ namespace MyRESTService
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
             }catch (Exception ex) {
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }finally{
                 this.disconnect();
@@ -120,7 +120,7 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }
             finally
@@ -153,7 +153,7 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }
             finally
@@ -181,7 +181,7 @@ namespace MyRESTService
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
             }catch (Exception ex){
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }finally{
                 this.disconnect();
@@ -208,7 +208,7 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }
             finally
@@ -232,7 +232,7 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += " Insert Error:";
+                msg += "Error:";
                 msg += ex.Message;
             }
             finally
@@ -256,7 +256,36 @@ namespace MyRESTService
             }
             catch (Exception ex)
             {
-                msg += " Insert Error:";
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+        
+        public string CreateStage(Stage str)
+        {
+            string query = "SELECT add_project_stage(@ID_Project, @Stage_Name, @Start_Date, @End_Date, @Details, @Comments)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.Parameters.AddWithValue("@Stage_Name", str.Stage_Name);
+                sqlcmd.Parameters.AddWithValue("@Start_Date", str.Start_Date);
+                sqlcmd.Parameters.AddWithValue("@End_Date", str.End_Date);
+                sqlcmd.Parameters.AddWithValue("@Details", str.Details);
+                sqlcmd.Parameters.AddWithValue("@Comments", str.Comments);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
                 msg += ex.Message;
             }
             finally
