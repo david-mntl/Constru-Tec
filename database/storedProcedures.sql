@@ -16,6 +16,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+
+--Procedure to retrieve customer info
+--SELECT get_customer('richard');
+DROP FUNCTION get_customer(character varying);
+
+CREATE OR REPLACE FUNCTION get_customer(pUser varchar(25)) 
+RETURNS SETOF CUSTOMER AS 
+$$
+SELECT * FROM CUSTOMER WHERE CUSTOMER.username = pUser;
+$$ LANGUAGE SQL;
+
 --Procedure to update customer info
 --SELECT update_customer(201505054,'Jose','Flores','Obando','88855692','ricardo@gmail.com','richard','123');
 CREATE OR REPLACE FUNCTION update_customer(pID int, pName_eng varchar(25),pLast1 varchar(25),pLast2 varchar(25),pPhone varchar(15),pMail varchar(50),pUsername varchar(25), pPass varchar(25))
