@@ -7,11 +7,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,23 +30,27 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class RegisterActivity extends ActionBarActivity  {
 
-    String userNickname = "";
-    String userPassword = "";
+    String jsonTOsend = "";
 
-    /*AsyncTaskConnector connector;*/
+    String userNickname = "";
+
+    AsyncTaskConnector connector;
+    JSONArray userInfo = null;
 
     private TabHost tabHost;
     private TabHost.TabSpec spec;
 
-    private String tabIndicator = "";
+    private Boolean tabIndicator ;
 
     private ArrayAdapter<String> dropDownRole;
     private Spinner dropdown;
@@ -81,7 +91,18 @@ public class RegisterActivity extends ActionBarActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        TabHost selectRole = (TabHost)findViewById(R.id.selectRole);
+        tabIndicator = Boolean.parseBoolean(getString(R.string.tipoRegisterClient));
+
+        final TabHost selectRole = (TabHost)findViewById(R.id.selectRole);
+        selectRole.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+               if(tabIndicator)
+                   tabIndicator= Boolean.valueOf(getString(R.string.tipoRegisterClient));
+                else
+                   tabIndicator= Boolean.valueOf(getString(R.string.tipoRegisterEmployee));
+            }
+        });
         selectRole.setup();
 
         dropdown = (Spinner)findViewById(R.id.spinner1);
@@ -92,15 +113,17 @@ public class RegisterActivity extends ActionBarActivity  {
 
         //Tab 1
         spec = selectRole.newTabSpec("Cliente");
-        spec.setContent(R.id.Cliente);
+        spec.setContent(R.id.scrollViewClient);
         spec.setIndicator("Cliente");
         selectRole.addTab(spec);
 
         //Tab 2
         spec = selectRole.newTabSpec("Empleado");
-        spec.setContent(R.id.Empleado);
+        spec.setContent(R.id.scrollViewEmpleado);
         spec.setIndicator("Empleado");
         selectRole.addTab(spec);
+
+
 
 
 
@@ -116,14 +139,18 @@ public class RegisterActivity extends ActionBarActivity  {
 
     public void sendRegister ()
     {
+        JSONObject jsonObject = new JSONObject();
 
-        if (spec.getTag().compareTo("Cliente")==0)
+        Log.e("*********TAB****", tabIndicator.toString() );
+
+        if (tabIndicator == false)
         {
         /*
         ****************  Client Edit Texts **********************
         */
 
-            tabIndicator = "Cliente";
+
+
 
             final EditText nameClientEDIT = (EditText)findViewById(R.id.nameClient);
             final EditText LN1ClientEDIT = (EditText)findViewById(R.id.LN1Client);
@@ -145,12 +172,32 @@ public class RegisterActivity extends ActionBarActivity  {
             mailClient = mailClientEDIT.getText().toString();
             usrClient = usrClientEDIT.getText().toString();
             idClient = idClientEDIT.getText().toString();
+
+            Log.e("******name********",nameClient);
+
+
+            try {
+                jsonObject.put("ID_Customer", idClient);
+                jsonObject.put("Name", nameClient);
+                jsonObject.put("Lastname_1", LN1Client);
+                jsonObject.put("Lastname_2", LN2Client);
+                jsonObject.put("Phone", telClient);
+                jsonObject.put("Email", mailClient);
+                jsonObject.put("Username", usrClient);
+                jsonObject.put("Password", passClient);
+
+                userNickname = usrClient;
+                jsonTOsend = jsonObject.toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
-        if (spec.getTag().compareTo("Empleado")==0)
+        else if (tabIndicator)
         {
 
-            tabIndicator = "Empleado";
+
         /*
         ****************  Employee Edit Texts **********************
         */
@@ -177,12 +224,139 @@ public class RegisterActivity extends ActionBarActivity  {
             idEmployee = idEmployeeEDIT.getText().toString();
             engCode = engCodeEDIT.getText().toString();
 
+            try {
+                jsonObject.put("ID_Engineer", idEmployee);
+                jsonObject.put("Name", nameEmployee);
+                jsonObject.put("Lastname_1", LN1Employee);
+                jsonObject.put("Lastname_2", LN2Employee);
+                jsonObject.put("Phone", telEmployee);
+                jsonObject.put("Email", mailEmployee);
+                jsonObject.put("Eng_Code", engCode);
+                jsonObject.put("Username", usrEmployee);
+                jsonObject.put("Password", passEmployee);
+
+                userNickname = usrEmployee;
+                jsonTOsend = jsonObject.toString();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
 
-        /*connector = new AsyncTaskConnector();
-        connector.execute("init");*/
+        connector = new AsyncTaskConnector();
+        connector.execute("init");
 
+    }
+
+    private class AsyncTaskConnector extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            /*******************/
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+
+
+            try {
+                //constants
+                URL url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/PostCustomer");
+
+                Log.i("*********************:",jsonTOsend.toString());
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(jsonTOsend.getBytes().length);
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(jsonTOsend.getBytes());
+                //clean up
+                os.flush();
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                StringBuffer response;
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+
+                publishProgress(response.toString());
+
+
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //clean up
+                try {
+                    os.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                conn.disconnect();
+            }
+
+            return "";
+        }
+        @Override
+        protected void onProgressUpdate(String... progress) {
+
+            String response = progress[0].split("\"")[1];
+            if(response.compareTo("responsetrue") == 0 ) {
+
+                new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Completado")
+                        .setContentText("Registro Finalizado")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                RegisterActivity.this.finish();
+                            }
+                        })
+                        .show();
+            }
+            else if(response.compareTo("responsefalse") == 0 ){
+                new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops")
+                        .setContentText("Porfavor verifique los datos proporcionados")
+                        .show();
+            }
+
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
     }
 
 }
