@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class UserDataHolder {
     private static UserDataHolder instance = null;
 
-    public String user = "";
-    public String userID = "";
+    public String user = "fasm22";
+    public String userROLE = "Cliente";
     public ArrayList<Producto> shoppingcart;
 
     private UserDataHolder() {
@@ -18,6 +18,22 @@ public class UserDataHolder {
         }
         return instance;
     }
+
+    public void setUser(String pNewUser)
+    {
+        user =  pNewUser;
+    }
+
+    public void setUserROLE(String pNewRole)
+    {
+        userROLE =  pNewRole;
+    }
+
+
+
+
+
+
     public void addProductToShoppingCart(int id,int quantity,int price,String name){
         boolean inserted = false;
         if(shoppingcart.size() == 0) {

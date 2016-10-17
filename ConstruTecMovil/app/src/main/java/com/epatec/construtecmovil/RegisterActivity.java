@@ -33,6 +33,7 @@ import java.net.URL;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -50,7 +51,7 @@ public class RegisterActivity extends ActionBarActivity  {
     private TabHost tabHost;
     private TabHost.TabSpec spec;
 
-    private Boolean tabIndicator ;
+    private String tabIndicator ;
 
     private ArrayAdapter<String> dropDownRole;
     private Spinner dropdown;
@@ -91,18 +92,8 @@ public class RegisterActivity extends ActionBarActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        tabIndicator = Boolean.parseBoolean(getString(R.string.tipoRegisterClient));
-
         final TabHost selectRole = (TabHost)findViewById(R.id.selectRole);
-        selectRole.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-               if(tabIndicator)
-                   tabIndicator= Boolean.valueOf(getString(R.string.tipoRegisterClient));
-                else
-                   tabIndicator= Boolean.valueOf(getString(R.string.tipoRegisterEmployee));
-            }
-        });
         selectRole.setup();
 
         dropdown = (Spinner)findViewById(R.id.spinner1);
@@ -110,6 +101,9 @@ public class RegisterActivity extends ActionBarActivity  {
 
         dropDownRole = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(dropDownRole);
+
+        Log.i("DROPDOWNNNN", dropdown.getSelectedItem().toString());
+
 
         //Tab 1
         spec = selectRole.newTabSpec("Cliente");
@@ -130,6 +124,18 @@ public class RegisterActivity extends ActionBarActivity  {
         final Button registerClient = (Button) findViewById(R.id.registerClient);
         registerClient.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                final TabHost selectRole = (TabHost) findViewById(R.id.selectRole);
+                tabIndicator = selectRole.getCurrentTab()+"";
+                sendRegister();
+            }
+        });
+
+        final Button registerEmployee = (Button) findViewById(R.id.registerEmployee);
+        registerEmployee.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                final TabHost selectRole = (TabHost)findViewById(R.id.selectRole);
+                tabIndicator = selectRole.getCurrentTab()+"";
 
                 sendRegister();
             }
@@ -143,7 +149,7 @@ public class RegisterActivity extends ActionBarActivity  {
 
         Log.e("*********TAB****", tabIndicator.toString() );
 
-        if (tabIndicator == false)
+        if (tabIndicator.compareTo(  getString(R.string.tipoRegisterClient)) ==0)
         {
         /*
         ****************  Client Edit Texts **********************
@@ -194,7 +200,7 @@ public class RegisterActivity extends ActionBarActivity  {
 
         }
 
-        else if (tabIndicator)
+        else if (tabIndicator.compareTo(  getString(R.string.tipoRegisterEmployee)) ==0)
         {
 
 
@@ -234,8 +240,8 @@ public class RegisterActivity extends ActionBarActivity  {
                 jsonObject.put("Eng_Code", engCode);
                 jsonObject.put("Username", usrEmployee);
                 jsonObject.put("Password", passEmployee);
+                jsonObject.put("Role",  dropdown.getSelectedItem().toString());
 
-                userNickname = usrEmployee;
                 jsonTOsend = jsonObject.toString();
 
             } catch (JSONException e) {
@@ -249,6 +255,8 @@ public class RegisterActivity extends ActionBarActivity  {
         connector.execute("init");
 
     }
+
+
 
     private class AsyncTaskConnector extends AsyncTask<String, String, String> {
         @Override
@@ -265,10 +273,27 @@ public class RegisterActivity extends ActionBarActivity  {
 
             try {
                 //constants
-                URL url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/PostCustomer");
 
-                Log.i("*********************:",jsonTOsend.toString());
+                ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
+                URL url;
 
+                /* *************** REGISTER CUSTOMER LINK CONNECTION ****************** */
+
+                if ( tabIndicator.compareTo(  getString(R.string.tipoRegisterClient)) ==0) {
+
+                     url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.customerRegister));
+
+                    Log.i("******CUSTOMER*******:", jsonTOsend.toString());
+                }
+                else
+                {
+                     url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.employeeRegister));
+
+                    Log.i("*******EMPLOYEE*******:", jsonTOsend.toString());
+
+                }
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
                 conn.setConnectTimeout(15000 /* milliseconds */);
@@ -331,7 +356,7 @@ public class RegisterActivity extends ActionBarActivity  {
         protected void onProgressUpdate(String... progress) {
 
             String response = progress[0].split("\"")[1];
-            if(response.compareTo("responsetrue") == 0 ) {
+            if(response.compareTo("Ok") == 0 ) {
 
                 new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("Completado")
@@ -345,7 +370,7 @@ public class RegisterActivity extends ActionBarActivity  {
                         })
                         .show();
             }
-            else if(response.compareTo("responsefalse") == 0 ){
+            else {
                 new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops")
                         .setContentText("Porfavor verifique los datos proporcionados")

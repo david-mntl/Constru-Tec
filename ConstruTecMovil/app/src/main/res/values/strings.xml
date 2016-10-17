@@ -20,7 +20,7 @@
     <string name="action_settings">Settings</string>
 
 
-    <!-- Strings related to login -->
+    <!--**************** Strings related to login ****************************-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
@@ -37,8 +37,21 @@
     <string name="employeeParameters">9</string>
     <string name="roleClient">Cliente</string>
 
-    <string name = "tipoRegisterClient">false</string>
-    <string name = "tipoRegisterEmployee">true</string>
+    <string name = "tipoRegisterClient">0</string>
+    <string name = "tipoRegisterEmployee">1</string>
+
+    <!--*******************  CONECTION TO SERVER LINKS  **************-->
+    <string name = "domain">http://</string>
+    <string name = "customerRegister"> /ProductRESTService.svc/PostCustomer </string>
+    <string name = "employeeRegister"> /ProductRESTService.svc/PostEngineer </string>
+    <string name = "getCustomerInfo"> /ProductRESTService.svc/GetCustomer/ </string>
+    <string name = "updateCustomerInfo"> /ProductRESTService.svc/UpdateCustomer </string>
+    <string name = "updateEngineerInfo"> /ProductRESTService.svc/UpdateEngineer </string>
+    <string name = "login"> /ProductRESTService.svc/Login </string>
+
+    <!-- <string name = "getEmployeeInfo"> /ProductRESTService.svc// </string> -->
+
+
 
 
 

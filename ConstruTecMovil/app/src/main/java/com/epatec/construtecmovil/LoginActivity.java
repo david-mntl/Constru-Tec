@@ -48,15 +48,11 @@ public class LoginActivity extends ActionBarActivity {
                 connector = new AsyncTaskConnector();
                 connector.execute("init");
 
-                requestLogin(pUser.getText().toString(), pPassword.getText().toString());
+                //requestLogin(pUser.getText().toString(), pPassword.getText().toString());
             }
         });
     }
 
-    private void requestLogin(String pUser, String pPassword){
-
-
-    }
 
     private class AsyncTaskConnector extends AsyncTask<String, String, String> {
         @Override
@@ -73,7 +69,13 @@ public class LoginActivity extends ActionBarActivity {
 
             try {
                 //constants
-                URL url = new URL("http://cewebserver.azurewebsites.net/Service1.svc/postlogin");
+                ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
+
+                URL url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        + getString(R.string.login));
+
+
+
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("Nickname", userNickname);
@@ -145,6 +147,8 @@ public class LoginActivity extends ActionBarActivity {
         @Override
         protected void onProgressUpdate(String... progress) {
 
+            final String[] serverResponse = progress[0].split("\"");
+
             String response = progress[0].split("\"")[1];
             if(response.compareTo("responsetrue") == 0 ) {
 
@@ -157,6 +161,14 @@ public class LoginActivity extends ActionBarActivity {
                                 sDialog.dismissWithAnimation();
                                 UserDataHolder x = UserDataHolder.getInstance();
                                 x.user = userNickname;
+
+
+                                /* ************TO DO****************/
+
+                                x.userROLE = serverResponse[2];
+
+                                 /* ***********************************/
+
                                 LoginActivity.this.finish();
                             }
                         })

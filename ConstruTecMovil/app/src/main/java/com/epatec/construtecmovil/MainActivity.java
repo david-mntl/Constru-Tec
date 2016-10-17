@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity
                                     TextView usertxt = (TextView) findViewById(R.id.usertxtview);
 
                                     x.user = "";
-                                    x.userID = "";
+                                    x.userROLE = "";
                                     usertxt.setText(x.user);
                                     sDialog.dismissWithAnimation();
                                 }
