@@ -1,0 +1,43 @@
+<!-- <div id='cliente' ng-controller = "controlCheck" class="modal-body"> -->
+<script src="js/script.js"></script>
+<div ng-app>
+
+
+
+
+    <p><span class="glyphicon glyphicon-list-alt"></span> Nombre</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-list-alt"></span> Primer apellido</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-list-alt"></span> Segundo apellido</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-list-alt"></span> Cédula</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-envelope"></span> Correo electrónico</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-phone"></span> Teléfono</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p>Seleccione su rol</p>
+    <div ng-controller= "ex" class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Dropdown
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li ng-repeat="(country,goals) in items">{{country}}: {{goals}}</li>
+        </ul>
+        <!-- <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+             <li><a href="#">Action</a></li>
+             <li><a href="#">Another action</a></li>
+             <li><a href="#">Something else here</a></li>
+             <li role="separator" class="divider"></li>
+             <li><a href="#">Separated link</a></li>
+         </ul>-->
+    </div>
+    <p><span class="glyphicon glyphicon-briefcase"></span>Carné de trabajo</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-user"></span> Nombre de Usuario</p>
+    <input type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <p><span class="glyphicon glyphicon-lock"></span> Contraseña</p>
+
+</div>
