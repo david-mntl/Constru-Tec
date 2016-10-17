@@ -103,7 +103,7 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             Password: $scope.myForm.password.toString()
         });
 
-        $http.post('http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/PostCustomer', parameter).
+        $http.post('https://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/PostCustomer', parameter).
         success(function(data, status, headers, config) {
             console.log("DATOS: " + data);
             if(data == "Error"){
