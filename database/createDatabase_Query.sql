@@ -74,7 +74,8 @@ CREATE TABLE ROLE(
 CREATE TABLE ROLExENGINEER(
 	ID_ROLExENGINEER int PRIMARY KEY NOT NULL DEFAULT nextval('ROLExENGINEER_seq'),
 	ID_Engineer int NOT NULL,
-	ID_Role int NOT NULL
+	ID_Role int NOT NULL,
+	UNIQUE(ID_Engineer,ID_Role)
 );
 
 CREATE TABLE PROJECT(
@@ -85,7 +86,8 @@ CREATE TABLE PROJECT(
 	ID_Customer int UNIQUE NOT NULL,
 	Comments varchar(255),
 	Details varchar(255),
-	Active boolean NOT NULL
+	Active boolean NOT NULL,
+	Completed boolean NOT NULL
 );
 
 CREATE TABLE PROJECT_STAGE(
