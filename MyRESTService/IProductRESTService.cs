@@ -37,6 +37,13 @@ namespace MyRESTService
         string PostCustomer(Customer str);
 
         [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostTest")]
+        string PostTest(string str);
+
+        [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
                                    BodyStyle = WebMessageBodyStyle.Bare,
                                    UriTemplate = "GetCustomer/{Username}")]
@@ -60,6 +67,13 @@ namespace MyRESTService
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/VerifyLogin")]
+        string VerifyLogin(Customer str);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/PostEngineer")]
         string PostEngineer(Engineer str);
 
@@ -76,6 +90,12 @@ namespace MyRESTService
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/DeleteEngineer")]
         string DeleteEngineer(Engineer str);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
+                                   BodyStyle = WebMessageBodyStyle.Bare,
+                                   UriTemplate = "/GetRoles")]
+        string GetRoles();
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,

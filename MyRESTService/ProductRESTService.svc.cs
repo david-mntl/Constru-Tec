@@ -79,6 +79,12 @@ namespace MyRESTService
             return msg;
         }
 
+        public string PostTest(string str)
+        {
+            string msg = str;
+            return msg;
+        }
+
         public string GetCustomer(string Username)
         {
             string query = "SELECT * from get_customer('"+Username+"')";
@@ -165,6 +171,36 @@ namespace MyRESTService
             return msg;
         }
 
+        public string VerifyLogin(Customer str)
+        {
+            string query = "SELECT login(@Username,@Password)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@Username", str.Username);
+                sqlcmd.Parameters.AddWithValue("@Password", str.Password);
+                sqlcmd.ExecuteNonQuery();
+                
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
 
         public string PostEngineer(Engineer str)
         {
@@ -236,6 +272,32 @@ namespace MyRESTService
                 sqlcmd.Parameters.AddWithValue("@ID_Engineer", str.ID_Engineer);
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetRoles()
+        {
+            string query = "SELECT get_roles()";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
             }
             catch (Exception ex)
             {
