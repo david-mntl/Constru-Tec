@@ -16,6 +16,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to retrieve customer info
+--SELECT * FROM get_customer('fasm22');
+CREATE OR REPLACE FUNCTION get_customer(pUser varchar(25)) 
+RETURNS SETOF CUSTOMER AS 
+$$
+SELECT * FROM CUSTOMER WHERE CUSTOMER.username = pUser;
+$$ LANGUAGE SQL;
+
 --Procedure to update customer info
 --SELECT update_customer(201505054,'Jose','Flores','Obando','88855692','ricardo@gmail.com','richard','123');
 CREATE OR REPLACE FUNCTION update_customer(pID int, pName_eng varchar(25),pLast1 varchar(25),pLast2 varchar(25),pPhone varchar(15),pMail varchar(50),pUsername varchar(25), pPass varchar(25))
@@ -80,6 +88,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to retrieve engineer info
+--SELECT * FROM get_engineer('fasm22');
+DROP FUNCTION get_engineer(character varying);
+CREATE OR REPLACE FUNCTION get_engineer(pUser varchar(25)) 
+RETURNS TABLE (
+	ID_Engineer int,
+	Name varchar(25),
+	LastName1 varchar(25),
+	LastName2 varchar(25),
+	Phone varchar(15),
+	Email varchar(50),
+	Eng_Code varchar(15),
+	Username varchar(25),
+	Password varchar(25),
+	Role varchar(25)
+)AS 
+$$
+SELECT ENGINEER.ID_Engineer,ENGINEER.Name,ENGINEER.LastName1,ENGINEER.LastName2,
+	ENGINEER.Phone,ENGINEER.Email,ENGINEER.Eng_Code,ENGINEER.Username,
+	ENGINEER.Password,ROLE.Name
+FROM ENGINEER JOIN ROLExENGINEER ON ROLExENGINEER.ID_Engineer = ENGINEER.ID_Engineer
+JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role WHERE ENGINEER.Username=pUser;
+$$ LANGUAGE SQL;
+
 --Procedure to update engineer info
 --SELECT update_engineer(201505054,'El inge','Vargas','Campos,','25587878','vargas@gmail.com','ABC159','campos','123');
 CREATE OR REPLACE FUNCTION update_engineer(pID int, pName_eng varchar(25),pLast1 varchar(25),pLast2 varchar(25),pPhone varchar(15),pMail varchar(50),pCode varchar(15),pUsername varchar(25), pPass varchar(25))
@@ -124,8 +156,8 @@ BEGIN
 	EXCEPTION
 		WHEN unique_violation 
 		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
-		WHEN undefined_function
-		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+		--WHEN undefined_function
+		--THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -273,6 +305,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to get roles
+--SELECT get_roles();
+DROP FUNCTION IF EXISTS get_roles();
+CREATE OR REPLACE FUNCTION get_roles() 
+RETURNS TABLE (
+	Role varchar(50)
+)AS 
+$$
+SELECT Name FROM ROLE;
+$$ LANGUAGE SQL;
+
 --Procedure to insert a stage_name
 --SELECT add_new_stage_name('Conserje');
 CREATE OR REPLACE FUNCTION add_new_stage_name(pStageName varchar(50))
@@ -302,3 +345,94 @@ BEGIN
 		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
 END;
 $$ LANGUAGE plpgsql;
+
+
+--Procedure to login into the system
+--SELECT login('fasm22','123');
+CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
+RETURNS TEXT AS $$
+BEGIN
+	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE Username = pUser)) THEN
+		IF( (SELECT Password FROM CUSTOMER WHERE Username = pUser) = pPass) THEN
+			RETURN 'CUSTOMER';
+		ELSE
+			RETURN 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE Username = pUser)) THEN
+		IF( (SELECT Password FROM ENGINEER WHERE Username = pUser) = pPass) THEN
+			RETURN (SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
+				WHERE ENGINEER.Username = pUser);
+		ELSE
+			RETURN 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	ELSE
+		RETURN 'UNEXISTANT USER';
+	END IF;
+
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the products from an specific stage
+--SELECT get_products_from_stage(202);
+DROP FUNCTION IF EXISTS get_products_from_stage(int);
+CREATE OR REPLACE FUNCTION get_products_from_stage(pID int)
+RETURNS TABLE(
+	Name varchar(50),
+	Quantity int,
+	Price int,
+	Purchased boolean
+)AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PRODUCT.Name,PRODUCTxSTAGE.Quantity,PRODUCTxSTAGE.Price,PRODUCTxSTAGE.Purchased
+	FROM PRODUCT JOIN PRODUCTxSTAGE ON PRODUCTxSTAGE.ID_Product = PRODUCT.ID_Product JOIN PROJECT_STAGE ON PROJECT_STAGE.ID_Stage = PRODUCTxSTAGE.ID_STAGE
+	WHERE PROJECT_STAGE.ID_Stage = pID;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+/******************* TRIGGERS ********************************/
+--Trigger to prevent the engineer deletion if projects depend on him
+DROP TRIGGER IF EXISTS eng_stamp ON ENGINEER;
+DROP FUNCTION IF EXISTS eng_trig();
+CREATE OR REPLACE FUNCTION eng_trig() RETURNS TRIGGER AS $eng_trig$
+BEGIN
+	IF(OLD.Active != NEW.Active) THEN
+		IF (SELECT EXISTS(SELECT 1 FROM PROJECT WHERE ID_Engineer = OLD.ID_Engineer)) THEN
+			RAISE EXCEPTION 'CANT DELETE ENGINEER IF PROJETS DEPEND ON HIM';
+			RETURN NULL;
+		ELSE
+			RETURN NEW;
+		END IF;
+	ELSIF(OLD.Active = False) THEN
+		RAISE EXCEPTION 'ENGINEER WAS ALREADY INACTIVE';
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$eng_trig$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER eng_stamp BEFORE UPDATE ON ENGINEER
+	FOR EACH ROW EXECUTE PROCEDURE eng_trig();
+
+--Trigger to prevent incorrect input of dates (initial and end date)
+DROP TRIGGER IF EXISTS date_stamp ON PROJECT_STAGE;
+DROP FUNCTION IF EXISTS date_trig();
+CREATE OR REPLACE FUNCTION date_trig() RETURNS TRIGGER AS $date_trig$
+BEGIN
+	IF(NEW.End_Date < NEW.Start_Date) THEN
+		RAISE EXCEPTION 'END DATE IS BEFORE START DATE. PLEASE CHECK INPUT';
+	ELSIF(NEW.End_Date = NEW.Start_Date) THEN
+		RAISE EXCEPTION 'END DATE AND START DATE ARE EQUAL';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$date_trig$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER date_stamp BEFORE INSERT ON PROJECT_STAGE
+	FOR EACH ROW EXECUTE PROCEDURE date_trig();
