@@ -1,0 +1,34 @@
+<div   class="panel-body" style=" height: 670px">
+    <div class="row" ng-controller = "Main">
+        <div  style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Proyectos</span>
+                <button style="float: right" type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+            </h3>
+
+            <span ng-repeat="user in projects" >
+                <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="loadEmail(user);">{{user.id}}</button>
+            </span>
+
+        </div>
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Etapas</span>
+                <button style="float: right" type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+            </h3>
+            <span ng-repeat="stages in stages" >
+                <div ng-if="stages.project == idproject">
+                    <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="loadEmail(user);">{{stages.id}}</button>
+                </div>
+            </span>
+        </div>
+
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Información de las etapas</span>
+
+            </h3>
+        </div>
+    </div>
+
+</div>
