@@ -307,10 +307,13 @@ $$ LANGUAGE plpgsql;
 
 --Procedure to get roles
 --SELECT get_roles();
+DROP FUNCTION IF EXISTS get_roles();
 CREATE OR REPLACE FUNCTION get_roles() 
-RETURNS SETOF ROLE AS 
+RETURNS TABLE (
+	Role varchar(50)
+)AS 
 $$
-SELECT * FROM ROLE;
+SELECT Name FROM ROLE;
 $$ LANGUAGE SQL;
 
 --Procedure to insert a stage_name
@@ -344,22 +347,52 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-/******************* TRIGGERS ********************************/
-DROP TRIGGER IF EXISTS emp_stamp ON CUSTOMER;
-DROP FUNCTION IF EXISTS sec_trig();
---Trigger de prueba
-CREATE OR REPLACE FUNCTION sec_trig() RETURNS TRIGGER AS $sec_trig$
+--Procedure to login into the system
+--SELECT login('fasm22','123');
+CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
+RETURNS TEXT AS $$
 BEGIN
-	RAISE NOTICE 'NO SEA NECIO';
-	RETURN NULL;
+	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE Username = pUser)) THEN
+		IF( (SELECT Password FROM CUSTOMER WHERE Username = pUser) = pPass) THEN
+			RETURN 'CUSTOMER';
+		ELSE
+			RETURN 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE Username = pUser)) THEN
+		IF( (SELECT Password FROM ENGINEER WHERE Username = pUser) = pPass) THEN
+			RETURN (SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
+				WHERE ENGINEER.Username = pUser);
+		ELSE
+			RETURN 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	ELSE
+		RETURN 'UNEXISTANT USER';
+	END IF;
 
 END;
-$sec_trig$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the products from an specific stage
+--SELECT get_products_from_stage(202);
+DROP FUNCTION IF EXISTS get_products_from_stage(int);
+CREATE OR REPLACE FUNCTION get_products_from_stage(pID int)
+RETURNS TABLE(
+	Name varchar(50),
+	Quantity int,
+	Price int,
+	Purchased boolean
+)AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PRODUCT.Name,PRODUCTxSTAGE.Quantity,PRODUCTxSTAGE.Price,PRODUCTxSTAGE.Purchased
+	FROM PRODUCT JOIN PRODUCTxSTAGE ON PRODUCTxSTAGE.ID_Product = PRODUCT.ID_Product JOIN PROJECT_STAGE ON PROJECT_STAGE.ID_Stage = PRODUCTxSTAGE.ID_STAGE
+	WHERE PROJECT_STAGE.ID_Stage = pID;
+END;
+$$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER emp_stamp BEFORE INSERT OR UPDATE ON CUSTOMER
-	FOR EACH ROW EXECUTE PROCEDURE sec_trig();
 
+/******************* TRIGGERS ********************************/
 --Trigger to prevent the engineer deletion if projects depend on him
 DROP TRIGGER IF EXISTS eng_stamp ON ENGINEER;
 DROP FUNCTION IF EXISTS eng_trig();
