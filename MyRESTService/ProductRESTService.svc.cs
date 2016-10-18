@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using Newtonsoft.Json;
 using Npgsql;
 
 namespace MyRESTService
@@ -72,6 +74,38 @@ namespace MyRESTService
                 msg += "Error:";
                 msg += ex.Message;
             }finally{
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetCustomer(string Username)
+        {
+            string query = "SELECT * from get_customer('"+Username+"')";
+            string msg = "";
+            try
+            {
+                this.connect();
+                /*                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                                NpgsqlDataReader dr = sqlcmd.ExecuteReader();
+
+                                // Output rows
+                                while (dr.Read())
+                                    msg+= dr[0]+"\t"+dr[1]+"\t";*/
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
                 this.disconnect();
             }
             return msg;

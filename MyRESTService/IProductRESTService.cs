@@ -9,10 +9,12 @@ using System.Text;
 
 namespace MyRESTService
 {
+
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IProductRESTService" in both code and config file together.
     [ServiceContract]
     public interface IProductRESTService
     {
+
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
                                    BodyStyle = WebMessageBodyStyle.Bare,
@@ -33,6 +35,12 @@ namespace MyRESTService
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/PostCustomer")]
         string PostCustomer(Customer str);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
+                                   BodyStyle = WebMessageBodyStyle.Bare,
+                                   UriTemplate = "GetCustomer/{Username}")]
+        string GetCustomer(string Username);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
