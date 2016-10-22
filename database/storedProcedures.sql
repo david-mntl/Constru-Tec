@@ -479,16 +479,56 @@ RETURNS TABLE(
 	Stage_Name varchar(50),
 	ID_Product int,
 	Product_name varchar(50),
-	Price int
+	Price int,
+	Quantity int
 ) AS $$
 BEGIN
 	RETURN QUERY
 	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name, PRODUCT.ID_Product,
-		PRODUCT.Name, PRODUCT.Price FROM PROJECT JOIN PROJECT_STAGE
+		PRODUCT.Name, PRODUCT.Price, PRODUCTxSTAGE.Quantity
+		FROM PROJECT JOIN PROJECT_STAGE
 		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN STAGE_NAME ON 
 		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
 		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
 		PRODUCTxSTAGE.ID_Product WHERE (PROJECT.ID_Project = pID_Project);
+END;
+$$ LANGUAGE plpgsql;
+
+
+--Procedure to get all the projects that will use an especific material in the next 15 days
+--SELECT get_projects_next_weeks();
+DROP FUNCTION IF EXISTS get_projects_by_material(varchar(50));
+CREATE OR REPLACE FUNCTION get_projects_by_material(pMaterial varchar(50))
+RETURNS TABLE(
+	ID_Project int,
+	Name varchar(50),
+	Location varchar(50),
+	Engineer text,
+	Completed boolean,
+	Comments varchar(255),
+	Details varchar(255),
+	NextStage varchar(50),
+	Start_Date date,
+	Material_Name varchar(50),
+	Quantity int
+	
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
+		(ENGINEER.Name || ' ' || ENGINEER.LastName1 || ' ' || ENGINEER.LastName2),
+		PROJECT.Completed,PROJECT.Comments,PROJECT.Details,STAGE_NAME.Name,
+		PROJECT_STAGE.Start_Date, PRODUCT.Name, PRODUCTxSTAGE.Quantity
+
+		FROM PROJECT JOIN PROJECT_STAGE
+		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN ENGINEER ON
+		PROJECT.ID_Engineer=ENGINEER.ID_Engineer JOIN STAGE_NAME ON 
+		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
+		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
+		PRODUCTxSTAGE.ID_Product WHERE (PROJECT_STAGE.Start_Date - current_date <= 15 AND 
+			PROJECT_STAGE.Start_Date - current_date > 0 AND
+			PRODUCT.Name = pMaterial
+			);
 END;
 $$ LANGUAGE plpgsql;
 
