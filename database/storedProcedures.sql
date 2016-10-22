@@ -390,6 +390,47 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to get all the projects from a customer or a engineer
+--SELECT get_stages_from_project(100);
+DROP FUNCTION IF EXISTS get_projects_from_generic(int,int);
+CREATE OR REPLACE FUNCTION get_projects_from_generic(pMode int,pID int)
+RETURNS TABLE(
+	ID_Project int,
+	Project_Name varchar(50)
+	
+)AS $$
+BEGIN
+	IF (pMode = 0) THEN
+		RETURN QUERY
+		SELECT PROJECT.ID_Project,PROJECT.Name 
+		FROM PROJECT WHERE PROJECT.ID_Customer = pID;
+	ELSIF (pMode = 1) THEN
+		RETURN QUERY
+		SELECT PROJECT.ID_Project,PROJECT.Name 
+		FROM PROJECT WHERE PROJECT.ID_Engineer = pID;
+	END IF;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the stages from a project
+--SELECT get_stages_from_project(100);
+DROP FUNCTION IF EXISTS get_stages_from_project(int);
+CREATE OR REPLACE FUNCTION get_stages_from_project(pID_Project int)
+RETURNS TABLE(
+	ID_Project_Stage int,
+	Stage_Name varchar(50),
+	Completed boolean
+	
+)AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name,PROJECT_STAGE.Completed 
+	FROM PROJECT_STAGE JOIN STAGE_NAME ON PROJECT_STAGE.ID_Stage_Name = STAGE_NAME.ID_Stage_Name
+	WHERE PROJECT_STAGE.ID_Project = pID_Project;
+END;
+$$ LANGUAGE plpgsql;
+
 
 
 /******************* TRIGGERS ********************************/
@@ -419,14 +460,16 @@ CREATE TRIGGER eng_stamp BEFORE UPDATE ON ENGINEER
 	FOR EACH ROW EXECUTE PROCEDURE eng_trig();
 
 --Trigger to prevent incorrect input of dates (initial and end date)
-DROP TRIGGER IF EXISTS date_stamp ON PROJECT_STAGE;
-DROP FUNCTION IF EXISTS date_trig();
+DROP TRIGGER IF EXISTS date_stamp ON PROJECT_STAGE CASCADE;
+DROP FUNCTION IF EXISTS date_trig() CASCADE;
 CREATE OR REPLACE FUNCTION date_trig() RETURNS TRIGGER AS $date_trig$
 BEGIN
 	IF(NEW.End_Date < NEW.Start_Date) THEN
 		RAISE EXCEPTION 'END DATE IS BEFORE START DATE. PLEASE CHECK INPUT';
+		RETURN NULL;
 	ELSIF(NEW.End_Date = NEW.Start_Date) THEN
 		RAISE EXCEPTION 'END DATE AND START DATE ARE EQUAL';
+		RETURN NULL;
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -436,3 +479,21 @@ $date_trig$ LANGUAGE plpgsql;
 
 CREATE TRIGGER date_stamp BEFORE INSERT ON PROJECT_STAGE
 	FOR EACH ROW EXECUTE PROCEDURE date_trig();
+
+--Trigger to prevent updating or deleting stages
+DROP TRIGGER IF EXISTS prevent_st_name_func ON STAGE_NAME CASCADE;
+DROP FUNCTION IF EXISTS prevent_st_name_func() CASCADE;
+CREATE OR REPLACE FUNCTION prevent_st_name_func() RETURNS TRIGGER AS $stname$
+BEGIN
+	IF(OLD.ID_Stage_Name <= 18) THEN
+		RAISE EXCEPTION 'CANT DELETE PREDEFINED STAGE NAME';
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$stname$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER prevent_del_stage_name BEFORE DELETE ON STAGE_NAME
+	FOR EACH ROW EXECUTE PROCEDURE prevent_st_name_func();
