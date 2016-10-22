@@ -45,7 +45,7 @@ public class MainActivity extends ActionBarActivity
         logoutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final UserDataHolder x = UserDataHolder.getInstance();
-                if(x.user != "") {
+                if (x.user != "") {
                     new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE)
                             .setTitleText("")
                             .setContentText("¿Está seguro que desea salir?")
@@ -62,8 +62,7 @@ public class MainActivity extends ActionBarActivity
                                 }
                             })
                             .show();
-                }
-                else{
+                } else {
                     new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("¡Atención!")
                             .setContentText("No ha ingresado al sistema")
@@ -93,6 +92,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onSectionAttached(int number) {
+        UserDataHolder userInfo = UserDataHolder.getInstance();
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
@@ -115,9 +115,31 @@ public class MainActivity extends ActionBarActivity
                 break;
 
             case 5:
-                mTitle = getString(R.string.title_section5);
-                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(profileIntent);
+                if(userInfo.user != "")
+                {
+                    mTitle = getString(R.string.title_section5);
+                    Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                    startActivity(profileIntent);
+                    break;
+                }
+                else
+                {
+                    new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Oops")
+                            .setContentText("Porfavor debe registrarse")
+                            .show();
+                };
+
+            case 6:
+                mTitle = getString(R.string.title_section6);
+                Intent projectIntent = new Intent(MainActivity.this, ProjectsActivity.class);
+                startActivity(projectIntent);
+                break;
+
+            case 7:
+                mTitle = getString(R.string.title_section6);
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
         }
     }

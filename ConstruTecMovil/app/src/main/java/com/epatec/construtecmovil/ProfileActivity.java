@@ -245,17 +245,13 @@ public class ProfileActivity extends ActionBarActivity {
             TextView txt = (TextView)findViewById(R.id.textView3);
             UserDataHolder user = UserDataHolder.getInstance();
 
-
             String result = progress[0].toString().substring(1, progress[0].toString().length() - 1);
             result = convertStandardJSONString(result);
 
-            Log.i("***JSON INFO****",result);
-
             try {
                 userInfo = new JSONArray(result);
-
-
             }
+
             catch (JSONException e) {
                 txt.setText(e.toString());
             }
@@ -264,7 +260,6 @@ public class ProfileActivity extends ActionBarActivity {
 
             try {
 
-                Log.e("**USERINFO***", userInfo.getJSONObject(0).getString("name").toString());
 
                 userName = userInfo.getJSONObject(0).getString("name");
                 userLN1  = userInfo.getJSONObject(0).getString("lastname1");
