@@ -39,6 +39,17 @@
         <activity
             android:name="com.epatec.construtecmovil.ProfileActivity"
             android:label="@string/title_activity_profile"></activity>
+
+        <activity
+            android:name="com.epatec.construtecmovil.ProjectsActivity"
+            android:label="@string/title_activity_projects"></activity>
+        <activity
+            android:name="com.epatec.construtecmovil.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity
+            android:name="com.epatec.construtecmovil.StageActivity"
+            android:label="@string/title_activity_stage"></activity>
+
     </application>
 
 </manifest>

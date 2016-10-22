@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -81,8 +82,16 @@ public class ProfileActivity extends ActionBarActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_profile);
 
-            connector = new AsyncTaskGetInfo();
-            connector.execute("init");
+            try
+            {
+                connector = new AsyncTaskGetInfo();
+                connector.execute("init");
+            }
+            catch (Exception e) {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
 
             final Button updateProfile = (Button) findViewById(R.id.updateProfile);
             updateProfile.setOnClickListener(new View.OnClickListener() {
@@ -245,17 +254,13 @@ public class ProfileActivity extends ActionBarActivity {
             TextView txt = (TextView)findViewById(R.id.textView3);
             UserDataHolder user = UserDataHolder.getInstance();
 
-
             String result = progress[0].toString().substring(1, progress[0].toString().length() - 1);
             result = convertStandardJSONString(result);
 
-            Log.i("***JSON INFO****",result);
-
             try {
                 userInfo = new JSONArray(result);
-
-
             }
+
             catch (JSONException e) {
                 txt.setText(e.toString());
             }
@@ -264,7 +269,6 @@ public class ProfileActivity extends ActionBarActivity {
 
             try {
 
-                Log.e("**USERINFO***", userInfo.getJSONObject(0).getString("name").toString());
 
                 userName = userInfo.getJSONObject(0).getString("name");
                 userLN1  = userInfo.getJSONObject(0).getString("lastname1");

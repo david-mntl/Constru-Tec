@@ -6,7 +6,13 @@ public class UserDataHolder {
     private static UserDataHolder instance = null;
 
     public String user = "fasm22";
+    public String userID = "2014068784";
+
     public String userROLE = "Cliente";
+    public String userType = "0";
+    public String actualProject = "";
+
+
     public ArrayList<Producto> shoppingcart;
 
     private UserDataHolder() {
