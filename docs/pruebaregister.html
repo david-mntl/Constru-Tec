@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html ng-app=myapp>
+<head>
+    <meta charset="utf-8">
+    <title>Registrarse</title>
+    <script data-require="angular.js@1.4.0" data-semver="1.4.0" src="https://code.angularjs.org/1.4.0/angular.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Ropa+Sans' rel='stylesheet'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+
+
+</head>
+<body>
+
+<div id="login-form">
+
+    <input type="radio" checked id="login" name="switch" class="hide">
+    <input type="radio" id="signup" name="switch" class="hide">
+
+    <div>
+        <ul class="form-header">
+            <li><label for="login"><i class="fa fa-edit"></i> REGISTRARSE</label></li>
+        </ul>
+    </div>
+
+    <div class="section-out">
+        <section class="signup-section">
+            <div class="login" ng-controller=MyController>
+                <form>
+                    <input id=idnumber ng-model=myForm.iDcard class="col1" placeholder="Cédula"/><span class="icon1"><i class="fa fa-info"></i></span>
+                    <input id=name ng-model=myForm.fname class="col2" placeholder="Nombre"/><span class="icon2"><i class="fa fa-user"></i></span>
+                    <input id=lname1 ng-model=myForm.lname1 class="col1" placeholder="Apellido"/><span class="icon1"><i class="fa fa-user"></i></span>
+                    <input id=lanme2 ng-model=myForm.lname2 class="col2" placeholder="Apellido"/><span class="icon2"><i class="fa fa-user"></i></span>
+                    <input id=residence ng-model=myForm.residence class="col1" placeholder="Residencia"/><span class="icon1"><i class="fa fa-hotel"></i></span>
+                    <input id=bdate ng-model=myForm.bpdate class="col2" placeholder="Nacimiento DD/MM/AAAA"/><span class="icon2"><i class="fa fa-birthday-cake"></i></span>
+
+                    <input id=username ng-model=myForm.nickname class="col1" placeholder="Username"/><span class="icon1"><i class="fa fa-male"></i></span>
+                    <input id=password type="password" ng-model=myForm.password class="col2" placeholder="Contraseña"/><span class="icon2"><i class="fa fa-key"></i></span>
+
+                    <input id=phone ng-model=myForm.phone class="col1" placeholder="Teléfono"/><span class="icon1"><i class="fa fa-phone"></i></span>
+                    <input id=email ng-model=myForm.email class="col2" placeholder="Correo Electrónico"/><span class="icon2"><i class="fa fa-envelope"></i></span>
+
+                    <button class="btn" ng-click="myForm.submitTheForm()">Enviar</button>
+
+                </form>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+<script>
+    /**
+     * Permite capturar los datos obtenidos por el usuario y luego realizar el request al
+     * web service para añadir los datos a la base de datos
+     */
+    var appcookies = angular.module("myapp",[]);
+    appcookies.controller("MyController",function($scope,$http) {
+        $scope.myForm={};
+        $scope.myForm.iDcard="";
+        $scope.myForm.fname="";
+        $scope.myForm.lname1="";
+        $scope.myForm.lname2="";
+        $scope.myForm.residence="";
+        $scope.myForm.bpdate="";
+        $scope.myForm.nickname="";
+        $scope.myForm.password="";
+        $scope.myForm.phone="";
+        $scope.myForm.email="";
+        $scope.myForm.submitTheForm=function(item,event) {
+            var parameter = JSON.stringify({
+                ID_Card:"12356888",
+                Name: "Fabian",
+                Residence: "Paraiso",
+                Nickname: "fasm89",
+                Secure_Pass: "123",
+                BDate: "10/10/96",
+                Phone: "88833746",
+                Email: "Fabian@gmail.com",
+                PriorityLevel: "1"
+            });
+            $http.post('http://cewebserver.azurewebsites.net/Service1.svc/postcustomer', parameter).success(function(data, status, headers, config) {
+                console.log("DATOS: " + data);
+            }).
+            error(function(data, status, headers, config) {
+                if(status != 200){
+                    console.log("ERROR: " + data);
+                }
+            });
+        }});
+</script>
+
+</body>
+</html>

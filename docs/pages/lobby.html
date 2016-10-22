@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html ng-app="mainApp"   lang="en">
+<html ng-app="App"   lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,33 +18,31 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-sanitize.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/scriptlobby.js"></script>
 
 
     <![endif]-->
 </head>
 <body>
-<span ng-app="mainApp">
+
 	<div  class="container-fluid">
 		<div class="navbar-header">
             <ul class="nav navbar-nav navbar-left">
-				<li><a data-target="#myModal" href="#">Ingresar</a></li>
-				<li><a data-target="#myModa2" href="#/cliente">Registrarse</a></li>
+				<li><a data-target="#myModal" href="#/proyectos">Proyectos</a></li>
+
 			</ul>
         </div>
         <div class="navbar-right">
             <ul class="nav navbar-nav navbar-left">
-				<li><h4><span class="glyphicon glyphicon-user"></span> Registrarse <span class="glyphicon glyphicon-unchecked"></span> </h4></li>
+                <li><a  href="#/editar">Editar Usuario</a></li>
+                <li><h4><span class="glyphicon glyphicon-user"></span> Registrarse <span class="glyphicon glyphicon-unchecked"></span> </h4></li>
 			</ul>
         </div>
 	</div>
-<div   class="panel-body" style=" height: 468px; background-color: #66afe9">
-
-
+<div   class="panel-body" style=" height: 700px; background-color: #66afe9">
+    <div ng-view></div>
 </div>
 
-<div class="panel-body" style=" height: 120px; background-color: #333333; color: #dff0d8">
-    <a style="color: #f9f9f9;size:150px">Acerca de</a>
 
-</div>
 </body>
 </html>
