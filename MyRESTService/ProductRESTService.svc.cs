@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using Newtonsoft.Json;
 using Npgsql;
+using MyRESTService.ServiceReference1;
 
 namespace MyRESTService
 {
@@ -563,12 +564,134 @@ namespace MyRESTService
         }
 
 
+        /*
+        * -------------------------------------------------------------------------------------
+        *                                       GETs 
+        * -------------------------------------------------------------------------------------  
+        */
+
+        public string GetStagesFromProject(string projectID)
+        {
+            string query = "SELECT * from get_stages_from_project('"+projectID+"')";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetProjects()
+        {
+            string query = "SELECT * from project;";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetProjectsFrom(string status, string id)
+        {
+            string query = "SELECT * from get_projects_from_generic("+status+","+id+");";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetInfoFromStage(string id)
+        {
+            string query = "SELECT * from get_info_from_stage(" +id+ ");";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        /*
+         * -------------------------------------------------------------------------------------
+         *                          Llamadas al web service de EPATEC
+         * -------------------------------------------------------------------------------------  
+         */
+        public string EpatecGetProductList(string paramList)
+        {
+            List<Product> PL;
+            MyRESTService.ProductRESTService ws = new MyRESTService.ProductRESTService();
+            PL = ws.GetProductList();
+            string result1 = JsonConvert.SerializeObject(PL);
+            string result = result1.Remove(result1.Length - 1).Remove(0, 1);
 
 
+            return result;
+        }
 
-
-
-
+        
 
 
 

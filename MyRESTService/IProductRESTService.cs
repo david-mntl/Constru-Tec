@@ -167,6 +167,51 @@ namespace MyRESTService
             UriTemplate = "/CreateStage")]
         string CreateStage(Stage str);
 
+
+
+        /*
+         * -------------------------------------------------------------------------------------
+         *                                      GETs
+         * -------------------------------------------------------------------------------------  
+         */
+
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetStagesFromProject?params={projectID}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetStagesFromProject(string projectID);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProjects",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetProjects();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProjectsFrom?status={status}&id={id}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetProjectsFrom(string status, string id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetInfoFromStage?id={id}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetInfoFromStage(string id);
+
+        /*
+         * -------------------------------------------------------------------------------------
+         *                          Llamadas al web service de EPATEC
+         * -------------------------------------------------------------------------------------  
+         */
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProducts?params={paramList}",
+           RequestFormat = WebMessageFormat.Json,
+           ResponseFormat = WebMessageFormat.Json)]
+        string EpatecGetProductList(string paramList);
+
     }
 }
 
