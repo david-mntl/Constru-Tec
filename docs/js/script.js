@@ -26,31 +26,31 @@ app.config(function($routeProvider,$httpProvider) {
         .otherwise({redirectTo: '/'});
 });
 
-var m = {
-    "India": "2",
-    "England": "2",
-    "Brazil": "3",
-    "UK": "1",
-    "USA": "3",
-    "Syria": "2"
-};
-app.controller('ex', function($scope) {
-    $scope.items = m;
-    $scope.roles=[];
+app.controller('getRoles',function ($scope,$http) {
 
-    $scope.getRoles = function () {
-        $http.get('http://cewebserver.azurewebsites.net/Service1.svc/getboffice').success(function (data, status, headers, config) {
+    $scope.sucursales = [];
+    $scope.infosurcursal = [];
+    $scope.selectedSucursal = $scope.sucursales[0];
+
+
+
+    $scope.getSucursales = function () {
+        $http.get('http://192.168.0.15:17476/ProductRESTService.svc/GetRoles').success(function (data, status, headers, config) {
             $scope.infosurcursal = (JSON).parse(data.toString());
+            console.log($scope.infosurcursal);
             angular.forEach($scope.infosurcursal, function (item) {
-                $scope.roles.push(item.Name)
+                $scope.sucursales.push(item.get_roles)
             });
-            $scope.selectedSucursal = $scope.roles[0];
+            $scope.selectedSucursal = $scope.sucursales[0];
 
         }).error(function (data, status, headers, config) {
             console.log(data);
         });
     }
-    $scope.getRoles();
+
+    $scope.getSucursales();
+
+
 });
 
 
@@ -104,6 +104,17 @@ app.controller('lobbyButton',function ($scope) {
 */
 
 app.controller("MyController",function($scope,$http,$timeout,$window) {
+    $scope.roles = {};
+    $scope.roles.cliente = "cliente";
+    $scope.roles.empleado = "empleado";
+    $scope.rol = "cliente";
+
+    $scope.changeRol = function (rol) {
+        $scope.rol = rol;
+
+    }
+
+
     $scope.myForm={};
     $scope.myForm.iDcard="";
     $scope.myForm.fname="";
@@ -113,17 +124,26 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
     $scope.myForm.password="";
     $scope.myForm.phone="";
     $scope.myForm.email="";
+    $scope.myForm.carne = "";
 
-    $scope.myForm.submitTheForm=function(item,event) {
+    $scope.myForm.selectRegister=function (item,event) {
+        if($scope.rol == "cliente"){
+            $scope.myForm.registerClient();
+        }else{
+            $scope.myForm.registerEmployee();
+        }
+
+    }
+    $scope.myForm.registerClient=function(item,event) {
         var parameter = JSON.stringify({
-            ID_Customer:40089,
-            Name: 'Carlos',
-            Lastname_1:'perez',
-            Lastname_2:'gonzalez',
-            Phone: '898989',
-            Email: 'Carlos@gmail.com',
-            Username: 'cars23',
-            Password: '123456'
+            ID_Customer:$scope.myForm.iDcard,
+            Name: $scope.myForm.fname,
+            Lastname_1:$scope.myForm.lname1,
+            Lastname_2:$scope.myForm.lname2,
+            Phone: $scope.myForm.phone,
+            Email: $scope.myForm.email,
+            Username: $scope.myForm.nickname,
+            Password: $scope.myForm.password
         });
 
         $http.post('http://192.168.0.15:17476/ProductRESTService.svc/PostCustomer',parameter).success(function (data, status, headers, config) {
@@ -137,5 +157,38 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             console.log(data);
             console.log(status);
         });
+        window.location.assign("pages/lobby.html")
 
-    }});
+    }
+    $scope.myForm.registerEmployee=function(item,event) {
+        var parameter = JSON.stringify({
+            ID_Engineer:$scope.myForm.iDcard,
+            Name: $scope.myForm.fname,
+            Lastname_1:$scope.myForm.lname1,
+            Lastname_2:$scope.myForm.lname2,
+            Phone: $scope.myForm.phone,
+            Email: $scope.myForm.email,
+            Eng_Code : $scope.myForm.carne,
+            Username: $scope.myForm.nickname,
+            Password: $scope.myForm.password,
+            Role : $scope.selectedSucursal
+
+        });
+
+        $http.post('http://192.168.0.15:17476/ProductRESTService.svc/PostEngineer',parameter).success(function (data, status, headers, config) {
+            // this callback will be called asynchronously
+            // when the response is available
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+            console.log(data);
+            console.log(status);
+        });
+        window.location.assign("pages/lobby.html")
+
+    }
+
+
+});
