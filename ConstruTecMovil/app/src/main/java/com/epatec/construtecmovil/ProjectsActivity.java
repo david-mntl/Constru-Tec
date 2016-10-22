@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -37,7 +38,11 @@ public class ProjectsActivity extends Activity {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+    ArrayList<Projects> allProjects;
+
+
     JSONArray stageInfo = null;
+    JSONArray projects = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +52,27 @@ public class ProjectsActivity extends Activity {
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.ExpandableList);
 
+        try
+        {
+            AsyncTaskProjects projectsServer = new AsyncTaskProjects();
+            projectsServer.execute("init");
+
+        }
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+
+    }
+
+    private void initData()
+    {
+
         // preparing list data
-        prepareListData();
+        //prepareListData();
 
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
@@ -120,15 +144,37 @@ public class ProjectsActivity extends Activity {
                 return false;
             }
         });
-    }
+
+    };
+
+
+
+
 
     /*
      * Preparing the list data
      */
     private void prepareListData() {
+
+
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
+        for (int i=0;i < allProjects.size() ; i++)
+        {
+            List<String> newHeaderList = new ArrayList<String>();
+            listDataHeader.add(allProjects.get(i).getProject_Name());
+
+            ArrayList<String> stagesList =allProjects.get(i).getStages();
+
+            for (int j=0; j < stagesList.size(); j++)
+            {
+                newHeaderList.add(stagesList.get(j));
+            }
+
+            listDataChild.put(listDataHeader.get(i), stagesList); // Header, Child data
+        }
+        /*
         // Adding child data
         listDataHeader.add("Top 250");
         listDataHeader.add("Now Showing");
@@ -151,8 +197,9 @@ public class ProjectsActivity extends Activity {
         nowShowing.add("Grown Ups 2");
         nowShowing.add("Red 2");
         nowShowing.add("The Wolverine");
+        */
 
-        List<String> comingSoon = new ArrayList<String>();
+        /*List<String> comingSoon = new ArrayList<String>();
         comingSoon.add("2 Guns");
         comingSoon.add("The Smurfs 2");
         comingSoon.add("The Spectacular Now");
@@ -162,6 +209,7 @@ public class ProjectsActivity extends Activity {
         listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
         listDataChild.put(listDataHeader.get(1), nowShowing);
         listDataChild.put(listDataHeader.get(2), comingSoon);
+        */
     }
 
 
@@ -177,8 +225,8 @@ public class ProjectsActivity extends Activity {
 
 
 
-    /* ASYNC TASK TO GET PROJECT INFORMATION*/
-    private class AsyncTaskConnector extends AsyncTask<String, String, String> {
+    /************************************************** ASYNC TASK TO GET PROJECT INFORMATION*****************************************/
+    private class AsyncTaskProjects extends AsyncTask<String, String, String> {
 
 
         // convert inputstream to String
@@ -209,21 +257,86 @@ public class ProjectsActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             InputStream inputStream = null;
+            InputStream inputStreamStage = null;
+
+            allProjects = new ArrayList<>();
+
+
             String result = "";
+            ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
+            UserDataHolder user = UserDataHolder.getInstance();
+
             try {
 
                 // create HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
 
                 // make GET request to the given URL
-                HttpResponse httpResponse = httpclient.execute(new HttpGet("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=all"));
+                String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        +"/"+ getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID   );
+
+
+                HttpResponse httpResponse = httpclient.execute(new HttpGet(serverRequest ));
+
 
                 // receive response as inputStream
                 inputStream = httpResponse.getEntity().getContent();
 
                 // convert inputstream to string
                 if(inputStream != null)
+                {
                     result = convertInputStreamToString(inputStream);
+                    result = result.toString().substring(1, result.toString().length() - 1);
+
+                    result = convertStandardJSONString(result);
+                    projects = new JSONArray(result);
+
+
+                    for(int i =0; i < projects.length(); i++)
+                    {
+                        String stageResult = "";
+                        Projects newProject = new Projects();
+                        newProject.setProject_Name(projects.getJSONObject(i).getString("project_name"));
+                        newProject.setProjectID(projects.getJSONObject(i).getString("id_project"));
+
+                        try
+                        {
+                            HttpClient httpclientStages = new DefaultHttpClient();
+
+                            String urlStage = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection + "/"
+                                    + getString(R.string.projectsStages) + newProject.getProjectID();
+
+
+                            // make GET request to the given URL
+                            HttpResponse httpResponseStages = httpclientStages.execute(new HttpGet (urlStage));
+
+                            // receive response as inputStream
+                            inputStreamStage = httpResponseStages.getEntity().getContent();
+
+                            if (inputStreamStage != null)
+                            {
+
+                                stageResult = convertInputStreamToString(inputStreamStage);
+                                stageResult = stageResult.toString().substring(1, stageResult.toString().length() - 1);
+                                stageResult = convertStandardJSONString(stageResult);
+                                stageInfo = new JSONArray(stageResult);
+
+
+
+                                for (int j =0; j< stageInfo.length(); j++)
+                                {
+                                    newProject.insertStage(stageInfo.getJSONObject(j).getString("stage_name"));
+                                }
+                            }
+                        }
+
+                        catch (Exception e) {
+                            publishProgress(e.toString());
+                        }
+                        allProjects.add(newProject);
+                    }
+                }
+
                 else
                     result = "Did not work!";
 
@@ -232,7 +345,6 @@ public class ProjectsActivity extends Activity {
             }
 
             publishProgress(result);
-
             return "";
         }
 
@@ -243,87 +355,22 @@ public class ProjectsActivity extends Activity {
          * @param progress
          */
         @Override
-        protected void onProgressUpdate(String... progress) {
-
-
-            String result = progress[0].toString().substring(1, progress[0].toString().length() - 1);
-            result = convertStandardJSONString(result);
-
-           
+        protected void onProgressUpdate(String... progress ) {
 
             try {
-                stageInfo = new JSONArray(result);
-                //txt.setText(obj.getJSONObject(0).get("ID_Product").toString());
+                //stageInfo = new JSONArray(result);
+                prepareListData();
 
+                initData();
             }
-            catch (JSONException e) {
+            catch (Exception e) {
                 Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
             }
-
-            for(int x = 0; x < stageInfo.length(); x++) {
-
-                String pName = "";
-                String pIDStage = "";
-                String pState = "";
-
-                int currentID = 0;
-                try {
-                    /**
-                     * TO BE DEFINED los tags
-                     */
-                    pName = stageInfo.getJSONObject(x).getString("stage_name");
-                    pIDStage = stageInfo.getJSONObject(x).getString("id_project_stage");
-                    pState = stageInfo.getJSONObject(x).getString("completed");
-
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-                }
-
-                TextView productNameTxt = new TextView(ProjectsActivity.this);
-                productNameTxt.setText(pName);
-                TextView productPriceTxt = new TextView(ProjectsActivity.this);
-                //productPriceTxt.setText("Precio: " + "₡" + pPrice + " | " + "Stock: " + pStock);
-
-
-                Button addToCartButton = new Button(ProjectsActivity.this);
-                addToCartButton.setText("Añadir");
-                addToCartButton.setId(currentID);
-                addToCartButton.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        final TextView texx = (TextView) findViewById(R.id.productsQuantityTxt);
-                        final TextView texxTotal = (TextView) findViewById(R.id.totaltxt);
-                        try {
-
-                            UserDataHolder holder = UserDataHolder.getInstance();
-                            //holder.addProductToShoppingCart(v.getId(), 1, getProductPrice(v.getId()),getProductName(v.getId()));
-                            texx.setText("(" + String.valueOf(holder.shoppingcart.size()) + ")");
-                            texxTotal.setText(String.valueOf(holder.getTotal()));
-                        }catch (Exception e){
-                            texx.setText(e.toString());
-                        }
-                    }
-                });
-
-                //linearLayout1.addView(productNameTxt);
-                //linearLayout1.addView(productPriceTxt);
-                //linearLayout1.addView(addToCartButton);
-            }
-
         }
+
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

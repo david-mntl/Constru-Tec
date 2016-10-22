@@ -53,6 +53,9 @@
     <string name = "getCustomerInfo"> /ProductRESTService.svc/GetCustomer/ </string>
     <string name = "updateCustomerInfo"> /ProductRESTService.svc/UpdateCustomer </string>
     <string name = "updateEngineerInfo"> /ProductRESTService.svc/UpdateEngineer </string>
+    <string name = "projectsStages"> ProductRESTService.svc/GetStagesFromProject?params= </string>
+    <string name = "allProjects"> ProductRESTService.svc/GetProjectsFrom?status= </string>
+    <string name = "projectUserID"> &amp;id= </string>
     <string name = "login"> /ProductRESTService.svc/Login </string>
 
     <!-- <string name = "getEmployeeInfo"> /ProductRESTService.svc// </string> -->

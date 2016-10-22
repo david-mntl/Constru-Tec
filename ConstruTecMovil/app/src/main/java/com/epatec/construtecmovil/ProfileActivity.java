@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -81,8 +82,16 @@ public class ProfileActivity extends ActionBarActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_profile);
 
-            connector = new AsyncTaskGetInfo();
-            connector.execute("init");
+            try
+            {
+                connector = new AsyncTaskGetInfo();
+                connector.execute("init");
+            }
+            catch (Exception e) {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+
 
             final Button updateProfile = (Button) findViewById(R.id.updateProfile);
             updateProfile.setOnClickListener(new View.OnClickListener() {
