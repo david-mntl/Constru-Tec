@@ -390,6 +390,108 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to get all the projects from a customer or a engineer
+--SELECT get_stages_from_project(100);
+DROP FUNCTION IF EXISTS get_projects_from_generic(int,int);
+CREATE OR REPLACE FUNCTION get_projects_from_generic(pMode int,pID int)
+RETURNS TABLE(
+	ID_Project int,
+	Project_Name varchar(50)
+	
+)AS $$
+BEGIN
+	IF (pMode = 0) THEN
+		RETURN QUERY
+		SELECT PROJECT.ID_Project,PROJECT.Name 
+		FROM PROJECT WHERE PROJECT.ID_Customer = pID;
+	ELSIF (pMode = 1) THEN
+		RETURN QUERY
+		SELECT PROJECT.ID_Project,PROJECT.Name 
+		FROM PROJECT WHERE PROJECT.ID_Engineer = pID;
+	END IF;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the stages from a project
+--SELECT get_stages_from_project(100);
+DROP FUNCTION IF EXISTS get_stages_from_project(int);
+CREATE OR REPLACE FUNCTION get_stages_from_project(pID_Project int)
+RETURNS TABLE(
+	ID_Project_Stage int,
+	Stage_Name varchar(50),
+	Completed boolean
+	
+)AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name,PROJECT_STAGE.Completed 
+	FROM PROJECT_STAGE JOIN STAGE_NAME ON PROJECT_STAGE.ID_Stage_Name = STAGE_NAME.ID_Stage_Name
+	WHERE PROJECT_STAGE.ID_Project = pID_Project;
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the information from a stage
+--SELECT get_stages_from_project(100);
+DROP FUNCTION IF EXISTS get_info_from_stage(int);
+CREATE OR REPLACE FUNCTION get_info_from_stage(pID_Stage int)
+RETURNS SETOF PROJECT_STAGE AS $$
+BEGIN
+	RETURN QUERY
+	SELECT * FROM PROJECT_STAGE WHERE ID_Stage = pID_Stage;
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the projects that a stage will begin in the next 2 weeks
+--SELECT get_projects_next_weeks();
+DROP FUNCTION IF EXISTS get_projects_next_weeks();
+CREATE OR REPLACE FUNCTION get_projects_next_weeks()
+RETURNS TABLE(
+	ID_Project int,
+	Name varchar(50),
+	Location varchar(50),
+	Engineer text,
+	Completed boolean,
+	Comments varchar(255),
+	Details varchar(255),
+	NextStage varchar(50),
+	Start_Date date
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
+		(ENGINEER.Name || ' ' || ENGINEER.LastName1 || ' ' || ENGINEER.LastName2),
+		PROJECT.Completed,PROJECT.Comments,PROJECT.Details,STAGE_NAME.Name,
+		PROJECT_STAGE.Start_Date FROM PROJECT JOIN PROJECT_STAGE
+		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN ENGINEER ON
+		PROJECT.ID_Engineer=ENGINEER.ID_Engineer JOIN STAGE_NAME ON 
+		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name 
+		WHERE (PROJECT_STAGE.Start_Date - current_date <= 15 AND PROJECT_STAGE.Start_Date - current_date > 0);
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all products information from a project
+--SELECT get_products_info_from_project();
+DROP FUNCTION IF EXISTS get_products_info_from_project(int);
+CREATE OR REPLACE FUNCTION get_products_info_from_project(pID_Project int)
+RETURNS TABLE(
+	ID_Stage int,
+	Stage_Name varchar(50),
+	ID_Product int,
+	Product_name varchar(50),
+	Price int
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name, PRODUCT.ID_Product,
+		PRODUCT.Name, PRODUCT.Price FROM PROJECT JOIN PROJECT_STAGE
+		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN STAGE_NAME ON 
+		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
+		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
+		PRODUCTxSTAGE.ID_Product WHERE (PROJECT.ID_Project = pID_Project);
+END;
+$$ LANGUAGE plpgsql;
+
 
 
 /******************* TRIGGERS ********************************/
@@ -419,14 +521,16 @@ CREATE TRIGGER eng_stamp BEFORE UPDATE ON ENGINEER
 	FOR EACH ROW EXECUTE PROCEDURE eng_trig();
 
 --Trigger to prevent incorrect input of dates (initial and end date)
-DROP TRIGGER IF EXISTS date_stamp ON PROJECT_STAGE;
-DROP FUNCTION IF EXISTS date_trig();
+DROP TRIGGER IF EXISTS date_stamp ON PROJECT_STAGE CASCADE;
+DROP FUNCTION IF EXISTS date_trig() CASCADE;
 CREATE OR REPLACE FUNCTION date_trig() RETURNS TRIGGER AS $date_trig$
 BEGIN
 	IF(NEW.End_Date < NEW.Start_Date) THEN
 		RAISE EXCEPTION 'END DATE IS BEFORE START DATE. PLEASE CHECK INPUT';
+		RETURN NULL;
 	ELSIF(NEW.End_Date = NEW.Start_Date) THEN
 		RAISE EXCEPTION 'END DATE AND START DATE ARE EQUAL';
+		RETURN NULL;
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -436,3 +540,21 @@ $date_trig$ LANGUAGE plpgsql;
 
 CREATE TRIGGER date_stamp BEFORE INSERT ON PROJECT_STAGE
 	FOR EACH ROW EXECUTE PROCEDURE date_trig();
+
+--Trigger to prevent updating or deleting stages
+DROP TRIGGER IF EXISTS prevent_st_name_func ON STAGE_NAME CASCADE;
+DROP FUNCTION IF EXISTS prevent_st_name_func() CASCADE;
+CREATE OR REPLACE FUNCTION prevent_st_name_func() RETURNS TRIGGER AS $stname$
+BEGIN
+	IF(OLD.ID_Stage_Name <= 18) THEN
+		RAISE EXCEPTION 'CANT DELETE PREDEFINED STAGE NAME';
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$stname$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER prevent_del_stage_name BEFORE DELETE ON STAGE_NAME
+	FOR EACH ROW EXECUTE PROCEDURE prevent_st_name_func();
