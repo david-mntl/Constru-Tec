@@ -1,0 +1,71 @@
+<div   class="panel-body" style=" height: 670px">
+    <div class="row" ng-controller = "Main">
+        <div  style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Proyectos</span>
+
+            </h3>
+
+            <span  ng-repeat="user in nprojects" >
+                <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStages(user.id_project)">{{user.project_name}}</button>
+            </span>
+
+        </div>
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Etapas</span>
+
+            </h3>
+            <span ng-repeat="stages in nstages" >
+
+                    <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getInfoStages(stages.id_project_stage)">{{stages.stage_name}}</button>
+
+            </span>
+        </div>
+
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Información de las etapas</span>
+                <div class="panel panel-default" style="background-color: #5bc0df; border-color: #5bc0de ">
+                    <div class="panel-body">
+                        <span class="label label-primary">Nombre:</span>
+                        <h4>{{infoStages[0].id_stage_name}}</h4>
+                        <span class="label label-primary">Descripción:</span>
+                        <h4 style="width: 400px">{{infoStages[0].details}} </h4>
+                        <span class="label label-primary">Fecha de inicio:</span><span style="font-size: 18px">{{infoStages[0].start_date}}</span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Fecha terminal:</span><span style="font-size: 18px">{{infoStages[0].end_date}}</span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Materiales:</span>
+
+                        <button  style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
+
+
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <div style="height: 200px;border-color: #5bc0de" class="panel panel-default">
+                            <div style="height: 200px; overflow-y: scroll;background-color: #5bc0df; border-color: #5bc0de" class="panel-body">
+                                <ul  class="list-group">
+                                    <li style="background-color: #5bc0df; border-color: #5bc0de " class="list-group-item">Cras justo odio</li>
+
+
+                                </ul>
+                            </div>
+                        </div>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Comentarios:</span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <textarea style="width: 375px;height: 65px " class="scrollabletextbox" name="note">
+                        <!-- aqui va el texo--->
+                        </textarea>
+
+
+
+                    </div>
+                </div>
+
+
+            </h3>
+        </div>
+    </div>
+
+</div>
