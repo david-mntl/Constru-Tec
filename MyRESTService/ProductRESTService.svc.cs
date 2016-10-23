@@ -731,11 +731,63 @@ namespace MyRESTService
             return msg;
         }
 
-         /*
-         * -------------------------------------------------------------------------------------
-         *                          Llamadas al web service de EPATEC
-         * -------------------------------------------------------------------------------------  
-         */
+        public string get_products_info_from_project(string id)
+        {
+            string query = "SELECT * from get_products_info_from_project("+id+")";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetProjectsByMaterial(string name)
+        {
+            string query = "SELECT * from get_projects_by_material("+name+")";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        /*
+        * -------------------------------------------------------------------------------------
+        *                          Llamadas al web service de EPATEC
+        * -------------------------------------------------------------------------------------  
+        */
         public string EpatecGetProductList(string paramList)
         {
             string Out = String.Empty;
