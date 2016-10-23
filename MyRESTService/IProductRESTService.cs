@@ -212,6 +212,17 @@ namespace MyRESTService
             ResponseFormat = WebMessageFormat.Json)]
         string GetProjectsNextNeeks();
 
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProductInfoFromProject?id={id}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string get_products_info_from_project(string id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProjectsByMaterial?name={name}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetProjectsByMaterial(string name);
 
         /*
          * -------------------------------------------------------------------------------------
