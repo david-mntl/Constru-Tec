@@ -23,5 +23,9 @@ namespace MyRESTService
         public string Comments { get; set; }
         [DataMember]
         public string Details { get; set; }
+        [DataMember]
+        public bool Active { get; set; }
+        [DataMember]
+        public bool Completed { get; set; }
     }
 }
