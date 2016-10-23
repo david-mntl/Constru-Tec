@@ -347,33 +347,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
---Procedure to login into the system
---SELECT login('fasm22','123');
-/*CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
-RETURNS TEXT AS $$
-BEGIN
-	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE Username = pUser)) THEN
-		IF( (SELECT Password FROM CUSTOMER WHERE Username = pUser) = pPass) THEN
-			RETURN 'CUSTOMER';
-		ELSE
-			RETURN 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
-		END IF;
-	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE Username = pUser)) THEN
-		IF( (SELECT Password FROM ENGINEER WHERE Username = pUser) = pPass) THEN
-			RETURN (SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
-				WHERE ENGINEER.Username = pUser);
-		ELSE
-			RETURN 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
-		END IF;
-	ELSE
-		RETURN 'UNEXISTANT USER';
-	END IF;
-
-END;
-$$ LANGUAGE plpgsql;*/
-
---Procedure to login into the system
---SELECT login('fasm22','123');
 DROP FUNCTION IF EXISTS login(varchar(25),varchar(25));
 CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
 RETURNS TABLE(
