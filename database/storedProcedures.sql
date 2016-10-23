@@ -349,7 +349,7 @@ $$ LANGUAGE plpgsql;
 
 --Procedure to login into the system
 --SELECT login('fasm22','123');
-CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
+/*CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
 RETURNS TEXT AS $$
 BEGIN
 	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE Username = pUser)) THEN
@@ -370,7 +370,52 @@ BEGIN
 	END IF;
 
 END;
+$$ LANGUAGE plpgsql;*/
+
+--Procedure to login into the system
+--SELECT login('fasm22','123');
+DROP FUNCTION IF EXISTS login(varchar(25),varchar(25));
+CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
+RETURNS TABLE(
+	ID_C_E int,
+	Name varchar(25),
+	LastName1 varchar(25),
+	LastName2 varchar(25),
+	Phone varchar(15),
+	Email varchar(50),
+	Username varchar(25),
+	Password varchar(25),
+	Active boolean,
+	Eng_Code varchar(15)
+)AS $$
+BEGIN
+	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE CUSTOMER.Username = pUser)) THEN
+		IF( (SELECT CUSTOMER.Password FROM CUSTOMER WHERE CUSTOMER.Username = pUser) = pPass) THEN
+			RETURN QUERY
+			SELECT CUSTOMER.ID_Customer,CUSTOMER.Name,CUSTOMER.LastName1,CUSTOMER.LastName2,
+				CUSTOMER.Phone,CUSTOMER.Email,CUSTOMER.Username,CUSTOMER.Password,
+				CUSTOMER.Active,varchar(15)'0'
+			FROM CUSTOMER WHERE CUSTOMER.Username = pUser;
+		ELSE
+			RAISE EXCEPTION 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE ENGINEER.Username = pUser)) THEN
+		IF( (SELECT ENGINEER.Password FROM ENGINEER WHERE ENGINEER.Username = pUser) = pPass) THEN
+			RETURN QUERY
+			SELECT ENGINEER.ID_Engineer,ENGINEER.Name,ENGINEER.LastName1,ENGINEER.LastName2,
+				ENGINEER.Phone,ENGINEER.Email,ENGINEER.Username,ENGINEER.Password,
+				ENGINEER.Active,(SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
+				WHERE ENGINEER.Username = pUser)
+			FROM ENGINEER WHERE ENGINEER.Username = pUser;
+		ELSE
+			RAISE EXCEPTION 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
+		END IF;
+	END IF;
+
+END;
 $$ LANGUAGE plpgsql;
+
+
 
 --Procedure to get all the products from an specific stage
 --SELECT get_products_from_stage(202);
