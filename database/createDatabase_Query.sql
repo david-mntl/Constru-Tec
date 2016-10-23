@@ -98,12 +98,13 @@ CREATE TABLE PROJECT_STAGE(
 	End_Date DATE,
 	Details varchar(255),
 	Completed boolean NOT NULL,
-	Comments varchar(255)
+	Comments varchar(255),
+	UNIQUE(ID_Stage_Name,ID_Project)
 );
 
 CREATE TABLE STAGE_NAME(
 	ID_STAGE_NAME int PRIMARY KEY NOT NULL DEFAULT nextval('STAGE_NAME_seq'),
-	Name varchar(255)
+	Name varchar(255) UNIQUE
 );
 
 CREATE TABLE PRODUCTxSTAGE(
