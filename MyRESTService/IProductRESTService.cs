@@ -200,6 +200,19 @@ namespace MyRESTService
             ResponseFormat = WebMessageFormat.Json)]
         string GetInfoFromStage(string id);
 
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProductsFromStage?id={id}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetProductsFromStage(string id);
+        
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProductsNextWeek",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetProjectsNextNeeks();
+
+
         /*
          * -------------------------------------------------------------------------------------
          *                          Llamadas al web service de EPATEC

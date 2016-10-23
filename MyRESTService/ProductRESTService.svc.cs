@@ -5,6 +5,10 @@ using System.Data;
 using Newtonsoft.Json;
 using Npgsql;
 using MyRESTService.ServiceReference1;
+using System.Net.Http;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace MyRESTService
 {
@@ -648,9 +652,36 @@ namespace MyRESTService
             return msg;
         }
 
-        public string GetInfoFromStage(string id)
+        public string GetInfoFromStage(string ID)
         {
-            string query = "SELECT * from get_info_from_stage(" +id+ ");";
+            string query = "SELECT * from get_info_from_stage(" +ID+");";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+        
+        
+        public string GetProductsFromStage(string ID)
+        {
+            string query = "SELECT * from get_products_from_stage(" + ID + ");";
             string msg = "";
             try
             {
@@ -674,43 +705,69 @@ namespace MyRESTService
             return msg;
         }
 
-        /*
+        public string GetProjectsNextNeeks()
+        {
+            string query = "SELECT * from get_projects_next_weeks()";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+         /*
          * -------------------------------------------------------------------------------------
          *                          Llamadas al web service de EPATEC
          * -------------------------------------------------------------------------------------  
          */
         public string EpatecGetProductList(string paramList)
         {
-            List<Product> PL;
-            MyRESTService.ProductRESTService ws = new MyRESTService.ProductRESTService();
-            PL = ws.GetProductList();
-            string result1 = JsonConvert.SerializeObject(PL);
-            string result = result1.Remove(result1.Length - 1).Remove(0, 1);
+            string Out = String.Empty;
+            System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=" + paramList);
+            //System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=all");
+            try
+            {
+                System.Net.WebResponse resp = req.GetResponse();
+                using (System.IO.Stream stream = resp.GetResponseStream())
+                {
+                    using (System.IO.StreamReader sr = new System.IO.StreamReader(stream))
+                    {
+                        Out = sr.ReadToEnd();
+                        sr.Close();
+                    }
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                Out = string.Format("HTTP_ERROR :: The second HttpWebRequest object has raised an Argument Exception as 'Connection' Property is set to 'Close' :: {0}", ex.Message);
+            }
+            catch (WebException ex)
+            {
+                Out = string.Format("HTTP_ERROR :: WebException raised! :: {0}", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Out = string.Format("HTTP_ERROR :: Exception raised! :: {0}", ex.Message);
+            }
 
-
-            return result;
+            return Out;
         }
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
