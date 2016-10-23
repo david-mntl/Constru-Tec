@@ -347,30 +347,48 @@ END;
 $$ LANGUAGE plpgsql;
 
 
---Procedure to login into the system
---SELECT login('fasm22','123');
+DROP FUNCTION IF EXISTS login(varchar(25),varchar(25));
 CREATE OR REPLACE FUNCTION login(pUser varchar(25), pPass varchar(25))
-RETURNS TEXT AS $$
+RETURNS TABLE(
+	ID_C_E int,
+	Name varchar(25),
+	LastName1 varchar(25),
+	LastName2 varchar(25),
+	Phone varchar(15),
+	Email varchar(50),
+	Username varchar(25),
+	Password varchar(25),
+	Active boolean,
+	Eng_Code varchar(15)
+)AS $$
 BEGIN
-	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE Username = pUser)) THEN
-		IF( (SELECT Password FROM CUSTOMER WHERE Username = pUser) = pPass) THEN
-			RETURN 'CUSTOMER';
+	IF (SELECT EXISTS(SELECT 1 FROM CUSTOMER WHERE CUSTOMER.Username = pUser)) THEN
+		IF( (SELECT CUSTOMER.Password FROM CUSTOMER WHERE CUSTOMER.Username = pUser) = pPass) THEN
+			RETURN QUERY
+			SELECT CUSTOMER.ID_Customer,CUSTOMER.Name,CUSTOMER.LastName1,CUSTOMER.LastName2,
+				CUSTOMER.Phone,CUSTOMER.Email,CUSTOMER.Username,CUSTOMER.Password,
+				CUSTOMER.Active,varchar(15)'0'
+			FROM CUSTOMER WHERE CUSTOMER.Username = pUser;
 		ELSE
-			RETURN 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
+			RAISE EXCEPTION 'CUSTOMER EXISTS BUT PASSWORD IS INCORRECT';
 		END IF;
-	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE Username = pUser)) THEN
-		IF( (SELECT Password FROM ENGINEER WHERE Username = pUser) = pPass) THEN
-			RETURN (SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
-				WHERE ENGINEER.Username = pUser);
+	ELSIF (SELECT EXISTS(SELECT 1 FROM ENGINEER WHERE ENGINEER.Username = pUser)) THEN
+		IF( (SELECT ENGINEER.Password FROM ENGINEER WHERE ENGINEER.Username = pUser) = pPass) THEN
+			RETURN QUERY
+			SELECT ENGINEER.ID_Engineer,ENGINEER.Name,ENGINEER.LastName1,ENGINEER.LastName2,
+				ENGINEER.Phone,ENGINEER.Email,ENGINEER.Username,ENGINEER.Password,
+				ENGINEER.Active,(SELECT ROLE.Name FROM ENGINEER JOIN ROLExENGINEER ON ENGINEER.ID_Engineer = ROLExENGINEER.ID_Engineer JOIN ROLE ON ROLE.ID_Role = ROLExENGINEER.ID_Role
+				WHERE ENGINEER.Username = pUser)
+			FROM ENGINEER WHERE ENGINEER.Username = pUser;
 		ELSE
-			RETURN 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
+			RAISE EXCEPTION 'ENGINEER EXISTS BUT PASSWORD IS INCORRECT';
 		END IF;
-	ELSE
-		RETURN 'UNEXISTANT USER';
 	END IF;
 
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 --Procedure to get all the products from an specific stage
 --SELECT get_products_from_stage(202);
@@ -479,16 +497,56 @@ RETURNS TABLE(
 	Stage_Name varchar(50),
 	ID_Product int,
 	Product_name varchar(50),
-	Price int
+	Price int,
+	Quantity int
 ) AS $$
 BEGIN
 	RETURN QUERY
 	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name, PRODUCT.ID_Product,
-		PRODUCT.Name, PRODUCT.Price FROM PROJECT JOIN PROJECT_STAGE
+		PRODUCT.Name, PRODUCT.Price, PRODUCTxSTAGE.Quantity
+		FROM PROJECT JOIN PROJECT_STAGE
 		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN STAGE_NAME ON 
 		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
 		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
 		PRODUCTxSTAGE.ID_Product WHERE (PROJECT.ID_Project = pID_Project);
+END;
+$$ LANGUAGE plpgsql;
+
+
+--Procedure to get all the projects that will use an especific material in the next 15 days
+--SELECT get_projects_next_weeks();
+DROP FUNCTION IF EXISTS get_projects_by_material(varchar(50));
+CREATE OR REPLACE FUNCTION get_projects_by_material(pMaterial varchar(50))
+RETURNS TABLE(
+	ID_Project int,
+	Name varchar(50),
+	Location varchar(50),
+	Engineer text,
+	Completed boolean,
+	Comments varchar(255),
+	Details varchar(255),
+	NextStage varchar(50),
+	Start_Date date,
+	Material_Name varchar(50),
+	Quantity int
+	
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
+		(ENGINEER.Name || ' ' || ENGINEER.LastName1 || ' ' || ENGINEER.LastName2),
+		PROJECT.Completed,PROJECT.Comments,PROJECT.Details,STAGE_NAME.Name,
+		PROJECT_STAGE.Start_Date, PRODUCT.Name, PRODUCTxSTAGE.Quantity
+
+		FROM PROJECT JOIN PROJECT_STAGE
+		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN ENGINEER ON
+		PROJECT.ID_Engineer=ENGINEER.ID_Engineer JOIN STAGE_NAME ON 
+		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
+		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
+		PRODUCTxSTAGE.ID_Product WHERE (PROJECT_STAGE.Start_Date - current_date <= 15 AND 
+			PROJECT_STAGE.Start_Date - current_date > 0 AND
+			PRODUCT.Name = pMaterial
+			);
 END;
 $$ LANGUAGE plpgsql;
 
