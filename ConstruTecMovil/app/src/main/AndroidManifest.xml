@@ -33,10 +33,6 @@
             android:label="@string/title_activity_register" />
 
         <activity
-            android:name="com.epatec.construtecmovil.CheckoutActivity"
-            android:label="@string/title_activity_checkout"></activity>
-
-        <activity
             android:name="com.epatec.construtecmovil.ProfileActivity"
             android:label="@string/title_activity_profile"></activity>
 
