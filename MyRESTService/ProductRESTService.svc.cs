@@ -1048,7 +1048,7 @@ namespace MyRESTService
         }
 
 
-        public string PostStageShop(Stage st)
+        public string PostStageShop(Products st)
         {
             string Out = String.Empty;
 
@@ -1095,8 +1095,17 @@ namespace MyRESTService
                             count = sr.Read(read, 0, 256);
                         }
                     }
+                    string query2 = "SELECT * from buy_product_from_stage(" + array[i].ID_Stage + ","+ array[i].ID_Product + ");";
+                    this.connect();
+                    NpgsqlCommand sqlcmd2 = new NpgsqlCommand(query2, conn);
+                    NpgsqlDataAdapter sda2 = new NpgsqlDataAdapter(sqlcmd2);
+                    DataSet dt2 = new DataSet();
+                    sda2.Fill(dt2);
+                    string result2 = JsonConvert.SerializeObject(dt2.Tables);
+                    msg = result2.Remove(result2.Length - 1).Remove(0, 1);
+                    this.disconnect();
                 }
-                msg = "ok";
+                msg = "Ok";
             }
             catch (Exception ex)
             {

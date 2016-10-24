@@ -277,7 +277,7 @@ namespace MyRESTService
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
             UriTemplate = "/PostStageShop")]
-        string PostStageShop(Stage stage);
+        string PostStageShop(Products stage);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
