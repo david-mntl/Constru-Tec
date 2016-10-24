@@ -635,16 +635,16 @@ namespace MyRESTService
 
         public string PostStageDetails(Stage str)
         {
-            string query = "SELECT add_details_to_stage(@ID_Project, @Details)";
+            string query = "SELECT add_details_to_stage(@ID_Stage, @Details)";
             string msg = "";
             try
             {
                 this.connect();
                 NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
-                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.Parameters.AddWithValue("@ID_Stage", str.ID_Stage);
                 sqlcmd.Parameters.AddWithValue("@Details", str.Details);
                 sqlcmd.ExecuteNonQuery();
-                msg = "Ok";
+                msg = "ok";
             }
             catch (Exception ex)
             {
@@ -1004,7 +1004,7 @@ namespace MyRESTService
                         req.Method = "POST";
                         req.Timeout = 100000;
                         req.ContentType = "application/json";
-                        data = "{\"DataG\":\"fasm22:Cartago," + list[i].ID_Product + ":" + list[i].Quantity + ":" + list[i].Price + "\"}";
+                        data = "{\"DataG\":\"fasm22:Cartago," + list[i].id_product + ":" + list[i].quantity + ":" + list[i].price + "\"}";
                         byte[] sentData = Encoding.UTF8.GetBytes(data);
                         req.ContentLength = sentData.Length;
                         using (System.IO.Stream sendStream = req.GetRequestStream())
@@ -1052,7 +1052,7 @@ namespace MyRESTService
         {
             string Out = String.Empty;
 
-            string query = "SELECT * from get_products_from_stage(" + st.ID_Stage + ");";
+            string query = "SELECT * from get_products_from_stage(" + st.id_stage + ");";
             string msg = "";
             try
             {
@@ -1073,7 +1073,7 @@ namespace MyRESTService
                     req.Method = "POST";
                     req.Timeout = 100000;
                     req.ContentType = "application/json";
-                    msg = "{\"DataG\":\"fasm22:Cartago," + array[i].ID_Product + ":" + array[i].Quantity + ":" + array[i].Price + "\"}";
+                    msg = "{\"DataG\":\"fasm22:Cartago," + array[i].id_product + ":" + array[i].quantity + ":" + array[i].price + "\"}";
                     byte[] sentData = Encoding.UTF8.GetBytes(msg);
                     req.ContentLength = sentData.Length;
                     using (System.IO.Stream sendStream = req.GetRequestStream())
@@ -1095,7 +1095,7 @@ namespace MyRESTService
                             count = sr.Read(read, 0, 256);
                         }
                     }
-                    string query2 = "SELECT * from buy_product_from_stage(" + array[i].ID_Stage + ","+ array[i].ID_Product + ");";
+                    string query2 = "SELECT * from buy_product_from_stage(" + array[i].id_stage + ","+ array[i].id_product + ");";
                     this.connect();
                     NpgsqlCommand sqlcmd2 = new NpgsqlCommand(query2, conn);
                     NpgsqlDataAdapter sda2 = new NpgsqlDataAdapter(sqlcmd2);
@@ -1122,17 +1122,16 @@ namespace MyRESTService
             for (var i = 0; i < list.Count; i++)
             {
                 string query = "SELECT add_product_to_stage(@ID_Stage, @ID_Product, @Quantity, @Price)";
-
                 try
                 {
                     this.connect();
                     NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
-                    sqlcmd.Parameters.AddWithValue("@ID_Stage", list[i].ID_Stage);
-                    sqlcmd.Parameters.AddWithValue("@ID_Product", list[i].ID_Product);
-                    sqlcmd.Parameters.AddWithValue("@Quantity", list[i].Quantity);
-                    sqlcmd.Parameters.AddWithValue("@Price", list[i].Price);
+                    sqlcmd.Parameters.AddWithValue("@ID_Stage", list[i].id_stage);
+                    sqlcmd.Parameters.AddWithValue("@ID_Product", list[i].id_product);
+                    sqlcmd.Parameters.AddWithValue("@Quantity", list[i].quantity);
+                    sqlcmd.Parameters.AddWithValue("@Price", list[i].price);
                     sqlcmd.ExecuteNonQuery();
-                    msg = "Ok";
+                    
                     this.disconnect();
                 }
                 catch (Exception ex)
@@ -1141,6 +1140,7 @@ namespace MyRESTService
                     msg += ex.Message;
                 }
             }
+            msg = "ok";
             return msg;
         }
 
@@ -1148,7 +1148,6 @@ namespace MyRESTService
 
 
         
-
 
 
 
