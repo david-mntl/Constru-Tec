@@ -145,6 +145,8 @@ public class ProjectsActivity extends Activity {
 
 
                 stageIntent.putExtra("stageInfo", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).json);
+                stageIntent.putExtra("idStage", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).ID_Stage);
+
                 stageIntent.putExtra("location", findProject(listDataHeader.get(groupPosition)).location);
 
                 startActivity(stageIntent);

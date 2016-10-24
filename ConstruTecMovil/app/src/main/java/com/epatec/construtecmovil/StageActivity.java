@@ -55,10 +55,15 @@ public class StageActivity extends ActionBarActivity {
     public String firstKeyName;
     public String stageInfo;
     public String location;
+    public String id_Stage;
+
+
     public Spinner dropdown;
     public ArrayAdapter dropDownRole;
 
     String stringProductsJson;
+    String stringJSONPRODUCTS;
+
 
     /********************Strings Json To Send ************************/
     String jsonTOsendDetail;
@@ -98,6 +103,17 @@ public class StageActivity extends ActionBarActivity {
 
         try
         {
+
+            /**
+             *  GETTING PARAMETERS from Outside
+             */
+            Intent myIntent = getIntent(); // gets the previously created intent
+            firstKeyName = myIntent.getStringExtra("childName");
+            stageInfo = "["+myIntent.getStringExtra("stageInfo") +"]";
+            location = myIntent.getStringExtra("location");
+
+            id_Stage = myIntent.getStringExtra("idStage");
+
 
             AsyncTaskProjects connector = new AsyncTaskProjects();
             connector.execute("init");
@@ -147,13 +163,6 @@ public class StageActivity extends ActionBarActivity {
             projectInfoButton.setVisibility(View.INVISIBLE);
         }
 
-        /**
-         *  GETTING PARAMETERS from Outside
-         */
-        Intent myIntent = getIntent(); // gets the previously created intent
-        firstKeyName = myIntent.getStringExtra("childName");
-        stageInfo = "["+myIntent.getStringExtra("stageInfo") +"]";
-        location = myIntent.getStringExtra("location");
 
         try {
             /**
@@ -306,10 +315,10 @@ public class StageActivity extends ActionBarActivity {
                 {
                     Log.i("ENTROIF", item[2]);
 
-                    jsonObject.put("ID_Stage", stageInfoJson.getJSONObject(0).getString("id_project_stage"));
-                    jsonObject.put("ID_Product", item[2] );
-                    jsonObject.put("Quantity", quantity.getText());
-                    jsonObject.put("Price",allProductsJSON.getJSONObject(i).getString("price") );
+                    jsonObject.put("id_stage", stageInfoJson.getJSONObject(0).getString("id_project_stage"));
+                    jsonObject.put("id_product", item[2] );
+                    jsonObject.put("quantity", quantity.getText());
+                    jsonObject.put("price",allProductsJSON.getJSONObject(i).getString("price") );
                     break;
 
 
@@ -338,21 +347,22 @@ public class StageActivity extends ActionBarActivity {
     {
         try
         {
-            dropdown = (Spinner)findViewById(R.id.productsSpinner);
 
             dropDownRole = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dropdownItems );
 
-            dropdown.setAdapter(dropDownRole);
+            dropdown = (Spinner)findViewById(R.id.productsSpinner);
 
-            Log.i("MECAGOOOO", dropDownRole.getItem(0).toString());
+
+            if (dropDownRole != null) {
+                Log.i("PREMECAGOOOO", "lilili");
+                dropdown.setAdapter(dropDownRole);
+            }
+
 
         }
         catch (Exception e)
         {
-            new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("Oops")
-                    .setContentText("Init!!")
-                    .show();
+            Toast.makeText(getApplicationContext(),"initData: "+ e.getMessage(), Toast.LENGTH_LONG).show();
 
         }
 
@@ -361,56 +371,67 @@ public class StageActivity extends ActionBarActivity {
 
     public void prepareData()
     {
-
-        ArrayList<String> planetList = new ArrayList<String>();
-
-        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
-
-        for (int i =0; i< jsonProducts.length(); i++)
-        {
-            //Producto temp = products.get(i);
-
-            try {
-                String name = jsonProducts.getJSONObject(i).getString("name").toString();
-                String price = jsonProducts.getJSONObject(i).getString("price").toString();
-                String quantity = jsonProducts.getJSONObject(i).getString("quantity").toString();
-                String purchased = jsonProducts.getJSONObject(i).getString("purchased").toString();
-
-                String productInfo = name +"     Price: " + price + "   Quantity: " +
-                        quantity + "    Comprado: " + purchased ;
-
-                listAdapter.add(productInfo);
+        Log.i("ENTROPUTA.", "ENTROPUTA");
+        try {
+            JSONArray productsJson = new JSONArray(stringJSONPRODUCTS);
+            Log.i("VWAVEAVEAEVA2222", "asdfasdfasdfa");
+            Log.i("VWAVEAVEAEVA", productsJson.toString());
 
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            ArrayList<String> planetList = new ArrayList<String>();
+
+            listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
+
+
+
+            for (int i =0; i< productsJson.length(); i++)
+            {
+                //Producto temp = products.get(i);
+
+                try {
+                    String name = productsJson.getJSONObject(i).getString("name").toString();
+                    String price = productsJson.getJSONObject(i).getString("price").toString();
+                    String quantity = productsJson.getJSONObject(i).getString("quantity").toString();
+                    String purchased = productsJson.getJSONObject(i).getString("purchased").toString();
+
+                    String productInfo = name +"     Price: " + price + "   Quantity: " +
+                            quantity + "    Comprado: " + purchased ;
+                    if(listAdapter != null)
+                    listAdapter.add(productInfo);
+
+
+
+                } catch (JSONException e) {
+                    new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Json ERROR")
+                            .setContentText("Init!!")
+                            .show();
+                }
+
+                /*String productInfo = temp._Name +"     Price: " + temp._Price + "   Quantity: " +
+                        temp._Quantity + "    Comprado: " + temp._Purchased ;
+                */
+
             }
 
-            /*String productInfo = temp._Name +"     Price: " + temp._Price + "   Quantity: " +
-                    temp._Quantity + "    Comprado: " + temp._Purchased ;
-            */
+            ListView listView = (ListView)findViewById(R.id.productsList);
+            listView.setTextFilterEnabled(true);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // When clicked, show a toast with the TextView text
+                    Toast.makeText(getApplicationContext(),
+                            ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
 
-
-
-
+            listView.setAdapter(listAdapter);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        ListView listView = (ListView)findViewById(R.id.productsList);
-        listView.setTextFilterEnabled(true);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // When clicked, show a toast with the TextView text
-                Toast.makeText(getApplicationContext(),
-                        ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        listView.setAdapter(listAdapter);
 
     }
 
@@ -517,7 +538,7 @@ public class StageActivity extends ActionBarActivity {
                 //TODO
                 /*****************CAMBIAR ESTO*************************************/
                 String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
-                        + getString(R.string.productsStage) + (stageInfoJson.getJSONObject(0).getString("id_project_stage")) ;
+                        + getString(R.string.productsStage) + id_Stage ;
                 /*****************************************************************/
 
 
@@ -537,6 +558,8 @@ public class StageActivity extends ActionBarActivity {
                     jsonProducts = new JSONArray(result);
                     products = new ArrayList<>();
 
+                    stringJSONPRODUCTS = result;
+
 
                     for(int i =0; i < jsonProducts.length(); i++)
                     {
@@ -547,6 +570,7 @@ public class StageActivity extends ActionBarActivity {
                         newProduct._Price = Integer.parseInt(jsonProducts.getJSONObject(i).getString("price"));
                         newProduct._Purchased = (jsonProducts.getJSONObject(i).getString("purchased"));
 
+
                         products.add(newProduct);
                     }
                 }
@@ -554,24 +578,24 @@ public class StageActivity extends ActionBarActivity {
                     result = "Did not work!";
 
             } catch (Exception e) {
-                publishProgress(e.toString());
+                e.printStackTrace();
             }
 
-            try
+           try
             {
                 HttpClient httpclientALLPRODUCTS = new DefaultHttpClient();
                 String resultPRODUCTS;
 
                 // make GET request to the given URL
 
-                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        +"/"+ getString(R.string.allProducts) );
-                */
+                //String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                //        +"/"+ getString(R.string.allProducts) );
+
                 //TODO PEDIR EL LINK quE DEBE DE SER
-                /*****************CAMBIAR ESTO*************************************/
+                //****************CAMBIAR ESTO************************************
                 String serverRequestALLRPRODUCTS = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
                         + getString(R.string.allProducts);
-                /*****************************************************************/
+                //*****************************************************************
 
 
                 HttpResponse httpResponseALLPRODUCTS = httpclientALLPRODUCTS.execute(new HttpGet(serverRequestALLRPRODUCTS ));
@@ -618,7 +642,7 @@ public class StageActivity extends ActionBarActivity {
                     }
                     catch (Exception e)
                     {
-                        Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
 
                 }
@@ -635,7 +659,7 @@ public class StageActivity extends ActionBarActivity {
             }
             catch (Exception e)
             {
-                publishProgress(e.toString());
+                e.printStackTrace();
             }
 
 
@@ -654,8 +678,9 @@ public class StageActivity extends ActionBarActivity {
 
             try {
                 //stageInfo = new JSONArray(result);
-
                 initData();
+
+                Log.i("printprint ", "PRINTNNNNNNNNNNNNNNNNNNNN PRINT");
                 prepareData();
 
             }
@@ -1179,7 +1204,7 @@ public class StageActivity extends ActionBarActivity {
             Log.i("RESPONSEEEE", progress[0]);
 
             String response = progress[0].split("\"")[1];
-            if(response.compareTo("Ok") == 0 ) {
+            if(response.compareTo("ok") == 0 ) {
 
                 new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("Completado")
