@@ -14,30 +14,33 @@ namespace MyRESTService
     public class Products
     {
         [DataMember]
-        public int ID_Product { get; set; }
+        public int id_product { get; set; }
         [DataMember]
-        public string Details { get; set; }
+        public string details { get; set; }
         [DataMember]
-        public int Stock { get; set; }
+        public int stock { get; set; }
         [DataMember]
-        public int Price { get; set; }
+        public int price { get; set; }
         [DataMember]
-        public string TaxFree { get; set; }
+        public string taxfree { get; set; }
         [DataMember]
-        public int ID_Supplier { get; set; }
+        public int id_supplier { get; set; }
         [DataMember]
-        public int ID_Category { get; set; }
+        public int id_category { get; set; }
         [DataMember]
-        public string Active { get; set; }
+        public string active { get; set; }
         [DataMember]
-        public string Name { get; set; }
+        public string name { get; set; }
         [DataMember]
-        public int BOffice { get; set; }
+        public int boffice { get; set; }
         [DataMember]
-        public int Quantity{ get; set; }
+        public int quantity { get; set; }
         [DataMember]
-        public int ID_Stage { get; set; }
-
+        public int id_stage { get; set; }
+        //[DataMember]
+        //public bool Purchased{get; set;}
+        //[DataMember]
+        //public string hashKey { get; set; }
     }
 }
 
