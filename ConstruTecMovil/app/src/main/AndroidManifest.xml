@@ -45,6 +45,9 @@
         <activity
             android:name="com.epatec.construtecmovil.StageActivity"
             android:label="@string/title_activity_stage"></activity>
+        <activity
+            android:name="com.epatec.construtecmovil.addProjectActivity"
+            android:label="@string/title_activity_addproject"></activity>
 
     </application>
 

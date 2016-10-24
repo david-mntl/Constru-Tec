@@ -58,13 +58,17 @@ public class StageActivity extends ActionBarActivity {
     public Spinner dropdown;
     public ArrayAdapter dropDownRole;
 
+    String stringProductsJson;
 
-
-
+    /********************Strings Json To Send ************************/
     String jsonTOsendDetail;
     String jsonTOsendComment;
-
+    String jsonTOsendAddProduct;
+    String jsonTOsendBuyStage;
+    /****************************************************************/
     ArrayList<String> dropdownItems;
+
+    String tabString;
 
     ArrayAdapter listAdapter;
 
@@ -76,11 +80,29 @@ public class StageActivity extends ActionBarActivity {
         UserDataHolder user = UserDataHolder.getInstance();
         final Button projectInfoButton = (Button) findViewById(R.id.projectInfoButton);
 
+        final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
+
+        viewSwitch.setup();
+
+        //Tab 1
+        tabSpec = viewSwitch.newTabSpec("Project");
+        tabSpec.setContent(R.id.ProjectInfo);
+        tabSpec.setIndicator("Project");
+        viewSwitch.addTab(tabSpec);
+
+        //Tab 2
+        tabSpec = viewSwitch.newTabSpec("Products");
+        tabSpec.setContent(R.id.Products);
+        tabSpec.setIndicator("Products");
+        viewSwitch.addTab(tabSpec);
+
         try
         {
-            products = new ArrayList<>();
+
             AsyncTaskProjects connector = new AsyncTaskProjects();
             connector.execute("init");
+
+
 
         }
         catch (Exception e)
@@ -96,7 +118,16 @@ public class StageActivity extends ActionBarActivity {
         {
             EditText detail = (EditText) findViewById(R.id.detailStage);
             detail.setEnabled(true);
+            EditText commentText = (EditText) findViewById(R.id.commentText);
+            commentText.setEnabled(false);
+
             projectInfoButton.setVisibility(View.VISIBLE);
+
+            //Tab 3
+            tabSpec = viewSwitch.newTabSpec("Ver Más");
+            tabSpec.setContent(R.id.addProducts);
+            tabSpec.setIndicator("Ver Más");
+            viewSwitch.addTab(tabSpec);
         }
         else if (user.userType == "2")
         {
@@ -151,33 +182,15 @@ public class StageActivity extends ActionBarActivity {
             TextView commentText = (TextView)findViewById(R.id.commentText);
             commentText.setText(stageInfoJson.getJSONObject(0).getString("comments"));
 
-            Log.i("COMENTARIOTEXT", stageInfoJson.getJSONObject(0).getString("comments") + " vacio");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
 
-        viewSwitch.setup();
 
-        //Tab 1
-        tabSpec = viewSwitch.newTabSpec("Project");
-        tabSpec.setContent(R.id.ProjectInfo);
-        tabSpec.setIndicator("Project");
-        viewSwitch.addTab(tabSpec);
 
-        //Tab 2
-        tabSpec = viewSwitch.newTabSpec("Products");
-        tabSpec.setContent(R.id.Products);
-        tabSpec.setIndicator("Products");
-        viewSwitch.addTab(tabSpec);
 
-        //Tab 2
-        tabSpec = viewSwitch.newTabSpec("Ver Más");
-        tabSpec.setContent(R.id.addProducts);
-        tabSpec.setIndicator("Ver Más");
-        viewSwitch.addTab(tabSpec);
 
 
         projectInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +208,126 @@ public class StageActivity extends ActionBarActivity {
             }
         });
 
+        final Button buyStageButton = (Button) findViewById(R.id.buyStageButton);
 
+        buyStageButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try
+                {
+                    final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
+                    tabString = viewSwitch.getCurrentTab()+"";
+                    buyProducts();
+                    Toast.makeText(getApplicationContext(),"Compra Realizada", Toast.LENGTH_SHORT).show();
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+
+        final Button addProductButton = (Button) findViewById(R.id.addProductButton);
+
+        addProductButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try
+                {
+                    final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
+                    tabString = viewSwitch.getCurrentTab()+"";
+                    addProduct();
+                    Toast.makeText(getApplicationContext(),"Actualizado", Toast.LENGTH_SHORT).show();
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+
+
+    }
+
+    // TODO
+    public void buyProducts()
+    {
+
+        try
+        {
+
+
+            JSONObject jsonObject = new JSONObject();
+
+            Log.i("EntroENTROOOO","stage stage");
+            Log.i("EntroENTROOOO", stageInfoJson.getJSONObject(0).get("id_project_stage").toString());
+            String id_stage = stageInfoJson.getJSONObject(0).get("id_project_stage").toString();
+
+            Log.i("stagestage","stage stage");
+
+            jsonObject.put("id_stage",id_stage);
+
+            jsonTOsendBuyStage = jsonObject.toString();
+
+            Log.i("BUYBUYBUY",jsonTOsendBuyStage);
+
+            AsyncTaskADDProduct asyncAddProduct = new AsyncTaskADDProduct();
+            asyncAddProduct.execute("init");
+
+        }
+        catch (JSONException e) {
+            Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    //TODO
+    public void addProduct()
+    {
+        try
+        {
+
+            JSONArray jsonString = new JSONArray(stringProductsJson);
+            JSONObject jsonObject = new JSONObject();
+
+            EditText quantity = (EditText) findViewById(R.id.addQuantityField);
+
+            String[] item  = dropdown.getSelectedItem().toString().split(":");
+
+            for (int i =0;i<allProductsJSON.length();i++)
+            {
+
+
+                Log.i("SPLITSPLIT", item[2]);
+                Log.i("ProductActual", allProductsJSON.getJSONObject(i).get("id_product").toString());
+                if ( allProductsJSON.getJSONObject(i).get("id_product").toString().compareTo(item[2]) ==0 )
+                {
+                    Log.i("ENTROIF", item[2]);
+
+                    jsonObject.put("ID_Stage", stageInfoJson.getJSONObject(0).getString("id_project_stage"));
+                    jsonObject.put("ID_Product", item[2] );
+                    jsonObject.put("Quantity", quantity.getText());
+                    jsonObject.put("Price",allProductsJSON.getJSONObject(i).getString("price") );
+                    break;
+
+
+                }
+            }
+            jsonTOsendAddProduct = jsonObject.toString();
+
+            Log.i("ADDJSONPRODUCT",jsonTOsendAddProduct);
+
+            AsyncTaskADDProduct asyncAddProduct = new AsyncTaskADDProduct();
+            asyncAddProduct.execute("init");
+
+
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+        }
 
 
 
@@ -204,11 +336,26 @@ public class StageActivity extends ActionBarActivity {
 
     public void initData()
     {
-        dropdown = (Spinner)findViewById(R.id.productsSpinner);
+        try
+        {
+            dropdown = (Spinner)findViewById(R.id.productsSpinner);
 
-        dropDownRole = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, dropdownItems);
+            dropDownRole = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dropdownItems );
 
-        dropdown.setAdapter(dropDownRole);
+            dropdown.setAdapter(dropDownRole);
+
+            Log.i("MECAGOOOO", dropDownRole.getItem(0).toString());
+
+        }
+        catch (Exception e)
+        {
+            new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops")
+                    .setContentText("Init!!")
+                    .show();
+
+        }
+
     }
 
 
@@ -219,14 +366,33 @@ public class StageActivity extends ActionBarActivity {
 
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
 
-        for (int i =0; i< products.size(); i++)
+        for (int i =0; i< jsonProducts.length(); i++)
         {
-            Producto temp = products.get(i);
-            String productInfo = temp._Name +"     Price: " + temp._Price + "   Quantity: " +
+            //Producto temp = products.get(i);
+
+            try {
+                String name = jsonProducts.getJSONObject(i).getString("name").toString();
+                String price = jsonProducts.getJSONObject(i).getString("price").toString();
+                String quantity = jsonProducts.getJSONObject(i).getString("quantity").toString();
+                String purchased = jsonProducts.getJSONObject(i).getString("purchased").toString();
+
+                String productInfo = name +"     Price: " + price + "   Quantity: " +
+                        quantity + "    Comprado: " + purchased ;
+
+                listAdapter.add(productInfo);
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            /*String productInfo = temp._Name +"     Price: " + temp._Price + "   Quantity: " +
                     temp._Quantity + "    Comprado: " + temp._Purchased ;
+            */
 
 
-            listAdapter.add(productInfo);
+
 
 
         }
@@ -242,6 +408,7 @@ public class StageActivity extends ActionBarActivity {
                         ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
             }
         });
+
 
         listView.setAdapter(listAdapter);
 
@@ -368,6 +535,7 @@ public class StageActivity extends ActionBarActivity {
 
                     result = convertStandardJSONString(result);
                     jsonProducts = new JSONArray(result);
+                    products = new ArrayList<>();
 
 
                     for(int i =0; i < jsonProducts.length(); i++)
@@ -385,75 +553,91 @@ public class StageActivity extends ActionBarActivity {
                 else
                     result = "Did not work!";
 
-                try
-                {
-                    HttpClient httpclientALLPRODUCTS = new DefaultHttpClient();
-                    String resultPRODUCTS;
+            } catch (Exception e) {
+                publishProgress(e.toString());
+            }
 
-                    // make GET request to the given URL
+            try
+            {
+                HttpClient httpclientALLPRODUCTS = new DefaultHttpClient();
+                String resultPRODUCTS;
+
+                // make GET request to the given URL
 
                 /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
                         +"/"+ getString(R.string.allProducts) );
                 */
-                    //TODO PEDIR EL LINK quE DEBE DE SER
-                    /*****************CAMBIAR ESTO*************************************/
-                    String serverRequestALLRPRODUCTS = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
-                            + getString(R.string.allProducts);
-                    /*****************************************************************/
+                //TODO PEDIR EL LINK quE DEBE DE SER
+                /*****************CAMBIAR ESTO*************************************/
+                String serverRequestALLRPRODUCTS = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                        + getString(R.string.allProducts);
+                /*****************************************************************/
 
 
-                    HttpResponse httpResponseALLPRODUCTS = httpclientALLPRODUCTS.execute(new HttpGet(serverRequestALLRPRODUCTS ));
+                HttpResponse httpResponseALLPRODUCTS = httpclientALLPRODUCTS.execute(new HttpGet(serverRequestALLRPRODUCTS ));
 
-                    // receive response as inputStream
-                    inputStream = httpResponseALLPRODUCTS.getEntity().getContent();
+                // receive response as inputStream
+                inputStream = httpResponseALLPRODUCTS.getEntity().getContent();
 
-                    // convert inputstream to string
-                    if(inputStream != null)
-                    {
-                        resultPRODUCTS = convertInputStreamToString(inputStream);
-                        resultPRODUCTS = resultPRODUCTS.toString().substring(1, resultPRODUCTS.toString().length() - 1);
-
-                        resultPRODUCTS = convertStandardJSONString(resultPRODUCTS);
-                        allProductsJSON = new JSONArray(resultPRODUCTS);
-
-                        dropdownItems = new ArrayList<String>();
-                        try
-                        {
-                            for(int j =0; j < allProductsJSON.length() ;j++)
-                            {
-                                String itemTOAdd = allProductsJSON.getJSONObject(j).getString("name") + "|Precio: ₡" +
-                                        allProductsJSON.getJSONObject(j).getString("price");
-                                dropdownItems.add(itemTOAdd);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                    else
-                    {
-                        resultPRODUCTS = "Did not work!";
-                    }
-
-
-
-
-
-                }
-                catch (Exception e)
+                // convert inputstream to string
+                if(inputStream != null)
                 {
-                    publishProgress(e.toString());
+                    resultPRODUCTS = convertInputStreamToString(inputStream);
+                    resultPRODUCTS = resultPRODUCTS.toString().substring(1, resultPRODUCTS.toString().length() - 1);
+
+                    resultPRODUCTS = convertStandardJSONString(resultPRODUCTS);
+                    allProductsJSON = new JSONArray(resultPRODUCTS);
+
+                    dropdownItems = new ArrayList<String>();
+
+
+                    try
+                    {
+                        for(int j =0; j < allProductsJSON.length() ;j++)
+                        {
+                            stringProductsJson = resultPRODUCTS;
+
+
+
+                            // Log.i("PROODUCTOOO", resultPRODUCTS);
+                            String nameProduct =  allProductsJSON.getJSONObject(j).getString("name");
+                            String priceProduct = allProductsJSON.getJSONObject(j).getString("price");
+                            String idProduct = allProductsJSON.getJSONObject(j).getString("id_product") ;
+
+
+                            // Log.i("PROODUCTOOO", "ANTESITEMS");
+                            //Log.i("NOMBREEEE", idProduct);
+
+                            String itemTOAdd = nameProduct + "|Precio: ₡" + priceProduct + "|ID:" + idProduct ;
+
+
+
+                            dropdownItems.add(itemTOAdd);
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+                else
+                {
+                    resultPRODUCTS = "Did not work!";
                 }
 
 
 
 
-            } catch (Exception e) {
+
+            }
+            catch (Exception e)
+            {
                 publishProgress(e.toString());
             }
+
 
             publishProgress(result);
             return "";
@@ -470,8 +654,10 @@ public class StageActivity extends ActionBarActivity {
 
             try {
                 //stageInfo = new JSONArray(result);
-                prepareData();
+
                 initData();
+                prepareData();
+
             }
             catch (Exception e) {
                 Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
@@ -551,7 +737,7 @@ public class StageActivity extends ActionBarActivity {
                 url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
                         + getString(R.string.updateStageComment) );
 
-                Log.i("LINKLINK", url.toString());
+                //Log.i("LINKLINK", url.toString());
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -561,7 +747,7 @@ public class StageActivity extends ActionBarActivity {
                 conn.setDoOutput(true);
                 conn.setFixedLengthStreamingMode(jsonTOsendComment.getBytes().length);
 
-                Log.i("JSONNComment", jsonTOsendComment);
+                //Log.i("JSONNComment", jsonTOsendComment);
 
                 //make some HTTP header nicety
                 conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
@@ -707,7 +893,7 @@ public class StageActivity extends ActionBarActivity {
                 url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
                         + getString(R.string.updateStageDetail) );
 
-                Log.i("LINKLINK22", url.toString());
+                //Log.i("LINKLINK22", url.toString());
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /*milliseconds*/);
@@ -717,7 +903,7 @@ public class StageActivity extends ActionBarActivity {
                 conn.setDoOutput(true);
                 conn.setFixedLengthStreamingMode(jsonTOsendDetail.getBytes().length);
 
-                Log.i("JSONN", jsonTOsendDetail);
+                //Log.i("JSONN", jsonTOsendDetail);
 
                 //make some HTTP header nicety
                 conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
@@ -776,6 +962,221 @@ public class StageActivity extends ActionBarActivity {
 
         @Override
         protected void onProgressUpdate(String... progress) {
+
+            String response = progress[0].split("\"")[1];
+            if(response.compareTo("Ok") == 0 ) {
+
+                new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Completado")
+                        .setContentText("Actualizado")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                //StageActivity.this.finish();
+                            }
+                        })
+                        .show();
+            }
+            else {
+                new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops")
+                        .setContentText("Ah ocurrido un error")
+                        .show();
+            }
+
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+    }
+
+
+
+
+    /********************************ADD PRODUCT STAGE******************************************/
+    /********************************ADD PRODUCT STAGE******************************************/
+    /********************************ADD PRODUCT STAGE******************************************/
+    /********************************ADD PRODUCT STAGE******************************************/
+
+
+    private class AsyncTaskADDProduct extends AsyncTask<String, String, String> {
+
+
+        // convert inputstream to String
+        private String convertInputStreamToString(InputStream inputStream) throws IOException {
+            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+            String line = "";
+            String result = "";
+            while((line = bufferedReader.readLine()) != null)
+                result += line;
+
+            inputStream.close();
+            return result;
+
+        }
+
+        public String convertStandardJSONString(String data_json) {
+            data_json = data_json.replaceAll("\\\\r\\\\n", "");
+            data_json = data_json.replace("\\", "");
+            return data_json;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            /*******************/
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+
+            try {
+                //constants
+
+                ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
+                URL url;
+
+                Log.i("TABTABTAB", tabString);
+                if(tabString.compareTo("1") ==0)
+                {
+
+                    /* *************** ****************** */
+
+                    /**
+                     * TODO CAMBIAR LINK
+                     */
+                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.BuyStage));
+                           */
+
+                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.BuyStage) );
+
+                    Log.i("LINKADDPRODUCT", url.toString());
+
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /*milliseconds*/);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.setFixedLengthStreamingMode(jsonTOsendBuyStage.getBytes().length);
+
+                    Log.i("JSONN", jsonTOsendBuyStage);
+
+                    //make some HTTP header nicety
+                    conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                    conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                    //open
+                    conn.connect();
+
+                    //setup send
+                    os = new BufferedOutputStream(conn.getOutputStream());
+                    os.write(jsonTOsendBuyStage.getBytes());
+                    Log.i("WRITEEEE", jsonTOsendBuyStage);
+                    //clean up
+                    os.flush();
+
+                }
+
+                else
+                {
+                    /* *************** ****************** */
+
+                    /**
+                     * TODO CAMBIAR LINK
+                     */
+                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.addProductStage));
+                           */
+
+                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.addProductStage) );
+
+                    Log.i("LINKADDPRODUCT", url.toString());
+
+                    jsonTOsendAddProduct = "["+jsonTOsendAddProduct+ "]";
+
+                    conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /*milliseconds*/);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setRequestMethod("POST");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.setFixedLengthStreamingMode(jsonTOsendAddProduct.getBytes().length);
+
+                    Log.i("JSONN", jsonTOsendAddProduct);
+
+                    //make some HTTP header nicety
+                    conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                    conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                    //open
+                    conn.connect();
+
+                    //setup send
+                    os = new BufferedOutputStream(conn.getOutputStream());
+                    os.write(jsonTOsendAddProduct.getBytes());
+                    Log.i("WRITEEEEPRODUC", jsonTOsendAddProduct);
+                    //clean up
+                    os.flush();
+                }
+
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                StringBuffer response;
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+
+                publishProgress(response.toString());
+
+
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            finally {
+                //clean up
+                try {
+                    os.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                conn.disconnect();
+            }
+
+
+            return "";
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+
+            Log.i("RESPONSEEEE", progress[0]);
 
             String response = progress[0].split("\"")[1];
             if(response.compareTo("Ok") == 0 ) {

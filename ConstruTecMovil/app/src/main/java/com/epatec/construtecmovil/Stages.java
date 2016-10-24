@@ -15,6 +15,7 @@ public class Stages {
     public String details = "";
     public String location = "";
     public String json = "";
+    public String jsonStage = "";
 
     public Stages()
     {

@@ -41,6 +41,8 @@ public class ProjectsActivity extends Activity {
     ArrayList<Projects> allProjects;
     ArrayList<Stages> allStages;
 
+    String stageJSONString;
+
 
     JSONArray stageInfo = null;
     JSONArray projects = null;
@@ -379,7 +381,7 @@ public class ProjectsActivity extends Activity {
 
                                 for (int j =0; j< stageInfo.length(); j++)
                                 {
-
+                                    stageJSONString = stageResult;
                                     Stages newStage = new Stages();
 
                                     newStage.json = stageInfo.getJSONObject(j).toString();
