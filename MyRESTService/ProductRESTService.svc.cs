@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Web.Script.Serialization;
 
 namespace MyRESTService
 {
@@ -19,36 +20,37 @@ namespace MyRESTService
 
         private NpgsqlConnection conn;
 
-        public ProductRESTService() {
+        public ProductRESTService()
+        {
             conn = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ConnectionString);
         }
 
-        public bool connect() {
-            try {
+        public string connect()
+        {
+            try
+            {
                 conn.Open();
                 conn.CreateCommand();
-                return true;
-            } catch (Exception ee) {
-                return false;
+                return "ok";
+            }
+            catch (Exception ee)
+            {
+                return ee.Message;
             }
         }
 
-        public bool disconnect() {
-            try{
-                conn.Close();
-                return true;
-            }catch (Exception ee){
-                return false;
-            }
-        }
-
-
-        public List<Product> GetProductList()
+        public string disconnect()
         {
-            return Products.Instance.ProductList;
+            try
+            {
+                conn.Close();
+                return "ok";
+            }
+            catch (Exception ee)
+            {
+                return ee.Message;
+            }
         }
-
-
 
 
         public string GetAll()
@@ -59,10 +61,12 @@ namespace MyRESTService
 
 
 
-        public string PostCustomer(Customer str){
+        public string PostCustomer(Customer str)
+        {
             string query = "SELECT add_customer(@ID_Customer,@Name,@Lastname_1,@Lastname_2, @Phone,@Email,@Username,@Password)";
-            string msg="";
-            try {
+            string msg = "";
+            try
+            {
                 this.connect();
                 NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
                 sqlcmd.Parameters.AddWithValue("@ID_Customer", str.ID_Customer);
@@ -75,10 +79,14 @@ namespace MyRESTService
                 sqlcmd.Parameters.AddWithValue("@Password", str.Password);
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
-            }catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 msg += "Error:";
                 msg += ex.Message;
-            }finally{
+            }
+            finally
+            {
                 this.disconnect();
             }
             return msg;
@@ -92,7 +100,7 @@ namespace MyRESTService
 
         public string GetCustomer(string Username)
         {
-            string query = "SELECT * from get_customer('"+Username+"')";
+            string query = "SELECT * from get_customer('" + Username + "')";
             string msg = "";
             try
             {
@@ -126,7 +134,8 @@ namespace MyRESTService
         {
             string query = "SELECT update_customer(@ID_Customer,@Name,@Lastname_1,@Lastname_2, @Phone,@Email,@Username,@Password)";
             string msg = "";
-            try{
+            try
+            {
                 this.connect();
                 NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
                 sqlcmd.Parameters.AddWithValue("@ID_Customer", str.ID_Customer);
@@ -187,7 +196,7 @@ namespace MyRESTService
                 sqlcmd.Parameters.AddWithValue("@Username", str.Username);
                 sqlcmd.Parameters.AddWithValue("@Password", str.Password);
                 sqlcmd.ExecuteNonQuery();
-                
+
                 NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
                 DataSet dt = new DataSet();
                 sda.Fill(dt);
@@ -240,10 +249,12 @@ namespace MyRESTService
             return msg;
         }
 
-        public string UpdateEngineer(Engineer str){
+        public string UpdateEngineer(Engineer str)
+        {
             string query = "SELECT update_engineer(@ID_Engineer,@Name,@Lastname_1,@Lastname_2, @Phone,@Email,@Eng_Code,@Username,@Password)";
             string msg = "";
-            try{
+            try
+            {
                 this.connect();
                 NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
                 sqlcmd.Parameters.AddWithValue("@ID_Engineer", str.ID_Engineer);
@@ -257,10 +268,14 @@ namespace MyRESTService
                 sqlcmd.Parameters.AddWithValue("@Password", str.Password);
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
-            }catch (Exception ex){
+            }
+            catch (Exception ex)
+            {
                 msg += "Error:";
                 msg += ex.Message;
-            }finally{
+            }
+            finally
+            {
                 this.disconnect();
             }
             return msg;
@@ -394,15 +409,41 @@ namespace MyRESTService
             return msg;
         }
 
-        public string PostProjectComment(Project str)
+        public string PostProjectComments(Project str)
         {
             string query = "SELECT add_comment_to_project(@ID_Project,@Comments)";
             string msg = "";
-            try{
+            try
+            {
                 this.connect();
                 NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
                 sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
                 sqlcmd.Parameters.AddWithValue("@Comments", str.Comments);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string PostProjectDetails(Project str)
+        {
+            string query = "SELECT add_details_to_project(@ID_Project,@Details)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.Parameters.AddWithValue("@Details", str.Details);
                 sqlcmd.ExecuteNonQuery();
                 msg = "Ok";
             }
@@ -465,7 +506,7 @@ namespace MyRESTService
             }
             return msg;
         }
-        
+
         public string DeleteProject(Project str)
         {
             string query = "SELECT delete_project(@ID_Project)";
@@ -537,7 +578,7 @@ namespace MyRESTService
             }
             return msg;
         }
-        
+
         public string CreateStage(Stage str)
         {
             string query = "SELECT add_project_stage(@ID_Project, @Stage_Name, @Start_Date, @End_Date, @Details, @Comments)";
@@ -567,6 +608,55 @@ namespace MyRESTService
             return msg;
         }
 
+        public string PostStageComments(Stage str)
+        {
+            string query = "SELECT add_comments_to_stage(@ID_Project, @Comments)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.Parameters.AddWithValue("@Comments", str.Comments);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string PostStageDetails(Stage str)
+        {
+            string query = "SELECT add_details_to_stage(@ID_Project, @Details)";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                sqlcmd.Parameters.AddWithValue("@ID_Project", str.ID_Project);
+                sqlcmd.Parameters.AddWithValue("@Details", str.Details);
+                sqlcmd.ExecuteNonQuery();
+                msg = "Ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
 
         /*
         * -------------------------------------------------------------------------------------
@@ -576,7 +666,7 @@ namespace MyRESTService
 
         public string GetStagesFromProject(string projectID)
         {
-            string query = "SELECT * from get_stages_from_project('"+projectID+"')";
+            string query = "SELECT * from get_stages_from_project('" + projectID + "')";
             string msg = "";
             try
             {
@@ -599,6 +689,33 @@ namespace MyRESTService
             }
             return msg;
         }
+
+        public string GetStagesName()
+        {
+            string query = "SELECT * from stage_name";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
 
         public string GetProjects()
         {
@@ -628,7 +745,7 @@ namespace MyRESTService
 
         public string GetProjectsFrom(string status, string id)
         {
-            string query = "SELECT * from get_projects_from_generic("+status+","+id+");";
+            string query = "SELECT * from get_projects_from_generic(" + status + "," + id + ");";
             string msg = "";
             try
             {
@@ -654,7 +771,7 @@ namespace MyRESTService
 
         public string GetInfoFromStage(string ID)
         {
-            string query = "SELECT * from get_info_from_stage(" +ID+");";
+            string query = "SELECT * from get_info_from_stage(" + ID + ");";
             string msg = "";
             try
             {
@@ -677,8 +794,8 @@ namespace MyRESTService
             }
             return msg;
         }
-        
-        
+
+
         public string GetProductsFromStage(string ID)
         {
             string query = "SELECT * from get_products_from_stage(" + ID + ");";
@@ -733,7 +850,7 @@ namespace MyRESTService
 
         public string get_products_info_from_project(string id)
         {
-            string query = "SELECT * from get_products_info_from_project("+id+")";
+            string query = "SELECT * from get_products_info_from_project(" + id + ")";
             string msg = "";
             try
             {
@@ -759,7 +876,33 @@ namespace MyRESTService
 
         public string GetProjectsByMaterial(string name)
         {
-            string query = "SELECT * from get_projects_by_material("+name+")";
+            string query = "SELECT * from get_projects_by_material(" + name + ")";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            finally
+            {
+                this.disconnect();
+            }
+            return msg;
+        }
+
+        public string GetProductList()
+        {
+            string query = "select * from get_products()";
             string msg = "";
             try
             {
@@ -788,11 +931,11 @@ namespace MyRESTService
         *                          Llamadas al web service de EPATEC
         * -------------------------------------------------------------------------------------  
         */
-        public string EpatecGetProductList(string paramList)
+        public string EpatecGetProductList()
         {
-            string Out = String.Empty;
-            System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=" + paramList);
-            //System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=all");
+            string Out = "";
+            string msg = "";
+            System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/GetProducts?params=all");
             try
             {
                 System.Net.WebResponse resp = req.GetResponse();
@@ -802,25 +945,212 @@ namespace MyRESTService
                     {
                         Out = sr.ReadToEnd();
                         sr.Close();
+                        Out = Out.Substring(2, Out.Length - 4);
+                        Out = Out.Replace("},", "}#");
+                        string[] infoArray = Out.Split('#');
+                        for (int i = 0; i < infoArray.Length; i++)
+                        {
+                            string itemstr = infoArray[i].Replace("\"", "").Replace("{", "").Replace("}", "").Replace("\\", "");
+                            string[] itemData = itemstr.Split(',');
+                            string query = "select add_product(@ID_Product,@Details,@Active,@Name,@Price)";
+                            try
+                            {
+                                this.connect();
+                                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                                sqlcmd.Parameters.AddWithValue("@ID_Product", itemData[0].Split(':')[1]);
+                                sqlcmd.Parameters.AddWithValue("@Details", itemData[1].Split(':')[1]);
+                                sqlcmd.Parameters.AddWithValue("@Active", itemData[7].Split(':')[1]);
+                                sqlcmd.Parameters.AddWithValue("@Name", itemData[8].Split(':')[1]);
+                                sqlcmd.Parameters.AddWithValue("@Price", itemData[3].Split(':')[1]);
+                                sqlcmd.ExecuteNonQuery();
+                                this.disconnect();
+                            }
+                            catch (Exception ex)
+                            {
+                                msg += "Error:";
+                                msg += ex.Message;
+                            }
+                        }
                     }
                 }
+                msg = "ok";
             }
             catch (ArgumentException ex)
             {
-                Out = string.Format("HTTP_ERROR :: The second HttpWebRequest object has raised an Argument Exception as 'Connection' Property is set to 'Close' :: {0}", ex.Message);
+                msg = string.Format("HTTP_ERROR :: The second HttpWebRequest object has raised an Argument Exception as 'Connection' Property is set to 'Close' :: {0}", ex.Message);
             }
             catch (WebException ex)
             {
-                Out = string.Format("HTTP_ERROR :: WebException raised! :: {0}", ex.Message);
+                msg = string.Format("HTTP_ERROR :: WebException raised! :: {0}", ex.Message);
             }
             catch (Exception ex)
             {
-                Out = string.Format("HTTP_ERROR :: Exception raised! :: {0}", ex.Message);
+                msg = string.Format("HTTP_ERROR :: Exception raised! :: {0}", ex.Message);
             }
+            return msg;
+        }
+
+        public string EpatecPostShop(List<Products> list)
+        {
+            string Out = String.Empty;
+            string data = "";
+            for (var i = 0; i < list.Count; i++)
+            {
+                {
+                    
+                    System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/PostShop");
+                    try
+                    {
+                        req.Method = "POST";
+                        req.Timeout = 100000;
+                        req.ContentType = "application/json";
+                        data = "{\"DataG\":\"fasm22:Cartago," + list[i].ID_Product + ":" + list[i].Quantity + ":" + list[i].Price + "\"}";
+                        byte[] sentData = Encoding.UTF8.GetBytes(data);
+                        req.ContentLength = sentData.Length;
+                        using (System.IO.Stream sendStream = req.GetRequestStream())
+                        {
+                            sendStream.Write(sentData, 0, sentData.Length);
+                            sendStream.Close();
+                        }
+                        System.Net.WebResponse res = req.GetResponse();
+                        System.IO.Stream ReceiveStream = res.GetResponseStream();
+                        using (System.IO.StreamReader sr = new System.IO.StreamReader(ReceiveStream, Encoding.UTF8))
+                        {
+                            Char[] read = new Char[256];
+                            int count = sr.Read(read, 0, 256);
+
+                            while (count > 0)
+                            {
+                                String stri = new String(read, 0, count);
+                                Out += stri;
+                                count = sr.Read(read, 0, 256);
+                            }
+                        }
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Out = string.Format("HTTP_ERROR :: The second HttpWebRequest object has raised an Argument Exception as 'Connection' Property is set to 'Close' :: {0}", ex.Message);
+                    }
+                    catch (WebException ex)
+                    {
+                        Out = string.Format("HTTP_ERROR :: WebException raised! :: {0}", ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Out = string.Format("HTTP_ERROR :: Exception raised! :: {0}", ex.Message);
+                    }
+                }
+                //Console.WriteLine("Amount is {0} and type is {1}", str[i], str[i]);
+            }
+
 
             return Out;
         }
 
 
+        public string PostStageShop(Stage st)
+        {
+            string Out = String.Empty;
+
+            string query = "SELECT * from get_products_from_stage(" + st.ID_Stage + ");";
+            string msg = "";
+            try
+            {
+                this.connect();
+                NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                NpgsqlDataAdapter sda = new NpgsqlDataAdapter(sqlcmd);
+                DataSet dt = new DataSet();
+                sda.Fill(dt);
+                string result1 = JsonConvert.SerializeObject(dt.Tables);
+                msg = result1.Remove(result1.Length - 1).Remove(0, 1);
+                this.disconnect();
+
+                //---------------------------------------Ir a comprar a epatec---------------------------------------------------------
+                var array = JsonConvert.DeserializeObject<List<Products>>(msg);
+                for(var i=0;i<array.Count;i++) 
+                {
+                    System.Net.WebRequest req = System.Net.WebRequest.Create("http://cewebserver.azurewebsites.net/Service1.svc/PostShop");
+                    req.Method = "POST";
+                    req.Timeout = 100000;
+                    req.ContentType = "application/json";
+                    msg = "{\"DataG\":\"fasm22:Cartago," + array[i].ID_Product + ":" + array[i].Quantity + ":" + array[i].Price + "\"}";
+                    byte[] sentData = Encoding.UTF8.GetBytes(msg);
+                    req.ContentLength = sentData.Length;
+                    using (System.IO.Stream sendStream = req.GetRequestStream())
+                    {
+                        sendStream.Write(sentData, 0, sentData.Length);
+                        sendStream.Close();
+                    }
+                    System.Net.WebResponse res = req.GetResponse();
+                    System.IO.Stream ReceiveStream = res.GetResponseStream();
+                    using (System.IO.StreamReader sr = new System.IO.StreamReader(ReceiveStream, Encoding.UTF8))
+                    {
+                        Char[] read = new Char[256];
+                        int count = sr.Read(read, 0, 256);
+
+                        while (count > 0)
+                        {
+                            String stri = new String(read, 0, count);
+                            Out += stri;
+                            count = sr.Read(read, 0, 256);
+                        }
+                    }
+                }
+                msg = "ok";
+            }
+            catch (Exception ex)
+            {
+                msg += "Error:";
+                msg += ex.Message;
+            }
+            return msg;
+        }
+
+
+        public string addProductToStage(List<Products> list)
+        {
+            string msg = "";
+            for (var i = 0; i < list.Count; i++)
+            {
+                string query = "SELECT add_product_to_stage(@ID_Stage, @ID_Product, @Quantity, @Price)";
+
+                try
+                {
+                    this.connect();
+                    NpgsqlCommand sqlcmd = new NpgsqlCommand(query, conn);
+                    sqlcmd.Parameters.AddWithValue("@ID_Stage", list[i].ID_Stage);
+                    sqlcmd.Parameters.AddWithValue("@ID_Product", list[i].ID_Product);
+                    sqlcmd.Parameters.AddWithValue("@Quantity", list[i].Quantity);
+                    sqlcmd.Parameters.AddWithValue("@Price", list[i].Price);
+                    sqlcmd.ExecuteNonQuery();
+                    msg = "Ok";
+                    this.disconnect();
+                }
+                catch (Exception ex)
+                {
+                    msg += "Error:";
+                    msg += ex.Message;
+                }
+            }
+            return msg;
+        }
+
+
+
+
+        
+
+
+
+
+
     }
 }
+
+
+
+
+
+
+
+

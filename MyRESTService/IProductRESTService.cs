@@ -18,12 +18,6 @@ namespace MyRESTService
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
                                    BodyStyle = WebMessageBodyStyle.Bare,
-                                   UriTemplate = "GetProductList/")]
-        List<Product> GetProductList();
-
-        [OperationContract]
-        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
-                                   BodyStyle = WebMessageBodyStyle.Bare,
                                    UriTemplate = "GetAll/")]
         string GetAll();
 
@@ -53,7 +47,7 @@ namespace MyRESTService
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/UpdateCustomer")]
+            UriTemplate = "/UpdateCustomer")] 
         string UpdateCustomer(Customer str);
 
         [OperationContract]
@@ -122,8 +116,15 @@ namespace MyRESTService
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/PostProjectComment")]
-        string PostProjectComment(Project str);
+            UriTemplate = "/PostProjectComments")]
+        string PostProjectComments(Project str);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostProjectDetails")]
+        string PostProjectDetails(Project str);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
@@ -167,7 +168,19 @@ namespace MyRESTService
             UriTemplate = "/CreateStage")]
         string CreateStage(Stage str);
 
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostStageComments")]
+        string PostStageComments(Stage str);
 
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostStageDetails")]
+        string PostStageDetails(Stage str);
 
         /*
          * -------------------------------------------------------------------------------------
@@ -181,6 +194,12 @@ namespace MyRESTService
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         string GetStagesFromProject(string projectID);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetStagesNames",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        string GetStagesName();
 
         [OperationContract]
         [WebGet(UriTemplate = "/GetProjects",
@@ -224,18 +243,48 @@ namespace MyRESTService
             ResponseFormat = WebMessageFormat.Json)]
         string GetProjectsByMaterial(string name);
 
-        /*
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetProducts",
+           RequestFormat = WebMessageFormat.Json,
+           ResponseFormat = WebMessageFormat.Json)]
+        string GetProductList();
+        
+          
+         /*
          * -------------------------------------------------------------------------------------
          *                          Llamadas al web service de EPATEC
          * -------------------------------------------------------------------------------------  
          */
+        
 
         [OperationContract]
-        [WebGet(UriTemplate = "/GetProducts?params={paramList}",
+        [WebGet(UriTemplate = "/EpatecGetProductList",
            RequestFormat = WebMessageFormat.Json,
+           BodyStyle = WebMessageBodyStyle.Bare,
            ResponseFormat = WebMessageFormat.Json)]
-        string EpatecGetProductList(string paramList);
+        string EpatecGetProductList();
 
+        [OperationContract]//En caso de enviar una lista con los productos a comprar, no se va a utilizar porque ya se guardan
+        // los productos de cada stage encontes solo se hace PostStageShop para comrpar todos.
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/EPATECPostShop")]
+        string EpatecPostShop(List<Products> list);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostStageShop")]
+        string PostStageShop(Stage stage);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/AddProductToStage")]
+        string addProductToStage(List<Products> list);
     }
 }
 

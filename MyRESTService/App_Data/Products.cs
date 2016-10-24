@@ -11,39 +11,33 @@ using System.Runtime.Serialization;
 namespace MyRESTService
 {
     [DataContract]
-    public class Product
+    public class Products
     {
         [DataMember]
-        public int ProductId { get; set; }
+        public int ID_Product { get; set; }
+        [DataMember]
+        public string Details { get; set; }
+        [DataMember]
+        public int Stock { get; set; }
+        [DataMember]
+        public int Price { get; set; }
+        [DataMember]
+        public string TaxFree { get; set; }
+        [DataMember]
+        public int ID_Supplier { get; set; }
+        [DataMember]
+        public int ID_Category { get; set; }
+        [DataMember]
+        public string Active { get; set; }
         [DataMember]
         public string Name { get; set; }
         [DataMember]
-        public string CategoryName { get; set; }
+        public int BOffice { get; set; }
         [DataMember]
-        public int Price { get; set; }
-    }
+        public int Quantity{ get; set; }
+        [DataMember]
+        public int ID_Stage { get; set; }
 
-    public partial class Products
-    {
-       private static readonly Products _instance = new Products();
-       
-       private Products() { } 
-       
-       public static Products Instance 
-       { 
-                get { return _instance; } 
-       } 
-        public List<Product> ProductList 
-        { 
-               get { return products; } 
-        } 
-        private List<Product> products = new List<Product>() 
-        { 
-                new Product() { ProductId = 1, Name = "Product 1", CategoryName = "Category 1", Price=10}, 
-                new Product() { ProductId = 1, Name = "Product 2", CategoryName = "Category 2", Price=5}, 
-                new Product() { ProductId = 1, Name = "Product 3", CategoryName = "Category 3", Price=15}, 
-                new Product() { ProductId = 1, Name = "Product 4", CategoryName = "Category 1", Price=9} 
-        }; 
     }
 }
 
