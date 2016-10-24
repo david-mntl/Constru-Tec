@@ -1,6 +1,7 @@
 
-var app = angular.module('mainApp',['ngRoute','ngSanitize']);
-
+var app = angular.module('mainApp',['ngCookies','ngRoute','ngSanitize']);
+const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+var roles = "";
 app.config(function($routeProvider,$httpProvider) {
 
 
@@ -35,13 +36,14 @@ app.controller('getRoles',function ($scope,$http) {
 
 
     $scope.getSucursales = function () {
-        $http.get('http://192.168.0.15:17476/ProductRESTService.svc/GetRoles').success(function (data, status, headers, config) {
+        $http.get(URL + 'GetRoles').success(function (data, status, headers, config) {
             $scope.infosurcursal = (JSON).parse(data.toString());
             console.log($scope.infosurcursal);
             angular.forEach($scope.infosurcursal, function (item) {
                 $scope.sucursales.push(item.get_roles)
             });
             $scope.selectedSucursal = $scope.sucursales[0];
+            roles = $scope.selectedSucursal;
 
         }).error(function (data, status, headers, config) {
             console.log(data);
@@ -103,6 +105,66 @@ app.controller('lobbyButton',function ($scope) {
     }});
 */
 
+
+app.controller('loginController',function ($scope,$cookies,$http,$window,$timeout) {
+
+    //$cookies.put('username', "hola");
+
+    $scope.Login= function () {
+
+        console.log($cookies.username);
+        var parameter = JSON.stringify({
+            Username: $scope.UserFE,
+            Password: $scope.PasswordFE
+        });
+        console.log(parameter);
+        $scope.loginRol=[];
+        $http.post(URL+'VerifyLogin',parameter).success(function (data, status, headers, config) {
+
+
+            $scope.ROL = (JSON).parse(data.toString());
+            console.log($scope.login);
+            //$cookies.rol = $scope.ROL[0].login[9];
+            console.log("ROL" + $scope.ROL[0].login[9]);
+            if ($scope.ROL[0].login[1] == "groot"){
+                $cookies.eng_code = 999;
+            }
+            else if ($scope.ROL[0].login[9] == "0"){
+                $cookies.eng_code = 0;
+            }else{
+                $cookies.eng_code = 1;
+            }
+
+            $cookies.userid = $scope.ROL[0].login[0];
+            $cookies.name = $scope.ROL[0].login[1];
+            $cookies.lastname1 = $scope.ROL[0].login[2];
+            $cookies.lastname2 = $scope.ROL[0].login[3];
+            $cookies.phone = $scope.ROL[0].login[4];
+            $cookies.email = $scope.ROL[0].login[5];
+            $cookies.username = $scope.ROL[0].login[6];
+            $cookies.password = $scope.ROL[0].login[7];
+
+            console.log(data);
+            console.log(status);
+            $timeout($scope.toLobby(),2000);
+
+        }).error(function (data, status, headers, config) {
+            console.log("Error");
+            console.log(data);
+            console.log(status);
+        });
+
+
+    }
+
+    
+    $scope.toLobby = function () {
+        $window.location.href = 'pages/lobby.html';
+    }
+});
+
+
+
 app.controller("MyController",function($scope,$http,$timeout,$window) {
     $scope.roles = {};
     $scope.roles.cliente = "cliente";
@@ -146,7 +208,7 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             Password: $scope.myForm.password
         });
 
-        $http.post('http://192.168.0.15:17476/ProductRESTService.svc/PostCustomer',parameter).success(function (data, status, headers, config) {
+        $http.post(URL+'PostCustomer',parameter).success(function (data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
             console.log("status " + status);
@@ -157,10 +219,11 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             console.log(data);
             console.log(status);
         });
-        window.location.assign("pages/lobby.html")
+
 
     }
     $scope.myForm.registerEmployee=function(item,event) {
+            console.log(roles);
         var parameter = JSON.stringify({
             ID_Engineer:$scope.myForm.iDcard,
             Name: $scope.myForm.fname,
@@ -171,11 +234,11 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             Eng_Code : $scope.myForm.carne,
             Username: $scope.myForm.nickname,
             Password: $scope.myForm.password,
-            Role : $scope.selectedSucursal
+            Role : roles
 
         });
-
-        $http.post('http://192.168.0.15:17476/ProductRESTService.svc/PostEngineer',parameter).success(function (data, status, headers, config) {
+        console.log(parameter);
+        $http.post(URL+'PostEngineer',parameter).success(function (data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
             console.log("status " + status);
@@ -186,7 +249,7 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             console.log(data);
             console.log(status);
         });
-        window.location.assign("pages/lobby.html")
+
 
     }
 
