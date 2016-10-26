@@ -1,11 +1,11 @@
-﻿using System;
+﻿//using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+//using System.Linq;
+//using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.Collections;
-using System.Text;
+//using System.Collections;
+//using System.Text;
 
 namespace MyRESTService
 {
@@ -21,7 +21,12 @@ namespace MyRESTService
                                    UriTemplate = "GetAll/")]
         string GetAll();
 
-
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare,
+            UriTemplate = "/PostTest")]
+        string PostTest(string str);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
@@ -31,17 +36,16 @@ namespace MyRESTService
         string PostCustomer(Customer str);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
-            RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare,
-            UriTemplate = "/PostTest")]
-        string PostTest(string str);
-
-        [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
                                    BodyStyle = WebMessageBodyStyle.Bare,
                                    UriTemplate = "GetCustomer/{Username}")]
         string GetCustomer(string Username);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json,
+                                   BodyStyle = WebMessageBodyStyle.Bare,
+                                   UriTemplate = "GetEngineer/{Username}")]
+        string GetEngineer(string Username);
 
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json,
@@ -248,14 +252,19 @@ namespace MyRESTService
            RequestFormat = WebMessageFormat.Json,
            ResponseFormat = WebMessageFormat.Json)]
         string GetProductList();
-        
-          
-         /*
-         * -------------------------------------------------------------------------------------
-         *                          Llamadas al web service de EPATEC
-         * -------------------------------------------------------------------------------------  
-         */
-        
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/GetUSerInfo?id={id}",
+           RequestFormat = WebMessageFormat.Json,
+           ResponseFormat = WebMessageFormat.Json)]
+        string GetUserInfo(string id);
+
+        /*
+        * -------------------------------------------------------------------------------------
+        *                          Llamadas al web service de EPATEC
+        * -------------------------------------------------------------------------------------  
+        */
+
 
         [OperationContract]
         [WebGet(UriTemplate = "/EpatecGetProductList",

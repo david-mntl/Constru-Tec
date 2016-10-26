@@ -92,7 +92,6 @@ public class ProfileActivity extends ActionBarActivity {
             }
 
 
-
             final Button updateProfile = (Button) findViewById(R.id.updateProfile);
             updateProfile.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -257,18 +256,10 @@ public class ProfileActivity extends ActionBarActivity {
             String result = progress[0].toString().substring(1, progress[0].toString().length() - 1);
             result = convertStandardJSONString(result);
 
+
+
             try {
                 userInfo = new JSONArray(result);
-            }
-
-            catch (JSONException e) {
-                txt.setText(e.toString());
-            }
-
-
-
-            try {
-
 
                 userName = userInfo.getJSONObject(0).getString("name");
                 userLN1  = userInfo.getJSONObject(0).getString("lastname1");

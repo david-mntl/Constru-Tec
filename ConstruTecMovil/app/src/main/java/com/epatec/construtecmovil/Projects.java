@@ -7,8 +7,15 @@ import java.util.ArrayList;
  */
 public class Projects {
 
-    private String project_ID = "";
-    private String project_Name = "";
+
+    public String project_ID = "";
+    public String project_Name = "";
+    public String start_Date = "";
+    public String end_Date = "";
+    public String comments = "";
+    public String location = "";
+    public String details = "";
+    public String completed = "";
 
     ArrayList<String> stages_Array;
 

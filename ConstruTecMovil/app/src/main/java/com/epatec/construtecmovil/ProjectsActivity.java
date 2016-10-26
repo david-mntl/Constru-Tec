@@ -39,6 +39,12 @@ public class ProjectsActivity extends Activity {
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
     ArrayList<Projects> allProjects;
+<<<<<<< HEAD
+=======
+    ArrayList<Stages> allStages;
+
+    String stageJSONString;
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
 
     JSONArray stageInfo = null;
@@ -54,6 +60,10 @@ public class ProjectsActivity extends Activity {
 
         try
         {
+<<<<<<< HEAD
+=======
+            allStages = new ArrayList<Stages>();
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
             AsyncTaskProjects projectsServer = new AsyncTaskProjects();
             projectsServer.execute("init");
 
@@ -132,21 +142,67 @@ public class ProjectsActivity extends Activity {
                         .show();
 
                 Intent stageIntent = new Intent(ProjectsActivity.this, StageActivity.class);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
                 stageIntent.putExtra("childName", listDataHeader.get(groupPosition)
                         + " : "
                         + listDataChild.get(
                         listDataHeader.get(groupPosition)).get(
                         childPosition));
+<<<<<<< HEAD
                 //stageIntent.putExtra("secondKeyName","SecondKeyValue");
                 startActivity(stageIntent);
 
 
+=======
+
+
+                stageIntent.putExtra("stageInfo", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).json);
+                stageIntent.putExtra("idStage", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).ID_Stage);
+
+                stageIntent.putExtra("location", findProject(listDataHeader.get(groupPosition)).location);
+
+                startActivity(stageIntent);
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
                 return false;
             }
         });
 
     };
 
+<<<<<<< HEAD
+=======
+    public Stages findStage(String pName)
+    {
+        for(int i = 0; i < allStages.size();i++)
+        {
+            Stages temp = allStages.get(i);
+            if ( temp.Stage_Name.compareTo(pName)==0)
+            {
+                return temp;
+            }
+        }
+
+        return null;
+    }
+
+    public Projects findProject(String pName)
+    {
+        for(int i = 0; i < allProjects.size();i++)
+        {
+            Projects temp = allProjects.get(i);
+            if ( temp.project_Name.compareTo(pName)==0)
+            {
+                return temp;
+            }
+        }
+
+        return null;
+    }
+
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
 
 
@@ -272,8 +328,22 @@ public class ProjectsActivity extends Activity {
                 HttpClient httpclient = new DefaultHttpClient();
 
                 // make GET request to the given URL
+<<<<<<< HEAD
                 String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
                         +"/"+ getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID   );
+=======
+
+                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        +"/"+ getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID   );
+                */
+                //TODO
+                /*****************CAMBIAR ESTO*************************************/
+                String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                        + getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID;
+                /*****************************************************************/
+
+
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
 
                 HttpResponse httpResponse = httpclient.execute(new HttpGet(serverRequest ));
@@ -290,6 +360,10 @@ public class ProjectsActivity extends Activity {
 
                     result = convertStandardJSONString(result);
                     projects = new JSONArray(result);
+<<<<<<< HEAD
+=======
+                    Log.i("PROJECT", result);
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
 
                     for(int i =0; i < projects.length(); i++)
@@ -298,13 +372,30 @@ public class ProjectsActivity extends Activity {
                         Projects newProject = new Projects();
                         newProject.setProject_Name(projects.getJSONObject(i).getString("project_name"));
                         newProject.setProjectID(projects.getJSONObject(i).getString("id_project"));
+<<<<<<< HEAD
+=======
+                        newProject.location = projects.getJSONObject(i).getString("location");
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
                         try
                         {
                             HttpClient httpclientStages = new DefaultHttpClient();
 
+<<<<<<< HEAD
                             String urlStage = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection + "/"
                                     + getString(R.string.projectsStages) + newProject.getProjectID();
+=======
+                            /*String urlStage = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection + "/"
+                                    + getString(R.string.projectsStages) + newProject.getProjectID();
+                            */
+
+                            //TODO
+                            /*****************CAMBIAR ESTO*************************************/
+                            String urlStage ="http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                                    + getString(R.string.projectsStages) + newProject.getProjectID();
+                            /******************************************************************/
+
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
 
 
                             // make GET request to the given URL
@@ -323,9 +414,36 @@ public class ProjectsActivity extends Activity {
 
 
 
+<<<<<<< HEAD
                                 for (int j =0; j< stageInfo.length(); j++)
                                 {
                                     newProject.insertStage(stageInfo.getJSONObject(j).getString("stage_name"));
+=======
+
+
+                                for (int j =0; j< stageInfo.length(); j++)
+                                {
+                                    stageJSONString = stageResult;
+                                    Stages newStage = new Stages();
+
+                                    newStage.json = stageInfo.getJSONObject(j).toString();
+                                    newStage.Stage_Name = stageInfo.getJSONObject(j).getString("stage_name");
+                                    newStage.ID_Stage = stageInfo.getJSONObject(j).getString("id_project_stage");
+                                    newStage.ID_Project = stageInfo.getJSONObject(j).getString("id_project");
+                                    newStage.comments = stageInfo.getJSONObject(j).getString("comments");
+                                    newStage.details = stageInfo.getJSONObject(j).getString("details");
+                                    newStage.completed = stageInfo.getJSONObject(j).getString("completed");
+                                    newStage.end_Date = stageInfo.getJSONObject(j).getString("end_date");
+                                    newStage.start_Date = stageInfo.getJSONObject(j).getString("start_date");
+
+
+                                    newProject.insertStage(stageInfo.getJSONObject(j).getString("stage_name"));
+
+
+
+                                    allStages.add(newStage);
+
+>>>>>>> 32ec32c1d52771dab38258c311c20fb44981f9f4
                                 }
                             }
                         }
