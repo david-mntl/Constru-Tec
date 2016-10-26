@@ -27,12 +27,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ShopActivity extends ActionBarActivity {
-
+/*
     AsyncTaskConnector connector;
     JSONArray productsInfo = null;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override*/
+   /* protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
 
@@ -49,10 +49,10 @@ public class ShopActivity extends ActionBarActivity {
             }
         });
 
-    }
+    }*/
 
 
-    private class AsyncTaskConnector extends AsyncTask<String, String, String> {
+    /*private class AsyncTaskConnector extends AsyncTask<String, String, String> {
 
         ArrayList<Producto> listaInfoProductos = new ArrayList<>();
 
@@ -221,7 +221,7 @@ public class ShopActivity extends ActionBarActivity {
     }
 
 
-
+*/
 
     /**
      * Clase que permite obtener una imagen de un recurso web, y mostrarla en una ImageView

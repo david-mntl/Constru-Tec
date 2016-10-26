@@ -134,13 +134,23 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.title_section6);
                 Intent projectIntent = new Intent(MainActivity.this, ProjectsActivity.class);
                 startActivity(projectIntent);
+
                 break;
 
             case 7:
-                mTitle = getString(R.string.title_section6);
+                mTitle = getString(R.string.title_section7);
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 break;
+            case 8:
+                if (userInfo.userType == 1+"")
+                {
+                    mTitle = getString(R.string.title_section8);
+                    Intent managerIntent = new Intent(MainActivity.this, addProjectActivity.class);
+                    startActivity(managerIntent);
+                    break;
+                }
+
         }
     }
 

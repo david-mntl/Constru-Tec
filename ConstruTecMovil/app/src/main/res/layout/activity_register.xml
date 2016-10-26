@@ -36,248 +36,6 @@
                     <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/scrollViewClient" >
-
-                        <LinearLayout
-                            android:id="@+id/Cliente"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:weightSum="1"
-                            android:background="#333333"
-                            android:nestedScrollingEnabled="true"
-                            android:measureWithLargestChild="false">
-
-                            <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:layout_width="110dp"
-                                    android:layout_height="38dp"
-                                    android:textAppearance="?android:attr/textAppearanceMedium"
-                                    android:text=" Nombre:"
-                                    android:id="@+id/textView8"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp" />
-
-                                <EditText
-                                    android:layout_width="match_parent"
-                                    android:layout_height="51dp"
-                                    android:inputType="textPersonName"
-                                    android:ems="10"
-                                    android:id="@+id/nameClient"
-                                    android:textIsSelectable="true"
-                                    android:textColor="#fafafa" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:layout_width="108dp"
-                                    android:layout_height="30dp"
-                                    android:text=" Apellido 1:"
-                                    android:id="@+id/textView9"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp" />
-
-                                <EditText
-                                    android:layout_width="287dp"
-                                    android:layout_height="55dp"
-                                    android:inputType="textPersonName"
-                                    android:ems="10"
-                                    android:id="@+id/LN1Client"
-                                    android:textColor="#ffffff" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="36dp"
-                                    android:text=" Apellido 2:"
-                                    android:id="@+id/textView10"
-                                    android:textColor="#ffffff"
-                                    android:textSize="20dp" />
-
-                                <EditText
-                                    android:layout_width="match_parent"
-                                    android:layout_height="49dp"
-                                    android:inputType="textPersonName"
-                                    android:ems="10"
-                                    android:id="@+id/LN2Client"
-                                    android:textColor="#ffffff" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:layout_width="99dp"
-                                    android:layout_height="match_parent"
-                                    android:text=" Usuario:"
-                                    android:id="@+id/textView11"
-                                    android:textSize="20dp"
-                                    android:textColor="#ffffff" />
-
-                                <EditText
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="textPersonName"
-                                    android:ems="10"
-                                    android:id="@+id/usrClient"
-                                    android:textColor="#ffffff" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                                <LinearLayout
-                                    android:orientation="vertical"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent">
-
-                                        <TextView
-                                            android:layout_width="102dp"
-                                            android:layout_height="match_parent"
-                                            android:text=" Password:"
-                                            android:id="@+id/textView12"
-                                            android:textColor="#ffffff"
-                                            android:textSize="20dp" />
-
-                                        <EditText
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:inputType="textPassword"
-                                            android:ems="10"
-                                            android:id="@+id/passClient"
-                                            android:textColor="#ffffff" />
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent">
-
-                                        <TextView
-                                            android:layout_width="59dp"
-                                            android:layout_height="match_parent"
-                                            android:text=" Tel:"
-                                            android:id="@+id/textView13"
-                                            android:textIsSelectable="false"
-                                            android:textSize="20dp"
-                                            android:textColor="#ffffff" />
-
-                                        <EditText
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:inputType="phone"
-                                            android:ems="10"
-                                            android:id="@+id/telClient"
-                                            android:textColor="#ffffff" />
-
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent">
-
-                                        <TextView
-                                            android:layout_width="80dp"
-                                            android:layout_height="match_parent"
-                                            android:text=" E-mail:"
-                                            android:id="@+id/textView14"
-                                            android:textSize="20dp"
-                                            android:textColor="#ffffff" />
-
-                                        <EditText
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:inputType="textEmailAddress"
-                                            android:ems="10"
-                                            android:id="@+id/mailClient"
-                                            android:textColor="#ffffff" />
-                                    </LinearLayout>
-
-                                    <LinearLayout
-                                        android:orientation="horizontal"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:weightSum="1">
-
-                                        <TextView
-                                            android:layout_width="82dp"
-                                            android:layout_height="match_parent"
-                                            android:text=" Cédula"
-                                            android:id="@+id/textView15"
-                                            android:textSize="20dp"
-                                            android:textColor="#ffffff" />
-
-                                        <EditText
-                                            android:layout_width="284dp"
-                                            android:layout_height="wrap_content"
-                                            android:inputType="number"
-                                            android:ems="10"
-                                            android:id="@+id/idClient"
-                                            android:textColor="#ffffff"
-                                            android:layout_weight="0.72" />
-
-                                    </LinearLayout>
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:orientation="horizontal"
-                                android:layout_width="163dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_weight="0.38"
-                                android:weightSum="1">
-
-                                <Button
-                                    style="?android:attr/buttonStyleSmall"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="72dp"
-                                    android:text="Registrarse"
-                                    android:id="@+id/registerClient"
-                                    android:layout_weight="0.63"
-                                    android:nestedScrollingEnabled="true" />
-                            </LinearLayout>
-
-                            <Space
-                                android:layout_width="match_parent"
-                                android:layout_height="200px" />
-
-                        </LinearLayout>
-                    </ScrollView>
-
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         android:id="@+id/scrollViewEmpleado" >
 
                         <LinearLayout
@@ -554,6 +312,248 @@
 
                             </LinearLayout>
 
+
+                        </LinearLayout>
+                    </ScrollView>
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollViewClient" >
+
+                        <LinearLayout
+                            android:id="@+id/Cliente"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:weightSum="1"
+                            android:background="#333333"
+                            android:nestedScrollingEnabled="true"
+                            android:measureWithLargestChild="false">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="110dp"
+                                    android:layout_height="38dp"
+                                    android:textAppearance="?android:attr/textAppearanceMedium"
+                                    android:text=" Nombre:"
+                                    android:id="@+id/textView8"
+                                    android:textColor="#ffffff"
+                                    android:textSize="20dp" />
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="51dp"
+                                    android:inputType="textPersonName"
+                                    android:ems="10"
+                                    android:id="@+id/nameClient"
+                                    android:textIsSelectable="true"
+                                    android:textColor="#fafafa" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="108dp"
+                                    android:layout_height="30dp"
+                                    android:text=" Apellido 1:"
+                                    android:id="@+id/textView9"
+                                    android:textColor="#ffffff"
+                                    android:textSize="20dp" />
+
+                                <EditText
+                                    android:layout_width="287dp"
+                                    android:layout_height="55dp"
+                                    android:inputType="textPersonName"
+                                    android:ems="10"
+                                    android:id="@+id/LN1Client"
+                                    android:textColor="#ffffff" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:text=" Apellido 2:"
+                                    android:id="@+id/textView10"
+                                    android:textColor="#ffffff"
+                                    android:textSize="20dp" />
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="49dp"
+                                    android:inputType="textPersonName"
+                                    android:ems="10"
+                                    android:id="@+id/LN2Client"
+                                    android:textColor="#ffffff" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="99dp"
+                                    android:layout_height="match_parent"
+                                    android:text=" Usuario:"
+                                    android:id="@+id/textView11"
+                                    android:textSize="20dp"
+                                    android:textColor="#ffffff" />
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="textPersonName"
+                                    android:ems="10"
+                                    android:id="@+id/usrClient"
+                                    android:textColor="#ffffff" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <LinearLayout
+                                    android:orientation="vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:layout_width="102dp"
+                                            android:layout_height="match_parent"
+                                            android:text=" Password:"
+                                            android:id="@+id/textView12"
+                                            android:textColor="#ffffff"
+                                            android:textSize="20dp" />
+
+                                        <EditText
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:inputType="textPassword"
+                                            android:ems="10"
+                                            android:id="@+id/passClient"
+                                            android:textColor="#ffffff" />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:layout_width="59dp"
+                                            android:layout_height="match_parent"
+                                            android:text=" Tel:"
+                                            android:id="@+id/textView13"
+                                            android:textIsSelectable="false"
+                                            android:textSize="20dp"
+                                            android:textColor="#ffffff" />
+
+                                        <EditText
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:inputType="phone"
+                                            android:ems="10"
+                                            android:id="@+id/telClient"
+                                            android:textColor="#ffffff" />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+
+                                        <TextView
+                                            android:layout_width="80dp"
+                                            android:layout_height="match_parent"
+                                            android:text=" E-mail:"
+                                            android:id="@+id/textView14"
+                                            android:textSize="20dp"
+                                            android:textColor="#ffffff" />
+
+                                        <EditText
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:inputType="textEmailAddress"
+                                            android:ems="10"
+                                            android:id="@+id/mailClient"
+                                            android:textColor="#ffffff" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="horizontal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:weightSum="1">
+
+                                        <TextView
+                                            android:layout_width="82dp"
+                                            android:layout_height="match_parent"
+                                            android:text=" Cédula"
+                                            android:id="@+id/textView15"
+                                            android:textSize="20dp"
+                                            android:textColor="#ffffff" />
+
+                                        <EditText
+                                            android:layout_width="284dp"
+                                            android:layout_height="wrap_content"
+                                            android:inputType="number"
+                                            android:ems="10"
+                                            android:id="@+id/idClient"
+                                            android:textColor="#ffffff"
+                                            android:layout_weight="0.72" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="163dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_weight="0.38"
+                                android:weightSum="1">
+
+                                <Button
+                                    style="?android:attr/buttonStyleSmall"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="72dp"
+                                    android:text="Registrarse"
+                                    android:id="@+id/registerClient"
+                                    android:layout_weight="0.63"
+                                    android:nestedScrollingEnabled="true" />
+                            </LinearLayout>
+
+                            <Space
+                                android:layout_width="match_parent"
+                                android:layout_height="200px" />
 
                         </LinearLayout>
                     </ScrollView>

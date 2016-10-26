@@ -7,6 +7,8 @@
     <string name="title_section4">Registrarse</string>
     <string name="title_section5">Mi Profile</string>
     <string name="title_section6">Proyectos</string>
+    <string name="title_section7">Settings</string>
+    <string name="title_section8">Manager</string>
 
 
     <string name="title_activity_shop">ShopActivity</string>
@@ -17,6 +19,7 @@
     <string name="title_activity_projects">ProfileActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_stage">StageActivity</string>
+    <string name="title_activity_addproject">addProjectActivity</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -43,6 +46,11 @@
     <string name="employeeParameters">9</string>
     <string name="roleClient">Cliente</string>
 
+    <string name="typeClient">0</string>
+    <string name="typeAdmin">2</string>
+    <string name="typeEmployee">1</string>
+
+
     <string name = "tipoRegisterClient">0</string>
     <string name = "tipoRegisterEmployee">1</string>
 
@@ -54,9 +62,20 @@
     <string name = "updateCustomerInfo"> /ProductRESTService.svc/UpdateCustomer </string>
     <string name = "updateEngineerInfo"> /ProductRESTService.svc/UpdateEngineer </string>
     <string name = "projectsStages"> ProductRESTService.svc/GetStagesFromProject?params= </string>
-    <string name = "allProjects"> ProductRESTService.svc/GetProjectsFrom?status= </string>
+    <string name = "allProjects"> /ProductRESTService.svc/GetProjectsFrom?status= </string>
+    <string name = "productsStage"> ProductRESTService.svc/GetProductsFromStage?id= </string>
     <string name = "projectUserID"> &amp;id= </string>
     <string name = "login"> /ProductRESTService.svc/Login </string>
+    <string name = "allProducts"> /ProductRESTService.svc/GetProducts</string>
+    <string name = "updateStageComment"> /ProductRESTService.svc/PostStageComments</string>
+    <string name = "updateStageDetail"> /ProductRESTService.svc/PostStageDetails</string>
+    <string name = "addProductStage"> /ProductRESTService.svc/AddProductToStage</string>
+    <string name = "CreateStage"> /ProductRESTService.svc/CreateStage</string>
+    <string name = "PostProject"> /ProductRESTService.svc/PostProject</string>
+    <string name = "BuyStage"> /ProductRESTService.svc/PostStageShop</string>
+    <string name = "allStagesAvailable"> /ProductRESTService.svc/GetStagesNames</string>
+
+
 
     <!-- <string name = "getEmployeeInfo"> /ProductRESTService.svc// </string> -->
 
