@@ -2,13 +2,12 @@
     <string name="app_name">Constru-Tec Movil</string>
 
     <string name="title_section1">Inicio</string>
-    <string name="title_section2">Productos</string>
-    <string name="title_section3">Ingresar</string>
-    <string name="title_section4">Registrarse</string>
-    <string name="title_section5">Mi Profile</string>
-    <string name="title_section6">Proyectos</string>
-    <string name="title_section7">Settings</string>
-    <string name="title_section8">Manager</string>
+    <string name="title_section2">Ingresar</string>
+    <string name="title_section3">Registrarse</string>
+    <string name="title_section4">Mi Profile</string>
+    <string name="title_section5">Proyectos</string>
+    <string name="title_section6">Settings</string>
+    <string name="title_section7">Manager</string>
 
 
     <string name="title_activity_shop">ShopActivity</string>
@@ -59,13 +58,14 @@
     <string name = "customerRegister"> /ProductRESTService.svc/PostCustomer </string>
     <string name = "employeeRegister"> /ProductRESTService.svc/PostEngineer </string>
     <string name = "getCustomerInfo"> /ProductRESTService.svc/GetCustomer/ </string>
+    <string name = "getEngineerInfo"> /ProductRESTService.svc/GetEngineer/ </string>
     <string name = "updateCustomerInfo"> /ProductRESTService.svc/UpdateCustomer </string>
     <string name = "updateEngineerInfo"> /ProductRESTService.svc/UpdateEngineer </string>
-    <string name = "projectsStages"> ProductRESTService.svc/GetStagesFromProject?params= </string>
+    <string name = "projectsStages"> /ProductRESTService.svc/GetStagesFromProject?params= </string>
     <string name = "allProjects"> /ProductRESTService.svc/GetProjectsFrom?status= </string>
-    <string name = "productsStage"> ProductRESTService.svc/GetProductsFromStage?id= </string>
+    <string name = "productsStage"> /ProductRESTService.svc/GetProductsFromStage?id= </string>
     <string name = "projectUserID"> &amp;id= </string>
-    <string name = "login"> /ProductRESTService.svc/Login </string>
+    <string name = "login"> /ProductRESTService.svc/VerifyLogin </string>
     <string name = "allProducts"> /ProductRESTService.svc/GetProducts</string>
     <string name = "updateStageComment"> /ProductRESTService.svc/PostStageComments</string>
     <string name = "updateStageDetail"> /ProductRESTService.svc/PostStageDetails</string>
@@ -74,6 +74,7 @@
     <string name = "PostProject"> /ProductRESTService.svc/PostProject</string>
     <string name = "BuyStage"> /ProductRESTService.svc/PostStageShop</string>
     <string name = "allStagesAvailable"> /ProductRESTService.svc/GetStagesNames</string>
+    <string name = "completeStage"> /ProductRESTService.svc/CompleteStage</string>
 
 
 

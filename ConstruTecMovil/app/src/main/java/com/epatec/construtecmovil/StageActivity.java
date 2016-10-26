@@ -64,6 +64,10 @@ public class StageActivity extends ActionBarActivity {
     String stringProductsJson;
     String stringJSONPRODUCTS;
 
+    String jsonCOMPLETEStage;
+
+    String completed;
+
 
     /********************Strings Json To Send ************************/
     String jsonTOsendDetail;
@@ -82,27 +86,40 @@ public class StageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage);
 
-        UserDataHolder user = UserDataHolder.getInstance();
-        final Button projectInfoButton = (Button) findViewById(R.id.projectInfoButton);
 
-        final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
 
-        viewSwitch.setup();
 
-        //Tab 1
-        tabSpec = viewSwitch.newTabSpec("Project");
-        tabSpec.setContent(R.id.ProjectInfo);
-        tabSpec.setIndicator("Project");
-        viewSwitch.addTab(tabSpec);
-
-        //Tab 2
-        tabSpec = viewSwitch.newTabSpec("Products");
-        tabSpec.setContent(R.id.Products);
-        tabSpec.setIndicator("Products");
-        viewSwitch.addTab(tabSpec);
 
         try
         {
+
+            UserDataHolder user = UserDataHolder.getInstance();
+            final Button projectInfoButton = (Button) findViewById(R.id.projectInfoButton);
+
+            final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
+            viewSwitch.setup();
+
+            //Tab 1
+            tabSpec = viewSwitch.newTabSpec("Project");
+            tabSpec.setContent(R.id.ProjectInfo);
+            tabSpec.setIndicator("Project");
+            viewSwitch.addTab(tabSpec);
+
+            //Tab 2
+            tabSpec = viewSwitch.newTabSpec("Products");
+            tabSpec.setContent(R.id.Products);
+            tabSpec.setIndicator("Products");
+            viewSwitch.addTab(tabSpec);
+
+            //Tab 3
+            tabSpec = viewSwitch.newTabSpec("Ver Más");
+            tabSpec.setContent(R.id.addProducts);
+            tabSpec.setIndicator("Ver Más");
+            viewSwitch.addTab(tabSpec);
+
+
+
+
 
             /**
              *  GETTING PARAMETERS from Outside
@@ -111,6 +128,11 @@ public class StageActivity extends ActionBarActivity {
             firstKeyName = myIntent.getStringExtra("childName");
             stageInfo = "["+myIntent.getStringExtra("stageInfo") +"]";
             location = myIntent.getStringExtra("location");
+            stageInfoJson = new JSONArray(stageInfo);
+
+
+            completed = stageInfoJson.getJSONObject(0).getString("completed");
+            Log.i("COMPLETEEEEED", completed);
 
             id_Stage = myIntent.getStringExtra("idStage");
 
@@ -118,147 +140,178 @@ public class StageActivity extends ActionBarActivity {
             AsyncTaskProjects connector = new AsyncTaskProjects();
             connector.execute("init");
 
+            /***********************************************************************************/
+
+            /**
+             * RESTRICTION to the user experience
+             * Permissions
+             */
+            if (user.userType== "1")
+            {
+                EditText detail = (EditText) findViewById(R.id.detailStage);
+                detail.setEnabled(true);
+                EditText commentText = (EditText) findViewById(R.id.commentText);
+                commentText.setEnabled(false);
+
+                projectInfoButton.setVisibility(View.VISIBLE);
+
+
+
+            }
+            else if (user.userType == "2")
+            {
+                EditText detail = (EditText) findViewById(R.id.detailStage);
+                detail.setEnabled(true);
+                EditText commentText = (EditText) findViewById(R.id.commentText);
+                commentText.setEnabled(true);
+                projectInfoButton.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                EditText detail = (EditText) findViewById(R.id.detailStage);
+                detail.setEnabled(false);
+                EditText commentText = (EditText) findViewById(R.id.commentText);
+                commentText.setEnabled(false);
+
+                projectInfoButton.setVisibility(View.INVISIBLE);
+
+                viewSwitch.getTabWidget().getChildAt(2).setVisibility(View.GONE);
+            }
+
+
+
+                /**
+                 * SETTING basic Info to Display
+                 */;
+
+                TextView projectName = (TextView)findViewById(R.id.projectNAME);
+                projectName.setText(stageInfoJson.getJSONObject(0).getString("stage_name"));
+
+                TextView startDate = (TextView)findViewById(R.id.startDate);
+                startDate.setText(stageInfoJson.getJSONObject(0).getString("start_date"));
+
+                TextView endDate = (TextView)findViewById(R.id.endDate);
+                endDate.setText(stageInfoJson.getJSONObject(0).getString("end_date"));
+
+                TextView completedStage = (TextView)findViewById(R.id.completedStage);
+                completedStage.setText(stageInfoJson.getJSONObject(0).getString("completed"));
+
+                TextView detailStage = (TextView)findViewById(R.id.detailStage);
+                detailStage.setText(stageInfoJson.getJSONObject(0).getString("details"));
+
+                TextView ubicacionStage = (TextView)findViewById(R.id.ubicacionStage);
+                ubicacionStage.setText(location);
+
+                TextView commentText = (TextView)findViewById(R.id.commentText);
+                commentText.setText(stageInfoJson.getJSONObject(0).getString("comments"));
+
+
+
+
+
+
+
+            projectInfoButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    try
+                    {
+                        postInfo();
+                        Toast.makeText(getApplicationContext(),"Actualizado", Toast.LENGTH_SHORT).show();
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
+
+            final Button buyStageButton = (Button) findViewById(R.id.buyStageButton);
+
+            buyStageButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    try
+                    {
+                        final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
+                        tabString = viewSwitch.getCurrentTab()+"";
+                        buyProducts();
+                        //Toast.makeText(getApplicationContext(),"Compra Realizada", Toast.LENGTH_SHORT).show();
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+
+            final Button addProductButton = (Button) findViewById(R.id.addProductButton);
+
+            addProductButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    if (completed.compareTo("false") == 0) {
+                        try {
+                            final TabHost viewSwitch = (TabHost) findViewById(R.id.selectView);
+                            tabString = viewSwitch.getCurrentTab() + "";
+                            addProduct();
+                            Toast.makeText(getApplicationContext(), "Actualizado", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Etapa Completada, no se puede añadir producto", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         }
         catch (Exception e)
         {
-            Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-        /**
-         * RESTRICTION to the user experience
-         * Permissions
-         */
-        if (user.userType== "1")
-        {
-            EditText detail = (EditText) findViewById(R.id.detailStage);
-            detail.setEnabled(true);
-            EditText commentText = (EditText) findViewById(R.id.commentText);
-            commentText.setEnabled(false);
-
-            projectInfoButton.setVisibility(View.VISIBLE);
-
-            //Tab 3
-            tabSpec = viewSwitch.newTabSpec("Ver Más");
-            tabSpec.setContent(R.id.addProducts);
-            tabSpec.setIndicator("Ver Más");
-            viewSwitch.addTab(tabSpec);
-        }
-        else if (user.userType == "2")
-        {
-            EditText detail = (EditText) findViewById(R.id.detailStage);
-            detail.setEnabled(true);
-            EditText commentText = (EditText) findViewById(R.id.commentText);
-            commentText.setEnabled(true);
-            projectInfoButton.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            EditText detail = (EditText) findViewById(R.id.detailStage);
-            detail.setEnabled(false);
-            EditText commentText = (EditText) findViewById(R.id.commentText);
-            commentText.setEnabled(false);
-
-            projectInfoButton.setVisibility(View.INVISIBLE);
+            //Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
 
 
+    }
+
+    public void CompleteStage()
+    {
+        JSONObject jsonObject = new JSONObject();
         try {
-            /**
-             * SETTING basic Info to Display
-             */
-            stageInfoJson = new JSONArray(stageInfo);
 
-            TextView projectName = (TextView)findViewById(R.id.projectNAME);
-            projectName.setText( stageInfoJson.getJSONObject(0).getString("stage_name"));
+            jsonObject.put("ID_Project",id_Stage);
 
-            TextView startDate = (TextView)findViewById(R.id.startDate);
-            startDate.setText(stageInfoJson.getJSONObject(0).getString("start_date"));
+            jsonCOMPLETEStage = jsonObject.toString();
 
-            TextView endDate = (TextView)findViewById(R.id.endDate);
-            endDate.setText(stageInfoJson.getJSONObject(0).getString("end_date"));
-
-            TextView completedStage = (TextView)findViewById(R.id.completedStage);
-            completedStage.setText(stageInfoJson.getJSONObject(0).getString("completed"));
-
-            TextView detailStage = (TextView)findViewById(R.id.detailStage);
-            detailStage.setText(stageInfoJson.getJSONObject(0).getString("details"));
-
-            TextView ubicacionStage = (TextView)findViewById(R.id.ubicacionStage);
-            ubicacionStage.setText(location);
-
-            TextView commentText = (TextView)findViewById(R.id.commentText);
-            commentText.setText(stageInfoJson.getJSONObject(0).getString("comments"));
+            AsyncTaskCOMPLETESTage completed = new AsyncTaskCOMPLETESTage();
+            completed.execute("init");
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-        projectInfoButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try
-                {
-                    postInfo();
-                    Toast.makeText(getApplicationContext(),"Actualizado", Toast.LENGTH_SHORT).show();
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-        final Button buyStageButton = (Button) findViewById(R.id.buyStageButton);
-
-        buyStageButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try
-                {
-                    final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
-                    tabString = viewSwitch.getCurrentTab()+"";
-                    buyProducts();
-                    Toast.makeText(getApplicationContext(),"Compra Realizada", Toast.LENGTH_SHORT).show();
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-
-        final Button addProductButton = (Button) findViewById(R.id.addProductButton);
-
-        addProductButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try
-                {
-                    final TabHost viewSwitch = (TabHost)findViewById(R.id.selectView);
-                    tabString = viewSwitch.getCurrentTab()+"";
-                    addProduct();
-                    Toast.makeText(getApplicationContext(),"Actualizado", Toast.LENGTH_SHORT).show();
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-
-
     }
+
 
     // TODO
     public void buyProducts()
@@ -266,21 +319,13 @@ public class StageActivity extends ActionBarActivity {
 
         try
         {
-
-
             JSONObject jsonObject = new JSONObject();
 
-            Log.i("EntroENTROOOO","stage stage");
-            Log.i("EntroENTROOOO", stageInfoJson.getJSONObject(0).get("id_project_stage").toString());
             String id_stage = stageInfoJson.getJSONObject(0).get("id_project_stage").toString();
-
-            Log.i("stagestage","stage stage");
 
             jsonObject.put("id_stage",id_stage);
 
             jsonTOsendBuyStage = jsonObject.toString();
-
-            Log.i("BUYBUYBUY",jsonTOsendBuyStage);
 
             AsyncTaskADDProduct asyncAddProduct = new AsyncTaskADDProduct();
             asyncAddProduct.execute("init");
@@ -297,7 +342,6 @@ public class StageActivity extends ActionBarActivity {
     {
         try
         {
-
             JSONArray jsonString = new JSONArray(stringProductsJson);
             JSONObject jsonObject = new JSONObject();
 
@@ -307,26 +351,16 @@ public class StageActivity extends ActionBarActivity {
 
             for (int i =0;i<allProductsJSON.length();i++)
             {
-
-
-                Log.i("SPLITSPLIT", item[2]);
-                Log.i("ProductActual", allProductsJSON.getJSONObject(i).get("id_product").toString());
                 if ( allProductsJSON.getJSONObject(i).get("id_product").toString().compareTo(item[2]) ==0 )
                 {
-                    Log.i("ENTROIF", item[2]);
-
                     jsonObject.put("id_stage", stageInfoJson.getJSONObject(0).getString("id_project_stage"));
                     jsonObject.put("id_product", item[2] );
                     jsonObject.put("quantity", quantity.getText());
                     jsonObject.put("price",allProductsJSON.getJSONObject(i).getString("price") );
                     break;
-
-
                 }
             }
             jsonTOsendAddProduct = jsonObject.toString();
-
-            Log.i("ADDJSONPRODUCT",jsonTOsendAddProduct);
 
             AsyncTaskADDProduct asyncAddProduct = new AsyncTaskADDProduct();
             asyncAddProduct.execute("init");
@@ -337,10 +371,6 @@ public class StageActivity extends ActionBarActivity {
         {
             Toast.makeText(getApplicationContext(),e.toString(), Toast.LENGTH_SHORT).show();
         }
-
-
-
-
     }
 
     public void initData()
@@ -354,7 +384,6 @@ public class StageActivity extends ActionBarActivity {
 
 
             if (dropDownRole != null) {
-                Log.i("PREMECAGOOOO", "lilili");
                 dropdown.setAdapter(dropDownRole);
             }
 
@@ -371,17 +400,17 @@ public class StageActivity extends ActionBarActivity {
 
     public void prepareData()
     {
-        Log.i("ENTROPUTA.", "ENTROPUTA");
         try {
             JSONArray productsJson = new JSONArray(stringJSONPRODUCTS);
-            Log.i("VWAVEAVEAEVA2222", "asdfasdfasdfa");
-            Log.i("VWAVEAVEAEVA", productsJson.toString());
 
 
 
             ArrayList<String> planetList = new ArrayList<String>();
 
             listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
+
+
+            int cost = 0;
 
 
 
@@ -401,6 +430,12 @@ public class StageActivity extends ActionBarActivity {
                     listAdapter.add(productInfo);
 
 
+                    Log.i ("COST COST", "ANTES");
+                    cost = cost + Integer.parseInt(price) * Integer.parseInt(quantity);
+
+                    Log.i ("COST COST", cost+"");
+
+
 
                 } catch (JSONException e) {
                     new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
@@ -414,6 +449,9 @@ public class StageActivity extends ActionBarActivity {
                 */
 
             }
+
+            TextView totalCost = (TextView)findViewById(R.id.totalCost);
+            totalCost.setText(cost+"");
 
             ListView listView = (ListView)findViewById(R.id.productsList);
             listView.setTextFilterEnabled(true);
@@ -532,14 +570,19 @@ public class StageActivity extends ActionBarActivity {
 
                 // make GET request to the given URL
 
-                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        +"/"+ getString(R.string.productsStage) + stageID  );
-                */
-                //TODO
-                /*****************CAMBIAR ESTO*************************************/
-                String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
-                        + getString(R.string.productsStage) + id_Stage ;
-                /*****************************************************************/
+                String serverRequest;
+                if(connClass.online)
+                {
+                    serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.productsStage) + id_Stage ;
+                }
+                else
+                {
+                    serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        + getString(R.string.productsStage) + id_Stage  );
+
+                    Log.i("LINKLINKLINK", serverRequest);
+                }
 
 
                 HttpResponse httpResponse = httpclient.execute(new HttpGet(serverRequest ));
@@ -588,14 +631,21 @@ public class StageActivity extends ActionBarActivity {
 
                 // make GET request to the given URL
 
-                //String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                //        +"/"+ getString(R.string.allProducts) );
 
-                //TODO PEDIR EL LINK quE DEBE DE SER
-                //****************CAMBIAR ESTO************************************
-                String serverRequestALLRPRODUCTS = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
-                        + getString(R.string.allProducts);
-                //*****************************************************************
+                String serverRequestALLRPRODUCTS;
+                if(connClass.online)
+                {
+
+                    serverRequestALLRPRODUCTS = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                            + getString(R.string.allProducts);
+
+                }
+                else
+                {
+                    serverRequestALLRPRODUCTS = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.allProducts) );
+                }
+
 
 
                 HttpResponse httpResponseALLPRODUCTS = httpclientALLPRODUCTS.execute(new HttpGet(serverRequestALLRPRODUCTS ));
@@ -621,20 +671,11 @@ public class StageActivity extends ActionBarActivity {
                         {
                             stringProductsJson = resultPRODUCTS;
 
-
-
-                            // Log.i("PROODUCTOOO", resultPRODUCTS);
                             String nameProduct =  allProductsJSON.getJSONObject(j).getString("name");
                             String priceProduct = allProductsJSON.getJSONObject(j).getString("price");
                             String idProduct = allProductsJSON.getJSONObject(j).getString("id_product") ;
 
-
-                            // Log.i("PROODUCTOOO", "ANTESITEMS");
-                            //Log.i("NOMBREEEE", idProduct);
-
                             String itemTOAdd = nameProduct + "|Precio: ₡" + priceProduct + "|ID:" + idProduct ;
-
-
 
                             dropdownItems.add(itemTOAdd);
                         }
@@ -651,11 +692,6 @@ public class StageActivity extends ActionBarActivity {
                 {
                     resultPRODUCTS = "Did not work!";
                 }
-
-
-
-
-
             }
             catch (Exception e)
             {
@@ -679,8 +715,6 @@ public class StageActivity extends ActionBarActivity {
             try {
                 //stageInfo = new JSONArray(result);
                 initData();
-
-                Log.i("printprint ", "PRINTNNNNNNNNNNNNNNNNNNNN PRINT");
                 prepareData();
 
             }
@@ -755,12 +789,20 @@ public class StageActivity extends ActionBarActivity {
                 /**
                  * TODO CAMBIAR LINK
                  */
-                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.updateProjectComment));
-                           */
+                if(connClass.online)
+                {
+                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.updateStageComment) );
+                }
+                else
+                {
+                    url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.updateStageComment));
 
-                url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                        + getString(R.string.updateStageComment) );
+                }
+
+
+
 
                 //Log.i("LINKLINK", url.toString());
 
@@ -833,11 +875,12 @@ public class StageActivity extends ActionBarActivity {
         protected void onProgressUpdate(String... progress) {
 
             String response = progress[0].split("\"")[1];
-            if(response.compareTo("Ok") == 0 ) {
+            Log.i("RESPONSEEEE", response);
+            if(response.compareTo("ok") == 0 || response.compareTo("Ok") == 0 ) {
 
                 new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("Completado")
-                        .setContentText("Actualizado")
+                        .setContentText("Comentario Actualizado")
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
@@ -907,16 +950,18 @@ public class StageActivity extends ActionBarActivity {
                 URL url;
 
                 /* *************** ****************** */
+                if(connClass.online)
+                {
+                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.updateStageDetail) );
+                }
+                else
+                {
+                    url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.updateStageDetail));
+                }
 
-                /**
-                 * TODO CAMBIAR LINK
-                 */
-                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.updateProjectDetail));
-                           */
 
-                url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                        + getString(R.string.updateStageDetail) );
 
                 //Log.i("LINKLINK22", url.toString());
 
@@ -989,11 +1034,11 @@ public class StageActivity extends ActionBarActivity {
         protected void onProgressUpdate(String... progress) {
 
             String response = progress[0].split("\"")[1];
-            if(response.compareTo("Ok") == 0 ) {
+            if(response.compareTo("ok") == 0 || response.compareTo("Ok") == 0 ) {
 
                 new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("Completado")
-                        .setContentText("Actualizado")
+                        .setContentText("Detalles Actualizados")
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
@@ -1067,7 +1112,6 @@ public class StageActivity extends ActionBarActivity {
                 ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
                 URL url;
 
-                Log.i("TABTABTAB", tabString);
                 if(tabString.compareTo("1") ==0)
                 {
 
@@ -1076,14 +1120,19 @@ public class StageActivity extends ActionBarActivity {
                     /**
                      * TODO CAMBIAR LINK
                      */
-                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.BuyStage));
-                           */
+                    if(connClass.online)
+                    {
 
-                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                            + getString(R.string.BuyStage) );
+                        url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.BuyStage) );
 
-                    Log.i("LINKADDPRODUCT", url.toString());
+
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.BuyStage));
+                    }
 
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000 /*milliseconds*/);
@@ -1093,7 +1142,6 @@ public class StageActivity extends ActionBarActivity {
                     conn.setDoOutput(true);
                     conn.setFixedLengthStreamingMode(jsonTOsendBuyStage.getBytes().length);
 
-                    Log.i("JSONN", jsonTOsendBuyStage);
 
                     //make some HTTP header nicety
                     conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
@@ -1105,7 +1153,6 @@ public class StageActivity extends ActionBarActivity {
                     //setup send
                     os = new BufferedOutputStream(conn.getOutputStream());
                     os.write(jsonTOsendBuyStage.getBytes());
-                    Log.i("WRITEEEE", jsonTOsendBuyStage);
                     //clean up
                     os.flush();
 
@@ -1118,14 +1165,20 @@ public class StageActivity extends ActionBarActivity {
                     /**
                      * TODO CAMBIAR LINK
                      */
-                /*url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.addProductStage));
-                           */
+                    if(connClass.online)
+                    {
+                        url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.addProductStage) );
 
-                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                            + getString(R.string.addProductStage) );
 
-                    Log.i("LINKADDPRODUCT", url.toString());
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.addProductStage));
+                    }
+
+
 
                     jsonTOsendAddProduct = "["+jsonTOsendAddProduct+ "]";
 
@@ -1137,7 +1190,6 @@ public class StageActivity extends ActionBarActivity {
                     conn.setDoOutput(true);
                     conn.setFixedLengthStreamingMode(jsonTOsendAddProduct.getBytes().length);
 
-                    Log.i("JSONN", jsonTOsendAddProduct);
 
                     //make some HTTP header nicety
                     conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
@@ -1149,7 +1201,6 @@ public class StageActivity extends ActionBarActivity {
                     //setup send
                     os = new BufferedOutputStream(conn.getOutputStream());
                     os.write(jsonTOsendAddProduct.getBytes());
-                    Log.i("WRITEEEEPRODUC", jsonTOsendAddProduct);
                     //clean up
                     os.flush();
                 }
@@ -1170,11 +1221,185 @@ public class StageActivity extends ActionBarActivity {
                 }
                 in.close();
 
-
                 publishProgress(response.toString());
 
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+            finally {
+                //clean up
+                try {
+                    os.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                conn.disconnect();
+                }
+
+
+            return "";
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+
+            Log.i("RESPONSEEEE", progress[0]);
+
+            String response = progress[0].split("\"")[1];
+            if(response.compareTo("ok") == 0 || response.compareTo("Ok") == 0 ) {
+
+                if(tabString.compareTo("1") ==0)
+                {
+                    CompleteStage();
+                }
+
+                new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("Completado")
+                        .setContentText("Actualizado")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                //StageActivity.this.finish();
+                            }
+                        }).show();
+
+
+
+            }
+            else {
+                new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops")
+                        .setContentText("Ah ocurrido un error")
+                        .show();
+            }
+
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private class AsyncTaskCOMPLETESTage extends AsyncTask<String, String, String> {
+
+
+        // convert inputstream to String
+        private String convertInputStreamToString(InputStream inputStream) throws IOException {
+            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+            String line = "";
+            String result = "";
+            while((line = bufferedReader.readLine()) != null)
+                result += line;
+
+            inputStream.close();
+            return result;
+
+        }
+
+        public String convertStandardJSONString(String data_json) {
+            data_json = data_json.replaceAll("\\\\r\\\\n", "");
+            data_json = data_json.replace("\\", "");
+            return data_json;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            /*******************/
+            OutputStream os = null;
+            InputStream is = null;
+            HttpURLConnection conn = null;
+
+            try {
+                //constants
+
+                ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
+                URL url;
+
+                /* *************** ****************** */
+                if(connClass.online)
+                {
+                    url = new URL( "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.completeStage) );
+
+
+                }
+                else
+                {
+                      url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        + getString(R.string.completeStage));
+                }
+
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /*milliseconds*/);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(jsonCOMPLETEStage.getBytes().length);
+
+
+                //make some HTTP header nicety
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+                //open
+                conn.connect();
+
+                //setup send
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(jsonCOMPLETEStage.getBytes());
+                //clean up
+                os.flush();
+
+
+                //do somehting with response
+                is = conn.getInputStream();
+
+                StringBuffer response;
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                publishProgress(response.toString());
 
 
             } catch (IOException e) {
@@ -1204,20 +1429,26 @@ public class StageActivity extends ActionBarActivity {
             Log.i("RESPONSEEEE", progress[0]);
 
             String response = progress[0].split("\"")[1];
-            if(response.compareTo("ok") == 0 ) {
+            if(response.compareTo("ok") == 0 || response.compareTo("Ok") == 0 ) {
+
+                completed = "true";
 
                 new SweetAlertDialog(StageActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("Completado")
-                        .setContentText("Actualizado")
+                        .setContentText("Etapa completada")
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
-                                //StageActivity.this.finish();
+                                StageActivity.this.finish();
                             }
-                        })
-                        .show();
+                        }).show();
+
+
             }
+
+
+
             else {
                 new SweetAlertDialog(StageActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops")
@@ -1231,9 +1462,6 @@ public class StageActivity extends ActionBarActivity {
             super.onPostExecute(result);
         }
     }
-
-
-
 
 
 

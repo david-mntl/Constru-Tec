@@ -144,8 +144,10 @@ public class ProjectsActivity extends Activity {
                         childPosition));
 
 
-                stageIntent.putExtra("stageInfo", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).json);
-                stageIntent.putExtra("idStage", findStage(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).ID_Stage);
+                stageIntent.putExtra("stageInfo", findStage(findProject(listDataHeader.get(groupPosition)), listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).json);
+
+                        //listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).json);
+                stageIntent.putExtra("idStage", findStage(findProject(listDataHeader.get(groupPosition)),listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition)).ID_Stage);
 
                 stageIntent.putExtra("location", findProject(listDataHeader.get(groupPosition)).location);
 
@@ -156,11 +158,11 @@ public class ProjectsActivity extends Activity {
 
     };
 
-    public Stages findStage(String pName)
+    public Stages findStage(Projects pProject , String pName)
     {
-        for(int i = 0; i < allStages.size();i++)
+        for(int i = 0; i < pProject.getStages_Array().size();i++)
         {
-            Stages temp = allStages.get(i);
+            Stages temp =  pProject.getStages_Array().get(i);
             if ( temp.Stage_Name.compareTo(pName)==0)
             {
                 return temp;
@@ -177,6 +179,7 @@ public class ProjectsActivity extends Activity {
             Projects temp = allProjects.get(i);
             if ( temp.project_Name.compareTo(pName)==0)
             {
+                Log.i("FINDPROJ",temp.project_ID);
                 return temp;
             }
         }
@@ -211,42 +214,6 @@ public class ProjectsActivity extends Activity {
 
             listDataChild.put(listDataHeader.get(i), stagesList); // Header, Child data
         }
-        /*
-        // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
-
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-        */
-
-        /*List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
-        */
     }
 
 
@@ -309,15 +276,26 @@ public class ProjectsActivity extends Activity {
                 HttpClient httpclient = new DefaultHttpClient();
 
                 // make GET request to the given URL
+                String serverRequest;
+                Log.i("ENTRO***********","server request");
+                if (connClass.online)
+                {
+                    /*****************CAMBIAR ESTO*************************************/
+                    serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                            + getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID;
+                    /*****************************************************************/
 
-                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        +"/"+ getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID   );
-                */
-                //TODO
-                /*****************CAMBIAR ESTO*************************************/
-                String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
-                        + getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID;
-                /*****************************************************************/
+                }
+
+                else
+                {
+                    //TODO
+                    serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        + getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID   );
+
+                    Log.i("LINKKKK***********",serverRequest);
+                }
+
 
 
 
@@ -335,8 +313,9 @@ public class ProjectsActivity extends Activity {
                     result = result.toString().substring(1, result.toString().length() - 1);
 
                     result = convertStandardJSONString(result);
-                    projects = new JSONArray(result);
                     Log.i("PROJECT", result);
+                    projects = new JSONArray(result);
+
 
 
                     for(int i =0; i < projects.length(); i++)
@@ -351,15 +330,23 @@ public class ProjectsActivity extends Activity {
                         {
                             HttpClient httpclientStages = new DefaultHttpClient();
 
-                            /*String urlStage = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection + "/"
-                                    + getString(R.string.projectsStages) + newProject.getProjectID();
-                            */
+                            String urlStage;
 
+
+
+                            if(connClass.online)
+                            {
+                                urlStage ="http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                        + getString(R.string.projectsStages) + newProject.getProjectID();
+                            }
                             //TODO
-                            /*****************CAMBIAR ESTO*************************************/
-                            String urlStage ="http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                            else
+                            {
+                                urlStage = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
                                     + getString(R.string.projectsStages) + newProject.getProjectID();
-                            /******************************************************************/
+
+                                Log.i("LINKKKKSTAGE***********",urlStage);
+                            }
 
 
 
@@ -371,15 +358,10 @@ public class ProjectsActivity extends Activity {
 
                             if (inputStreamStage != null)
                             {
-
                                 stageResult = convertInputStreamToString(inputStreamStage);
                                 stageResult = stageResult.toString().substring(1, stageResult.toString().length() - 1);
                                 stageResult = convertStandardJSONString(stageResult);
                                 stageInfo = new JSONArray(stageResult);
-
-
-
-
 
                                 for (int j =0; j< stageInfo.length(); j++)
                                 {
@@ -389,7 +371,11 @@ public class ProjectsActivity extends Activity {
                                     newStage.json = stageInfo.getJSONObject(j).toString();
                                     newStage.Stage_Name = stageInfo.getJSONObject(j).getString("stage_name");
                                     newStage.ID_Stage = stageInfo.getJSONObject(j).getString("id_project_stage");
+                                    Log.i("ID STAGEEEE",newStage.ID_Stage);
                                     newStage.ID_Project = stageInfo.getJSONObject(j).getString("id_project");
+
+                                    Log.i("ID PROOOOOOOJEEEECT",newStage.ID_Project);
+
                                     newStage.comments = stageInfo.getJSONObject(j).getString("comments");
                                     newStage.details = stageInfo.getJSONObject(j).getString("details");
                                     newStage.completed = stageInfo.getJSONObject(j).getString("completed");
@@ -398,7 +384,7 @@ public class ProjectsActivity extends Activity {
 
 
                                     newProject.insertStage(stageInfo.getJSONObject(j).getString("stage_name"));
-
+                                    newProject.addStagesToArray(newStage);
 
 
                                     allStages.add(newStage);
@@ -408,7 +394,7 @@ public class ProjectsActivity extends Activity {
                         }
 
                         catch (Exception e) {
-                            publishProgress(e.toString());
+                            e.printStackTrace();
                         }
                         allProjects.add(newProject);
                     }
@@ -418,7 +404,7 @@ public class ProjectsActivity extends Activity {
                     result = "Did not work!";
 
             } catch (Exception e) {
-                publishProgress(e.toString());
+                e.printStackTrace();
             }
 
             publishProgress(result);

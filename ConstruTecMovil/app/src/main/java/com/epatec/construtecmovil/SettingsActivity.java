@@ -19,6 +19,7 @@ public class SettingsActivity extends ActionBarActivity {
 
         final EditText settingsIP = (EditText)findViewById(R.id.settingsIP);
         final EditText settingsPort = (EditText)findViewById(R.id.settingsPort);
+        final EditText boolOnline = (EditText)findViewById(R.id.boolOnline);
 
 
         final Button settingsButton = (Button) findViewById(R.id.settingsButton);
@@ -27,6 +28,13 @@ public class SettingsActivity extends ActionBarActivity {
                 ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
                 connClass.ipConnection = settingsIP.getText().toString();
                 connClass.portConnection = settingsPort.getText().toString();
+                if (boolOnline.getText().toString().compareTo("true")==0)
+                {
+                    connClass.online = true;
+                }
+                else
+                    connClass.online = false;
+
              }
         });
 

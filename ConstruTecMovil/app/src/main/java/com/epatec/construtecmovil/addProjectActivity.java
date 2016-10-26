@@ -82,11 +82,11 @@ public class addProjectActivity extends ActionBarActivity {
         tabProjects.setIndicator("Añadir Etapa");
         viewSwitch.addTab(tabProjects);
 
-        //Tab 2
+        /*//Tab 2
         tabProjects = viewSwitch.newTabSpec("Añadir Etapa al Proyecto");
         tabProjects.setContent(R.id.linearLayout3);
         tabProjects.setIndicator("Añadir Etapa al Proyecto");
-        viewSwitch.addTab(tabProjects);
+        viewSwitch.addTab(tabProjects);*/
 
         EditText ID = (EditText)findViewById(R.id.newIdProject);
         ID.setEnabled(false);
@@ -293,14 +293,19 @@ public class addProjectActivity extends ActionBarActivity {
 
                 // make GET request to the given URL
 
-                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        + getString(R.string.allProjects)   );
-                */
-                //TODO
-                /*****************CAMBIAR ESTO*************************************/
-                String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                        + getString(R.string.allProjects)+ user.userType + getString(R.string.projectUserID) + user.userID; ;
-                /*****************************************************************/
+                String serverRequest;
+
+                if(connClass.online)
+                {
+                     serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.allProjects)+ user.userType + getString(R.string.projectUserID) + user.userID;
+                }
+                else
+                {
+                     serverRequest = getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                        + getString(R.string.allProjects) + user.userType + getString(R.string.projectUserID) + user.userID;
+                }
+
 
                 Log.i("******url*******", serverRequest);
 
@@ -360,14 +365,19 @@ public class addProjectActivity extends ActionBarActivity {
 
                 // make GET request to the given URL
 
-                /*String serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        + getString(R.string.allStagesAvailable)   );
-                */
-                //TODO
-                /*****************CAMBIAR ESTO*************************************/
-                String serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                        + getString(R.string.allStagesAvailable) ;
-                /*****************************************************************/
+                String serverRequest;
+
+                if(connClass.online)
+                {
+                    serverRequest = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                            + getString(R.string.allStagesAvailable) ;
+                }
+                else
+                {
+                    serverRequest = (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                            + getString(R.string.allStagesAvailable)   );
+                }
+
 
                 Log.i("******url*******", serverRequest);
 
@@ -399,7 +409,7 @@ public class addProjectActivity extends ActionBarActivity {
                     result = "Did not work!";
 
             } catch (Exception e) {
-                publishProgress(e.toString());
+               e.printStackTrace();
             }
 
 
@@ -462,21 +472,34 @@ public class addProjectActivity extends ActionBarActivity {
 
                 if ( tabIndicator.compareTo( 0+"" ) ==0) {
 
-                    /**url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.PostProject));*/
 
-                    url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                            + getString(R.string.PostProject));
+                    if(connClass.online)
+                    {
+                        url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.PostProject));
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                         + getString(R.string.PostProject));
+                    }
+
 
                     Log.i("******CUSTOMER*******:", toAsyncJSON.toString());
                 }
                 else
                 {
-                    /**url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.CreateStage));*/
 
-                    url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
-                            + getString(R.string.CreateStage));
+                    if(connClass.online)
+                    {
+                        url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.CreateStage));
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                         + getString(R.string.CreateStage));
+                    }
 
                     Log.i("*******LINK*******:", url.toString());
                     Log.i("*******EMPLOYEE*******:", toAsyncJSON.toString());

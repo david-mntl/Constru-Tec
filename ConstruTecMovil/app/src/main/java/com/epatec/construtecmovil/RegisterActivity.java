@@ -284,17 +284,36 @@ public class RegisterActivity extends ActionBarActivity  {
 
                 if ( tabIndicator.compareTo(  getString(R.string.tipoRegisterClient)) ==0) {
 
-                     url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.customerRegister));
+                    if(connClass.online)
+                    {
+                        url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.customerRegister));
 
-                    Log.i("******CUSTOMER*******:", jsonTOsend.toString());
+
+                    }
+                    else
+                    {
+
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.customerRegister));
+
+                    }
+
+
                 }
                 else
                 {
-                     url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.employeeRegister));
+                    if(connClass.online)
+                    {
+                        url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.employeeRegister));
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.employeeRegister));
+                    }
 
-                    Log.i("*******EMPLOYEE*******:", jsonTOsend.toString());
 
                 }
                 conn = (HttpURLConnection) url.openConnection();

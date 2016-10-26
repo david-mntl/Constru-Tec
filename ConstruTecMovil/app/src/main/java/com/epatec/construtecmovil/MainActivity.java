@@ -57,6 +57,8 @@ public class MainActivity extends ActionBarActivity
 
                                     x.user = "";
                                     x.userROLE = "";
+                                    x.userID = "";
+                                    x.userType="";
                                     usertxt.setText(x.user);
                                     sDialog.dismissWithAnimation();
                                 }
@@ -98,26 +100,22 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.title_section1);
 
                 break;
+
             case 2:
                 mTitle = getString(R.string.title_section2);
-                Intent shopIntent = new Intent(MainActivity.this, ShopActivity.class);
-                startActivity(shopIntent);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
                 Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(loginIntent);
                 break;
-            case 4:
-                mTitle = getString(R.string.title_section4);
-                Intent browserIntent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivity(browserIntent);
+            case 3:
+                mTitle = getString(R.string.title_section3);
+                Intent register = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivity(register);
                 break;
 
-            case 5:
+            case 4:
                 if(userInfo.user != "")
                 {
-                    mTitle = getString(R.string.title_section5);
+                    mTitle = getString(R.string.title_section4);
                     Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
                     startActivity(profileIntent);
                     break;
@@ -129,22 +127,23 @@ public class MainActivity extends ActionBarActivity
                             .setContentText("Porfavor debe registrarse")
                             .show();
                 };
+                break;
 
-            case 6:
-                mTitle = getString(R.string.title_section6);
+            case 5:
+                mTitle = getString(R.string.title_section5);
                 Intent projectIntent = new Intent(MainActivity.this, ProjectsActivity.class);
                 startActivity(projectIntent);
                 break;
 
-            case 7:
-                mTitle = getString(R.string.title_section7);
+            case 6:
+                mTitle = getString(R.string.title_section6);
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 break;
-            case 8:
+            case 7:
                 if (userInfo.userType == 1+"")
                 {
-                    mTitle = getString(R.string.title_section8);
+                    mTitle = getString(R.string.title_section7);
                     Intent managerIntent = new Intent(MainActivity.this, addProjectActivity.class);
                     startActivity(managerIntent);
                     break;

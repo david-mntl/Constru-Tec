@@ -4,8 +4,10 @@ public class ConnectionDataHolder {
 
     private static ConnectionDataHolder instance = null;
 
-    public String ipConnection = "192.168.0.15";
-    public String portConnection = "17476";
+    public String ipConnection = "192.168.43.115";
+    public String portConnection = "7676";
+    public boolean online = false;
+
 
     public static ConnectionDataHolder getInstance() {
         if(instance == null) {

@@ -12,10 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -221,33 +223,78 @@ public class ProfileActivity extends ActionBarActivity {
                 // create HttpClient
                 HttpClient httpclient = new DefaultHttpClient();
 
-                // make GET request to the given URL
-                HttpResponse httpResponse = httpclient.execute(new HttpGet
-                        (getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                                + getString(R.string.getCustomerInfo) + user.user ));
+                HttpResponse httpResponse;
+                if(connClass.online)
+                {
+                    if(user.userType.compareTo("0")==0)
+                    {
+                        String link = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.getCustomerInfo) + user.user;
+                        // make GET request to the given URL
+                        httpResponse = httpclient.execute(new HttpGet(link));
+                    }
+                    else
+                    {
+                        String link = "http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com"
+                                + getString(R.string.getEngineerInfo) + user.user;
+                        // make GET request to the given URL
+                        httpResponse = httpclient.execute(new HttpGet(link));
+                    }
 
-                Log.i("LINKUSER****",getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                        + getString(R.string.getCustomerInfo) + user.user );
+                }
+                else
+                {
+                    if(user.userType.compareTo("0")==0)
+                    {
+                        String link =  getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.getCustomerInfo) + user.user;
+
+                        // make GET request to the given URL
+                        httpResponse = httpclient.execute(new HttpGet(link));
+                    }
+                    else
+                    {
+                        String link =getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.getEngineerInfo) + user.user;
+
+
+                        // make GET request to the given URL
+                        httpResponse = httpclient.execute(new HttpGet(link));
+                    }
+
+                    // make GET request to the given URL
+                }
+
+                int status = httpResponse.getStatusLine().getStatusCode();
 
                 // receive response as inputStream
-                inputStream = httpResponse.getEntity().getContent();
+                //inputStream = httpResponse.getEntity().getContent();
+
+                HttpEntity entity = httpResponse.getEntity();
+                String data = EntityUtils.toString(entity);
+
 
                 // convert inputstream to string
-                if(inputStream != null)
-                    result = convertInputStreamToString(inputStream);
+                if(status == 200) {
+                    //result = convertInputStreamToString(inputStream);
+                    publishProgress(data);
+
+                }
                 else
                     result = "Did not work!";
 
             } catch (Exception e) {
-                publishProgress(e.toString());
+                e.printStackTrace();
             }
 
-            publishProgress(result);
+
 
             return "";
         }
         @Override
         protected void onProgressUpdate(String... progress) {
+
+            Log.i("Progress", progress[0]);
 
             TextView txt = (TextView)findViewById(R.id.textView3);
             UserDataHolder user = UserDataHolder.getInstance();
@@ -255,7 +302,7 @@ public class ProfileActivity extends ActionBarActivity {
             String result = progress[0].toString().substring(1, progress[0].toString().length() - 1);
             result = convertStandardJSONString(result);
 
-
+            Log.i("RESULT RESULT", result);
 
 
             try {
@@ -269,7 +316,7 @@ public class ProfileActivity extends ActionBarActivity {
                 userTel  = userInfo.getJSONObject(0).getString("phone");
                 userMail  = userInfo.getJSONObject(0).getString("email");
 
-                if (user.userROLE.compareTo(  getString(R.string.roleClient)) ==0)
+                if (user.userType.compareTo(  "0") ==0)
                 {
                     userEngCode = "";
                     userRole = getString(R.string.roleClient);
@@ -355,12 +402,22 @@ public class ProfileActivity extends ActionBarActivity {
 
                 /* *************** REGISTER CUSTOMER LINK CONNECTION ****************** */
 
-                if (user.userROLE.compareTo(  getString(R.string.roleClient)) ==0) {
+                if (user.userType.compareTo("0") ==0) {
 
-                    url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
-                            + getString(R.string.updateCustomerInfo));
+                    if (connClass.online)
+                    {
+                        url = new URL("http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/"
+                                + getString(R.string.updateCustomerInfo));
+                    }
+                    else
+                    {
+                        url = new URL(getString(R.string.domain) + connClass.ipConnection + ":" + connClass.portConnection
+                                + getString(R.string.updateCustomerInfo));
 
-                    Log.i("******CUSTOMER*******:", jsonTOsend.toString());
+                        Log.i("******CUSTOMER*******:", jsonTOsend.toString());
+                    }
+
+
                 }
                 else
                 {

@@ -16,20 +16,38 @@ public class Projects {
     public String details = "";
     public String completed = "";
 
-    ArrayList<String> stages_Array;
+    ArrayList<String> stagesNames_Array;
+
+    ArrayList<Stages> stages_Array;
+
+
 
     public Projects()
     {
-        stages_Array = new ArrayList<>();
+        stagesNames_Array = new ArrayList<>();
+        stages_Array = new ArrayList<Stages>();
+    }
+
+    public void addStagesToArray(Stages pStage)
+    {
+        stages_Array.add(pStage);
+    }
+
+    public ArrayList<Stages> getStages_Array() {
+        return stages_Array;
+    }
+
+    public void setStages_Array(ArrayList<Stages> stages_Array) {
+        this.stages_Array = stages_Array;
     }
 
     public void insertStage(String pStage)
     {
-        stages_Array.add(pStage);
+        stagesNames_Array.add(pStage);
     }
     public ArrayList<String> getStages()
     {
-        return stages_Array;
+        return stagesNames_Array;
     }
 
 

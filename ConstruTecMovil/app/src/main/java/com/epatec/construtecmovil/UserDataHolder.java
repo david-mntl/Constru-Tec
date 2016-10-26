@@ -6,12 +6,12 @@ public class UserDataHolder {
     private static UserDataHolder instance = null;
 
     //public String user = "fasm22";
-    public String user = "chiqui08";
+    public String user = "";
     //public String userID = "2014068784";
-    public String userID = "304980022";
+    public String userID = "";
 
-    public String userROLE = "Arquitecto";
-    public String userType = "1";
+    public String userROLE = "";
+    public String userType = "";
     public String actualProject = "";
 
 
