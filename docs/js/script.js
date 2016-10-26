@@ -1,6 +1,7 @@
 
-var app = angular.module('mainApp',['ngCookies','ngRoute','ngSanitize']);
-const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+var app = angular.module('mainApp',['ngCookies','ngRoute','ngSanitize','angular-loading-bar']);
+//const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+const URL  ='http://192.168.43.115:7676/ProductRESTService.svc/';
 var roles = "";
 app.config(function($routeProvider,$httpProvider) {
 
@@ -32,7 +33,7 @@ app.controller('getRoles',function ($scope,$http) {
     $scope.sucursales = [];
     $scope.infosurcursal = [];
     $scope.selectedSucursal = $scope.sucursales[0];
-
+    roles = $scope.selectedSucursal;
 
 
     $scope.getSucursales = function () {
@@ -52,6 +53,11 @@ app.controller('getRoles',function ($scope,$http) {
 
     $scope.getSucursales();
 
+    $scope.printRoles = function () {
+        roles = $scope.selectedSucursal;
+        console.log(roles);
+
+    }
 
 });
 
@@ -166,6 +172,25 @@ app.controller('loginController',function ($scope,$cookies,$http,$window,$timeou
 
 
 app.controller("MyController",function($scope,$http,$timeout,$window) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $scope.roles = {};
     $scope.roles.cliente = "cliente";
     $scope.roles.empleado = "empleado";
@@ -211,6 +236,22 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
         $http.post(URL+'PostCustomer',parameter).success(function (data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
+
+            $scope.myForm={};
+            $scope.myForm.iDcard="";
+            $scope.myForm.fname="";
+            $scope.myForm.lname1="";
+            $scope.myForm.lname2="";
+            $scope.myForm.nickname="";
+            $scope.myForm.password="";
+            $scope.myForm.phone="";
+            $scope.myForm.email="";
+            $scope.myForm.carne = "";
+
+
+
+
+
             console.log("status " + status);
             console.log("config " + data);
         }).error(function (data, status, headers, config) {
@@ -243,6 +284,23 @@ app.controller("MyController",function($scope,$http,$timeout,$window) {
             // when the response is available
             console.log("status " + status);
             console.log("config " + data);
+
+            $scope.myForm={};
+            $scope.myForm.iDcard="";
+            $scope.myForm.fname="";
+            $scope.myForm.lname1="";
+            $scope.myForm.lname2="";
+            $scope.myForm.nickname="";
+            $scope.myForm.password="";
+            $scope.myForm.phone="";
+            $scope.myForm.email="";
+            $scope.myForm.carne = "";
+
+
+
+
+
+
         }).error(function (data, status, headers, config) {
             // called asynchronously if an error occurs
             // or server returns response with an error status.
