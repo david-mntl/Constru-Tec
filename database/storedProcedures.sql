@@ -71,6 +71,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
 --Procedure to insert a new engineer
 --SELECT add_engineer(201505054,'El inge','Vargas','Campos,','25587878','vargas@gmail.com','ABC159','campos','123','Ingeniero');
 CREATE OR REPLACE FUNCTION add_engineer(ID int, name varchar(25),last1 varchar(25),last2 varchar(25),phone varchar(15),mail varchar(50),code varchar(15),username varchar(25), pass varchar(25),pRole varchar(25))
@@ -156,8 +157,33 @@ BEGIN
 	EXCEPTION
 		WHEN unique_violation 
 		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
-		--WHEN undefined_function
-		--THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+--Procedure to insert a new product
+--SELECT add_product();
+CREATE OR REPLACE FUNCTION add_product(pID_Product text,pDetails text,pActive text,pName text,pPrice text)
+RETURNS TEXT AS $$
+BEGIN
+	INSERT INTO PRODUCT VALUES (pID_Product::int,pDetails,pActive::boolean,pName,pPrice::int);
+	RETURN 'SUCCESS';
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to get all the available products info
+--SELECT add_product();
+CREATE OR REPLACE FUNCTION get_products()
+RETURNS SETOF PRODUCT AS $$
+BEGIN
+	RETURN QUERY
+	SELECT * FROM PRODUCT;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -186,6 +212,23 @@ BEGIN
 	
 	--INSERT INTO PROJECT VALUES (DEFAULT,pName,pLocation,pID_Engineer,pID_Customer,pComments,pDetails,True);
 	UPDATE PROJECT SET Comments= ((SELECT PROJECT.Comments FROM PROJECT WHERE PROJECT.ID_Project = pIDProject) || pComments )WHERE PROJECT.ID_Project = pIDProject;
+	RETURN 'SUCCESS';
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to insert add details to a project
+--SELECT add_details_to_project(1,"Esto es una descripcion de prueba")
+CREATE OR REPLACE FUNCTION add_details_to_project(pIDProject int, pDetails varchar(255))
+RETURNS TEXT AS $$
+BEGIN
+	
+	--INSERT INTO PROJECT VALUES (DEFAULT,pName,pLocation,pID_Engineer,pID_Customer,pComments,pDetails,True);
+	UPDATE PROJECT SET Details= ((SELECT PROJECT.Details FROM PROJECT WHERE PROJECT.ID_Project = pIDProject) || pDetails )WHERE PROJECT.ID_Project = pIDProject;
 	RETURN 'SUCCESS';
 	EXCEPTION
 		WHEN unique_violation 
@@ -272,6 +315,86 @@ BEGIN
 		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
 END;
 $$ LANGUAGE plpgsql;
+
+--Procedure to insert add comments to a stage
+--SELECT add_comment_to_stage(1,"Esto es un comentario de prueba")
+CREATE OR REPLACE FUNCTION add_comments_to_stage(pID_Stage int, pComments varchar(255))
+RETURNS TEXT AS $$
+BEGIN
+	UPDATE PROJECT_STAGE SET Comments= ((SELECT PROJECT_STAGE.Comments FROM PROJECT_STAGE
+	WHERE PROJECT_STAGE.ID_Stage = pID_Stage) || pComments )WHERE PROJECT_STAGE.ID_Stage = pID_Stage;
+
+	RETURN 'SUCCESS';
+
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedure to insert add details to a stage
+--SELECT add_details_to_stage(1,"Esto es una descripcion de prueba")
+CREATE OR REPLACE FUNCTION add_details_to_stage(pID_Stage int, pDetails varchar(255))
+RETURNS TEXT AS $$
+BEGIN
+	--UPDATE PROJECT_STAGE SET Details= ((SELECT PROJECT_STAGE.Details FROM PROJECT_STAGE 
+	--WHERE PROJECT_STAGE.ID_Stage = pID_Stage) || ' ' || pDetails )WHERE PROJECT_STAGE.ID_Stage = pID_Stage;
+	UPDATE PROJECT_STAGE SET Details= pDetails WHERE PROJECT_STAGE.ID_Stage = pID_Stage;
+
+	RETURN 'SUCCESS';
+
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
+
+--Procedure to add a new product to a stage
+--SELECT add_product_to_stage(1,"Esto es una descripcion de prueba")
+CREATE OR REPLACE FUNCTION add_product_to_stage(pID_Stage int, pID_Product int,pQuantity int, pPrice int)
+RETURNS TEXT AS $$
+BEGIN
+	IF (SELECT EXISTS(SELECT 1 FROM PRODUCTxSTAGE WHERE ID_Stage=pID_Stage AND ID_Product=pID_Product)) THEN
+		UPDATE PRODUCTxSTAGE SET Quantity = pQuantity, Price = pPrice WHERE ID_Stage=pID_Stage AND ID_Product=pID_Product;
+		RETURN 'SUCCESS';
+	ELSE
+		INSERT INTO PRODUCTxSTAGE VALUES(DEFAULT,pID_Product,pQuantity,pPrice,False,pID_Stage);
+		RETURN 'SUCCESS';
+	END IF;
+
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
+
+--Procedure to add a set the product from a stage to bought
+CREATE OR REPLACE FUNCTION buy_product_from_stage(pID_Stage int, pID_Product int)
+RETURNS TEXT AS $$
+BEGIN
+	IF (SELECT EXISTS(SELECT 1 FROM PRODUCTxSTAGE WHERE ID_Stage=pID_Stage AND ID_Product=pID_Product)) THEN
+		UPDATE PRODUCTxSTAGE SET Purchased = True WHERE ID_Stage=pID_Stage AND ID_Product=pID_Product;
+		RETURN 'SUCCESS';
+	ELSE
+		RAISE EXCEPTION 'THERE IS NO SUCH PRODUCT IN STAGE';
+	END IF;
+
+	EXCEPTION
+		WHEN unique_violation 
+		THEN  RAISE EXCEPTION 'UNIQUE KEY VIOLATION';
+		WHEN undefined_function
+		THEN RAISE EXCEPTION 'UNDEFINED FUNCTION. FUNCTION DOES NOT MATCH ARGUMENTS';
+END;
+$$ LANGUAGE plpgsql;
+
 
 --Procedure to finish a stage
 --SELECT complete_stage(1)
@@ -398,11 +521,13 @@ RETURNS TABLE(
 	Name varchar(50),
 	Quantity int,
 	Price int,
-	Purchased boolean
+	Purchased boolean,
+	ID_Stage int,
+	ID_Product int
 )AS $$
 BEGIN
 	RETURN QUERY
-	SELECT PRODUCT.Name,PRODUCTxSTAGE.Quantity,PRODUCTxSTAGE.Price,PRODUCTxSTAGE.Purchased
+	SELECT PRODUCT.Name,PRODUCTxSTAGE.Quantity,PRODUCTxSTAGE.Price,PRODUCTxSTAGE.Purchased,pID,PRODUCT.ID_Product
 	FROM PRODUCT JOIN PRODUCTxSTAGE ON PRODUCTxSTAGE.ID_Product = PRODUCT.ID_Product JOIN PROJECT_STAGE ON PROJECT_STAGE.ID_Stage = PRODUCTxSTAGE.ID_STAGE
 	WHERE PROJECT_STAGE.ID_Stage = pID;
 END;
@@ -414,17 +539,22 @@ DROP FUNCTION IF EXISTS get_projects_from_generic(int,int);
 CREATE OR REPLACE FUNCTION get_projects_from_generic(pMode int,pID int)
 RETURNS TABLE(
 	ID_Project int,
-	Project_Name varchar(50)
+	Project_Name varchar(50),
+	Location varchar(50)
 	
 )AS $$
 BEGIN
 	IF (pMode = 0) THEN
 		RETURN QUERY
-		SELECT PROJECT.ID_Project,PROJECT.Name 
+		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location
 		FROM PROJECT WHERE PROJECT.ID_Customer = pID;
+	ELSIF(pMode = 999) THEN
+		RETURN QUERY
+		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location
+		FROM PROJECT;
 	ELSIF (pMode = 1) THEN
 		RETURN QUERY
-		SELECT PROJECT.ID_Project,PROJECT.Name 
+		SELECT PROJECT.ID_Project,PROJECT.Name ,PROJECT.Location
 		FROM PROJECT WHERE PROJECT.ID_Engineer = pID;
 	END IF;
 	
@@ -438,12 +568,19 @@ CREATE OR REPLACE FUNCTION get_stages_from_project(pID_Project int)
 RETURNS TABLE(
 	ID_Project_Stage int,
 	Stage_Name varchar(50),
-	Completed boolean
+	ID_Project int,
+	Start_Date date,
+	End_Date date,
+	Details varchar(255),
+	Completed boolean,
+	Comments varchar(255)
 	
 )AS $$
 BEGIN
 	RETURN QUERY
-	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name,PROJECT_STAGE.Completed 
+	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name,PROJECT_STAGE.ID_Project,
+	PROJECT_STAGE.Start_Date,PROJECT_STAGE.End_Date, PROJECT_STAGE.Details,
+	PROJECT_STAGE.Completed, PROJECT_STAGE.Comments
 	FROM PROJECT_STAGE JOIN STAGE_NAME ON PROJECT_STAGE.ID_Stage_Name = STAGE_NAME.ID_Stage_Name
 	WHERE PROJECT_STAGE.ID_Project = pID_Project;
 END;
@@ -456,7 +593,11 @@ CREATE OR REPLACE FUNCTION get_info_from_stage(pID_Stage int)
 RETURNS SETOF PROJECT_STAGE AS $$
 BEGIN
 	RETURN QUERY
-	SELECT * FROM PROJECT_STAGE WHERE ID_Stage = pID_Stage;
+	SELECT PROJECT_STAGE.ID_Stage, PROJECT_STAGE.ID_Stage_Name,
+	PROJECT_STAGE.ID_Project,PROJECT_STAGE.Start_Date::date,
+	PROJECT_STAGE.End_Date::date,PROJECT_STAGE.Details,
+	PROJECT_STAGE.Completed,PROJECT_STAGE.Comments
+	FROM PROJECT_STAGE WHERE ID_Stage = pID_Stage;
 END;
 $$ LANGUAGE plpgsql;
 
