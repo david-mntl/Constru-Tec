@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <setParameter name="IIS Web Application Name" value="Default Web Site/" />
+  <setParameter name="MyConnection-Web.config Connection String" value="Server=master.chqgzqo7h54b.us-west-2.rds.amazonaws.com; Port=5432; User Id=master; Password=sudo2296; Database=postgres;" />
+</parameters>

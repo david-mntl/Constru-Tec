@@ -1,0 +1,146 @@
+<div   class="panel-body" style=" height: 670px">
+    <div class="row" ng-controller = "Main">
+        <div  style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3 ng-if="eng_code != 0" >
+                <span class="label label-info">Como desea filtrar los proyectos </span>
+
+            </h3>
+
+            <button ng-click="getProjectsNextWeeks()" ng-if="eng_code != 0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="">Obtener proximas etapas</button>
+            <h3 ng-if="eng_code != 0" >
+                <span class="label label-info">Seleccione el producto </span>
+
+            </h3>
+
+                <select   class="styled-select yellow rounded" ng-model="selectedProduct" ng-options="x.name for x in products"  >
+                    <option >products</option>
+                </select>
+
+
+
+
+
+            <button ng-if="eng_code !=0"style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getProjectByMaterial()">print</button>
+            <h3>
+                <span class="label label-info">Proyectos</span>
+
+            </h3>
+            <span  ng-repeat="user in nprojects" >
+                <button ng-if="eng_code ==0"style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStages(user.id_project)">{{user.project_name}}</button>
+                <button ng-if="eng_code !=0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStagesNextWeeks (user.id_project)">{{user.project_name}}</button>
+            </span>
+
+
+        </div>
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Etapas</span>
+                <button ng-if="eng_code != 0" data-target="#myModalStage" data-toggle="modal" style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-cog"></span></button>
+
+
+
+            </h3>
+            <div id="myModalStage" class="modal fade right" role="form" >
+                <div class="modal-dialog" >
+
+                    <!-- Modal content-->
+                    <div  class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Agregar Nueva etapa</h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Digite el nombre de la nueva etapa:</h4>
+                            <input type="text" class="form-control" placeholder="Etapa" aria-describedby="basic-addon1" ng-model="newStage">
+                        </div>
+                        <div class="modal-footer">
+                            <button ng-click="addStage()" type="button" class="btn btn-default" data-dismiss="modal">Insertar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <span ng-repeat="stages in nstages" >
+
+                    <button  style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getInfoStages(stages.id_project_stage)">{{stages.stage_name}}<span ng-if="stages.completed == true" style="float: right" class="badge"><span class="glyphicon glyphicon-ok"></span></span></button>
+            </span>
+            <h6 style="width: 400px;visibility: hidden"></h6>
+            <span class="label label-success">Cliente: {{nameofClient}}</span>
+            <h6 style="width: 400px;visibility: hidden"></h6>
+            <span class="label label-success">Teléfono: {{phoneofClient}}</span>
+        </div>
+
+        <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
+            <h3>
+                <span class="label label-info">Información de las etapas</span>
+                <button ng-if="eng_code != 0" ng-click="closeStage()" style="" type="button" class="btn btn-primary"><span style="float: right" class="glyphicon glyphicon-ok"></span></button>
+                <div class="panel panel-default" style="background-color: #5bc0df; border-color: #5bc0de ">
+                    <div class="panel-body">
+                        <span class="label label-primary">Nombre:</span>
+                        <h4>{{infoStages[0].id_stage_name}}</h4>
+                        <span class="label label-primary">Descripción:</span>
+                        <h4 style="width: 400px">{{infoStages[0].details}} </h4>
+                        <span class="label label-primary">Fecha de inicio:</span><span style="font-size: 18px">{{infoStages[0].start_date}}</span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Fecha terminal:</span><span style="font-size: 18px">{{infoStages[0].end_date}}</span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Materiales:</span>
+
+                        <button ng-if="infoStages[0].completed == false" ng-click="getPresupuesto()" data-target="#myModalPresu" data-toggle="modal"  style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
+
+                        <div id="myModalPresu" class="modal fade right" role="form" >
+                            <div class="modal-dialog" >
+
+                                <!-- Modal content-->
+                                <div  class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Presupuesto</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h1>&#162{{totalPresu}}</h1>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button ng-click="" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <button ng-if="eng_code == 0" ng-click="Comprar()" type="button" class="btn btn-default" data-dismiss="modal">Comprar</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <div style="height: 200px;border-color: #5bc0de" class="panel panel-default">
+                            <div style="height: 200px; overflow-y: scroll;background-color: #5bc0df; border-color: #5bc0de" class="panel-body">
+                                <ul ng-repeat="material in nmaterial" class="list-group">
+                                    <li ng-if="item.Quantity !=0 " style="background-color: #5bc0df; border-color: #5bc0de " class="list-group-item">{{material.name}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+                        <span class="label label-primary">Comentarios:
+                        <button ng-click="refreshComments()"   style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
+                        </span>
+                        <h6 style="width: 400px;visibility: hidden"></h6>
+
+                            <textarea ng-if="eng_code == 0" disabled style="width: 375px;height: 65px " class="scrollabletextbox" name="note">
+                            <!-- aqui va el texo--->
+                            </textarea>
+                            <textarea ng-model="infoStages[0].comments" ng-if="eng_code != 0"  style="width: 375px;height: 65px " class="scrollabletextbox" name="note">
+                            <!-- aqui va el texo--->
+                            </textarea>
+
+
+
+
+                    </div>
+                </div>
+
+
+            </h3>
+        </div>
+    </div>
+
+</div>

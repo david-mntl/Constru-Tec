@@ -1,46 +1,39 @@
-<div  class="panel panel-default"  style="color: #1b6d85;width: 600px;position: fixed;left: 29%;right: 60%">
+<div ng-controller="cookieController"  class="panel panel-default"  style="color: #1b6d85;width: 600px;position: fixed;left: 29%;right: 60%">
     <h1><span class="  col-md-offset-4 label label-primary">Editar usuario</span></h1>
     <div STYLE="color: #2aabd2" class="panel-body ">
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="nombre">Nombre</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputNombre" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=nameUser  class="form-control" id="inputNombre" aria-describedby="basic-addon3">
         </div>
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="apellido1">Primer apellido</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputapellido1" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=lastfname class="form-control" id="inputapellido1" aria-describedby="basic-addon3">
         </div>
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="apellido2">Segundo apellido</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputapellido2" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=lastsname class="form-control" id="inputapellido2" aria-describedby="basic-addon3">
         </div>
-        <div class="input-group">
-            <div style="width: 200px" class="input-group-addon" id="cedula">Cédula</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputCedula" aria-describedby="basic-addon3">
-        </div>
-        <div class="input-group">
-            <div style="width: 200px" class="input-group-addon" id="carnet">Carné de empleado</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputCarnet" aria-describedby="basic-addon3">
-        </div>
+
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="correo">Correo electrónico</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputCorreo" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=emailUser class="form-control" id="inputCorreo" aria-describedby="basic-addon3">
         </div>
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="telefono">Teléfono</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputTelefono" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=phone class="form-control" id="inputTelefono" aria-describedby="basic-addon3">
         </div>
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="usuario">Usuario</div>
-            <input style="width: 400px" type="text" class="form-control" id="inputUsuario" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="text" ng-model=UsernameU disabled class="form-control" id="inputUsuario" aria-describedby="basic-addon3">
         </div>
         <div class="input-group">
             <div style="width: 200px" class="input-group-addon" id="contraseña">Contraseña</div>
-            <input style="width: 400px" type="password" class="form-control" id="inputContraseña" aria-describedby="basic-addon3">
+            <input style="width: 400px" type="password" ng-model=passwordUser class="form-control" id="inputContraseña" aria-describedby="basic-addon3">
         </div>
     </div>
     <div  style="float:right !important;" class="btn-group " role="group" aria-label="...">
         <button type="button" class="btn btn-danger">Cancelar</button>
-        <button type="button" class="btn btn-success">Aceptar</button>
+        <button ng-click="actualizarEmpleado()" type="button" class="btn btn-success">Aceptar</button>
 
     </div>
 </div>

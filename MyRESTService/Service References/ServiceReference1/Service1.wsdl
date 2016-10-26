@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Service1" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://cewebserver.azurewebsites.net/Service1.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://cewebserver.azurewebsites.net/Service1.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://cewebserver.azurewebsites.net/Service1.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/WcfService1" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IService1_Get_Customer_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get_Customer" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Get_Customer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Get_CustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_UpdateCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IService1_UpdateCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostUpdateProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostUpdateProduct" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostUpdateProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostUpdateProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteCustomer_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteCustomer_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_UpdateOrder_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateOrder" />
+  </wsdl:message>
+  <wsdl:message name="IService1_UpdateOrder_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteSupplier_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteSupplier" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteSupplier_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteSupplierResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetOrders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetOrders" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetOrders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetOrdersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostOrder_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostOrder" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostOrder_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostCategory_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostCategory" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostCategory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostCategoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostLogin_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostLogin" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostLogin_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostLoginEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostLoginEmployee" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostLoginEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostLoginEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostEmployee_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostEmployee" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostEmployee_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostEmployeeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetProducts_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProducts" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetProducts_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProductsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostProduct" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Purchase_Item_InputMessage">
+    <wsdl:part name="parameters" element="tns:Post_Purchase_Item" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Purchase_Item_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Post_Purchase_ItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Supplier_InputMessage">
+    <wsdl:part name="parameters" element="tns:Post_Supplier" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Supplier_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Post_SupplierResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Shop_InputMessage">
+    <wsdl:part name="parameters" element="tns:Post_Shop" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Post_Shop_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Post_ShopResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Get_Order_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get_Order" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Get_Order_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Get_OrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Get_Stadistics_InputMessage">
+    <wsdl:part name="parameters" element="tns:Get_Stadistics" />
+  </wsdl:message>
+  <wsdl:message name="IService1_Get_Stadistics_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Get_StadisticsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetBoffice_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBoffice" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetBoffice_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBofficeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteProduct_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteProduct" />
+  </wsdl:message>
+  <wsdl:message name="IService1_DeleteProduct_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteProductResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetSupplier_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSupplier" />
+  </wsdl:message>
+  <wsdl:message name="IService1_GetSupplier_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSupplierResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostBoffice_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostBoffice" />
+  </wsdl:message>
+  <wsdl:message name="IService1_PostBoffice_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostBofficeResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IService1">
+    <wsdl:operation name="Get_Customer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Get_Customer" message="tns:IService1_Get_Customer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Get_CustomerResponse" message="tns:IService1_Get_Customer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostCustomer" message="tns:IService1_PostCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostCustomerResponse" message="tns:IService1_PostCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/UpdateCustomer" message="tns:IService1_UpdateCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/UpdateCustomerResponse" message="tns:IService1_UpdateCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostUpdateProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostUpdateProduct" message="tns:IService1_PostUpdateProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostUpdateProductResponse" message="tns:IService1_PostUpdateProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteCustomer">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/DeleteCustomer" message="tns:IService1_DeleteCustomer_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/DeleteCustomerResponse" message="tns:IService1_DeleteCustomer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateOrder">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/UpdateOrder" message="tns:IService1_UpdateOrder_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/UpdateOrderResponse" message="tns:IService1_UpdateOrder_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSupplier">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/DeleteSupplier" message="tns:IService1_DeleteSupplier_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/DeleteSupplierResponse" message="tns:IService1_DeleteSupplier_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOrders">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/GetOrders" message="tns:IService1_GetOrders_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/GetOrdersResponse" message="tns:IService1_GetOrders_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostOrder">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostOrder" message="tns:IService1_PostOrder_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostOrderResponse" message="tns:IService1_PostOrder_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostCategory">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostCategory" message="tns:IService1_PostCategory_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostCategoryResponse" message="tns:IService1_PostCategory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostLogin">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostLogin" message="tns:IService1_PostLogin_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostLoginResponse" message="tns:IService1_PostLogin_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostLoginEmployee">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostLoginEmployee" message="tns:IService1_PostLoginEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostLoginEmployeeResponse" message="tns:IService1_PostLoginEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostEmployee">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostEmployee" message="tns:IService1_PostEmployee_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostEmployeeResponse" message="tns:IService1_PostEmployee_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProducts">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/GetProducts" message="tns:IService1_GetProducts_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/GetProductsResponse" message="tns:IService1_GetProducts_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostProduct" message="tns:IService1_PostProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostProductResponse" message="tns:IService1_PostProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Post_Purchase_Item">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Post_Purchase_Item" message="tns:IService1_Post_Purchase_Item_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Post_Purchase_ItemResponse" message="tns:IService1_Post_Purchase_Item_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Post_Supplier">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Post_Supplier" message="tns:IService1_Post_Supplier_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Post_SupplierResponse" message="tns:IService1_Post_Supplier_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Post_Shop">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Post_Shop" message="tns:IService1_Post_Shop_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Post_ShopResponse" message="tns:IService1_Post_Shop_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Get_Order">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Get_Order" message="tns:IService1_Get_Order_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Get_OrderResponse" message="tns:IService1_Get_Order_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Get_Stadistics">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/Get_Stadistics" message="tns:IService1_Get_Stadistics_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/Get_StadisticsResponse" message="tns:IService1_Get_Stadistics_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBoffice">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/GetBoffice" message="tns:IService1_GetBoffice_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/GetBofficeResponse" message="tns:IService1_GetBoffice_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteProduct">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/DeleteProduct" message="tns:IService1_DeleteProduct_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/DeleteProductResponse" message="tns:IService1_DeleteProduct_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSupplier">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/GetSupplier" message="tns:IService1_GetSupplier_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/GetSupplierResponse" message="tns:IService1_GetSupplier_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostBoffice">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService1/PostBoffice" message="tns:IService1_PostBoffice_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService1/PostBofficeResponse" message="tns:IService1_PostBoffice_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:service name="Service1" />
+</wsdl:definitions>
