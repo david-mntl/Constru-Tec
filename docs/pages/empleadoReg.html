@@ -18,7 +18,7 @@
     <p><span class="glyphicon glyphicon-phone"></span> Teléfono</p>
     <input ng-model=myForm.phone type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
     <p>Seleccione su rol</p>
-    <select class="styled-select yellow rounded" ng-model="selectedSucursal" ng-options="x for x in sucursales" ng-init="selectedName = selectedName" >
+    <select ng-click="printRoles()" class="styled-select yellow rounded" ng-model="selectedSucursal" ng-options="x for x in sucursales" ng-init="selectedName = selectedName" >
         <option selected disabled>Sucursal</option>
     </select>
     <p><span class="glyphicon glyphicon-briefcase"></span>Carné de trabajo</p>
@@ -26,6 +26,6 @@
     <p><span class="glyphicon glyphicon-user"></span> Nombre de Usuario</p>
     <input ng-model=myForm.nickname type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
     <p><span class="glyphicon glyphicon-lock"></span> Contraseña</p>
-    <input ng-model=myForm.password type="text" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
+    <input ng-model=myForm.password type="password" size = "20" class="form-control" placeholder="" aria-describedby="basic-addon1">
 
 </div>

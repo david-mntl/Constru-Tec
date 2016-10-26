@@ -6,16 +6,30 @@
 
             </h3>
 
-            <button ng-if="eng_code != 0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="">15</button>
-            <button ng-if="eng_code != 0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="">45</button>
-            <button ng-if="eng_code != 0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="">30</button>
+            <button ng-click="getProjectsNextWeeks()" ng-if="eng_code != 0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="">Obtener proximas etapas</button>
+            <h3 ng-if="eng_code != 0" >
+                <span class="label label-info">Seleccione el producto </span>
+
+            </h3>
+
+                <select   class="styled-select yellow rounded" ng-model="selectedProduct" ng-options="x.name for x in products"  >
+                    <option >products</option>
+                </select>
+
+
+
+
+
+            <button ng-if="eng_code !=0"style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getProjectByMaterial()">print</button>
             <h3>
                 <span class="label label-info">Proyectos</span>
 
             </h3>
             <span  ng-repeat="user in nprojects" >
-                <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStages(user.id_project)">{{user.project_name}}</button>
+                <button ng-if="eng_code ==0"style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStages(user.id_project)">{{user.project_name}}</button>
+                <button ng-if="eng_code !=0" style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getStagesNextWeeks (user.id_project)">{{user.project_name}}</button>
             </span>
+
 
         </div>
         <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
@@ -51,14 +65,18 @@
 
             <span ng-repeat="stages in nstages" >
 
-                    <button style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getInfoStages(stages.id_project_stage)">{{stages.stage_name}}</button>
-
+                    <button  style="border: hidden;border-style: double;border-color: #5BC0DE;width: 300px" class= "btn btn-primary " ng-click="getInfoStages(stages.id_project_stage)">{{stages.stage_name}}<span ng-if="stages.completed == true" style="float: right" class="badge"><span class="glyphicon glyphicon-ok"></span></span></button>
             </span>
+            <h6 style="width: 400px;visibility: hidden"></h6>
+            <span class="label label-success">Cliente: {{nameofClient}}</span>
+            <h6 style="width: 400px;visibility: hidden"></h6>
+            <span class="label label-success">Teléfono: {{phoneofClient}}</span>
         </div>
 
         <div style="border: solid;border-color: #1b6d85;background-color: #5bc0de; height: 650px" class="col-xs-6 col-md-4">
             <h3>
                 <span class="label label-info">Información de las etapas</span>
+                <button ng-if="eng_code != 0" ng-click="closeStage()" style="" type="button" class="btn btn-primary"><span style="float: right" class="glyphicon glyphicon-ok"></span></button>
                 <div class="panel panel-default" style="background-color: #5bc0df; border-color: #5bc0de ">
                     <div class="panel-body">
                         <span class="label label-primary">Nombre:</span>
@@ -71,7 +89,7 @@
                         <h6 style="width: 400px;visibility: hidden"></h6>
                         <span class="label label-primary">Materiales:</span>
 
-                        <button ng-click="getPresupuesto()" data-target="#myModalPresu" data-toggle="modal"  style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button ng-if="infoStages[0].completed == false" ng-click="getPresupuesto()" data-target="#myModalPresu" data-toggle="modal"  style="float: right" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>
 
                         <div id="myModalPresu" class="modal fade right" role="form" >
                             <div class="modal-dialog" >
@@ -87,7 +105,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button ng-click="" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                        <button ng-click="Comprar()" type="button" class="btn btn-default" data-dismiss="modal">Comprar</button>
+                                        <button ng-if="eng_code == 0" ng-click="Comprar()" type="button" class="btn btn-default" data-dismiss="modal">Comprar</button>
                                     </div>
                                 </div>
 

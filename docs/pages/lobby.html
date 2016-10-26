@@ -20,6 +20,8 @@
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/scriptlobby.js"></script>
     <script src="../js/angular-cookies.js"></script>
+    <script src ="../js/loading-bar.min.js"> </script>
+    <link rel="stylesheet" type="text/css" href="../css/loading-bar.css">
 
 
     <![endif]-->
@@ -34,6 +36,14 @@
 
             </ul>
         </div>
+
+        <div ng-if="eng_code == 999" class="navbar-right">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a ng-click="actualizarProductos()" href="#">Actualizar productos</a></li>
+            </ul>
+        </div>
+
+
 
         <div ng-if="eng_code != 0 && eng_code != 999" class="navbar-header">
             <ul class="nav navbar-nav navbar-left">

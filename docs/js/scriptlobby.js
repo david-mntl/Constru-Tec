@@ -1,9 +1,10 @@
 
-var app = angular.module('App',['ngCookies','ngRoute','ngSanitize']);
+var app = angular.module('App',['ngCookies','ngRoute','ngSanitize','angular-loading-bar']);
 //const URL = 'http://192.168.0.15:17476/ProductRESTService.svc/';
-const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+//const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+const URL  ='http://192.168.43.115:7676/ProductRESTService.svc/';
 var NombreSeleccionado;
-var projectos;
+var proyectos = 1 ;
 var etapas = 1;
 app.config(function($routeProvider,$httpProvider) {
 
@@ -40,7 +41,7 @@ app.controller('getNames',function ($scope,$http,$cookies,$timeout) {
     $scope.names = [];
     $scope.infonames = [];
     $scope.selectedNames = $scope.names[0];
-    $scope.StageIDProject = projectos;
+    $scope.StageIDProject = proyectos;
 
 
 
@@ -78,6 +79,7 @@ app.controller('getNames',function ($scope,$http,$cookies,$timeout) {
         $http.post(URL+'CreateStage',parameter).success(function (data, status, headers, config) {
 
             //$scope.ROL = (JSON).parse(data.toString());
+            console.log("Stage Creada");
             console.log(data);
             console.log(status);
             //$timeout($scope.toLobby(),2000);
@@ -100,7 +102,88 @@ app.controller('proyectoController',function ($scope,$http) {
 
 });
 
-app.controller('cookieController',function ($scope,$cookies) {
+app.controller('cookieController',function ($scope,$cookies,$http) {
+    $scope.UsernameU = $cookies.username;
+    $scope.idUser = $cookies.userid;
+    $scope.nameUser = $cookies.name;
+    $scope.lastfname = $cookies.lastname1;
+    $scope.lastsname = $cookies.lastname2;
+    $scope.phone = $cookies.phone;
+    $scope.emailUser = $cookies.email;
+    $scope.passwordUser = $cookies.password;
+    $scope.eng_code = $cookies.eng_code;
+    console.log($scope.UsernameU);
+    
+    $scope.actualizarProductos = function () {
+
+        //console.log($scope.selectedProduct.id_product);
+        $http.get(URL+'EpatecGetProductList').success(function (data, status, headers,config) {
+            console.log(data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+
+
+        
+    }
+
+
+
+
+
+    $scope.actualizarEmpleado = function () {
+        var parameter = JSON.stringify({
+            ID_Engineer: $scope.idUser,
+            Name: $scope.nameUser,
+            Lastname_1: $scope.lastfname,
+            Lastname_2: $scope.lastsname,
+            Phone: $scope.phone,
+            Email: $scope.emailUser,
+            Eng_Code: $scope.eng_code,
+            Username: $scope.UsernameU,
+            Password: $scope.passwordUser
+        });
+
+        $http.post(URL+'UpdateEngineer',parameter).success(function (data, status, headers) {
+
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+        });
+
+    }
+    $scope.actualizarUsuario = function () {
+        var parameter = JSON.stringify({
+            ID_Customer: $scope.idUser,
+            Name: $scope.nameUser,
+            Lastname_1: $scope.lastfname,
+            Lastname_2: $scope.lastsname,
+            Phone: $scope.phone,
+            Email: $scope.emailUser,
+            Username: $scope.UsernameU,
+            Password: $scope.passwordUser
+        });
+
+        $http.post(URL+'UpdateCustomer',parameter).success(function (data, status, headers) {
+
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+        });
+
+    }
+    
+    
+    
+
+});
+
+app.controller('Main',function($scope,$http,$cookies) {
+
     $scope.UsernameU = $cookies.username;
     $scope.idUser = $cookies.userid;
     $scope.nameUser = $cookies.name;
@@ -112,9 +195,9 @@ app.controller('cookieController',function ($scope,$cookies) {
     $scope.eng_code = $cookies.eng_code;
     console.log($scope.eng_code);
 
-});
 
-app.controller('Main',function($scope,$http,$cookies) {
+
+
 
     $scope.totalPresu = 0;
     $scope.newStage="";
@@ -137,7 +220,7 @@ app.controller('Main',function($scope,$http,$cookies) {
     }
 
     $scope.getPresupuesto = function () {
-
+        $scope.totalPresu = 0;
         angular.forEach($scope.nmaterial, function (items) {
             console.log(items.quantity*items.price);
             $scope.totalPresu += (items.quantity*items.price);
@@ -170,21 +253,42 @@ app.controller('Main',function($scope,$http,$cookies) {
     });
 
     $scope.addItem = function (productname) {
+
         $scope.num = 0;
         var flag = true;
+        if($scope.nmaterial.length==0){
+            angular.forEach($scope.purchaseItems, function (item) {
+                //console.log(nmaterial);
 
+                if(item.name == productname ){
+                    $scope.num =1;
+                    item.Quantity +=1;
+                    //console.log("{\"name\":\""+item.name+"\",\"quantity\":1"+",\"price\":"+item.price+",\"purchased\":"+false+",\"id_stage\":"+etapas+",\"id_product\":"+item.id_product+"}");
+
+                    $scope.nmaterial.push((JSON).parse("{\"name\":\""+item.name+"\",\"quantity\":1"+",\"price\":"+item.price+",\"purchased\":"+false+",\"id_stage\":"+etapas+",\"id_product\":"+item.id_product+"}"))
+
+                }
+
+            });
+        }
             angular.forEach($scope.nmaterial, function (item2) {
+                console.log("1");
                 if (productname == item2.name){
+                    console.log("2");
                     item2.quantity += 1;
                     flag = false;
 
 
                 }else{
+                    console.log("3");
                     if(flag){
+                        console.log("4");
+
                         console.log($scope.nmaterial[0]);
                         angular.forEach($scope.purchaseItems, function (item) {
-                            //console.log(item.name);
-                            if(item.name == productname && $scope.num == 0 && item.Quantity == 0  ){
+                            //console.log(nmaterial);
+
+                            if(item.name == productname ){
                                 $scope.num =1;
                                 item.Quantity +=1;
                                 //console.log("{\"name\":\""+item.name+"\",\"quantity\":1"+",\"price\":"+item.price+",\"purchased\":"+false+",\"id_stage\":"+etapas+",\"id_product\":"+item.id_product+"}");
@@ -228,6 +332,7 @@ app.controller('Main',function($scope,$http,$cookies) {
     }
 
     $scope.Comprar = function () {
+        $scope.closeStage();
 
         var parameter = JSON.stringify({
             id_stage:etapas
@@ -241,6 +346,23 @@ app.controller('Main',function($scope,$http,$cookies) {
             console.log(data);
             console.log(status);
         });
+
+////////////////////marco ;la etapa como comprada
+        var parameter2 = JSON.stringify({
+            ID_Project:etapas
+        });
+
+        $http.post(URL+'CompleteStage',parameter2).success(function (data, status, headers) {
+            console.log("Etapa Finalizada")
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+        });
+
+
+
 
 
     }
@@ -274,8 +396,9 @@ app.controller('Main',function($scope,$http,$cookies) {
     $scope.selectedProduct = $scope.products[0];
 
     $scope.getProducts = function () {
+        console.log("Entra");
         $http.get(URL + 'GetProducts').success(function (data, status, headers, config) {
-            console.log(data);
+           // console.log(data);
             $scope.infoproducts = (JSON).parse(data.toString());
             console.log($scope.infoproducts);
             angular.forEach($scope.infoproducts, function (item) {
@@ -289,11 +412,12 @@ app.controller('Main',function($scope,$http,$cookies) {
                 $scope.purchaseItems = (JSON).parse("["+$scope.purchaseItems.toString()+"]");
             }
 
-            console.log($scope.purchaseItems);
-            $scope.selectedProduct = $scope.products[0];
+           // console.log($scope.purchaseItems);
+            $scope.selectedProduct = $scope.products[7];
 
         }).error(function (data, status, headers, config) {
             console.log(data);
+            //$scope.selectedProduct = $scope.products[0];
         });
 
 
@@ -301,7 +425,7 @@ app.controller('Main',function($scope,$http,$cookies) {
 
 
     }
-
+    $scope.getProducts();
 
     $scope.idproject=1;
     $scope.rootFolders = 'bob@go.com';
@@ -322,6 +446,42 @@ app.controller('Main',function($scope,$http,$cookies) {
         console.log(URL+'GetProjectsFrom?status='+$cookies.eng_code+'&id='+$cookies.userid);
         $http.get(URL+'GetProjectsFrom?status='+$cookies.eng_code+'&id='+$cookies.userid).success(function (data, status, headers,config) {
             $scope.infoProject = (JSON).parse(data.toString());
+            console.log("******************************************");
+            console.log($scope.infoProject);
+            angular.forEach($scope.infoProject, function (item) {
+                $scope.nprojects.push(item)
+            });
+
+            $scope.selectedProject = $scope.nprojects[0];
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+
+    }
+    $scope.getProjectsNextWeeks = function () {
+        $scope.nprojects = [];
+        console.log(URL+'GetProjectsFrom?status='+$cookies.eng_code+'&id='+$cookies.userid);
+        $http.get(URL+'GetProductsNextWeek').success(function (data, status, headers,config) {
+            $scope.infoProject = (JSON).parse(data.toString());
+            console.log("******************************************");
+            console.log($scope.infoProject);
+            angular.forEach($scope.infoProject, function (item) {
+                $scope.nprojects.push(item)
+            });
+
+            $scope.selectedProject = $scope.nprojects[0];
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+
+    }
+    $scope.getProjectByMaterial =function () {
+        $scope.nprojects = [];
+        console.log($scope.selectedProduct.id_product);
+        $http.get(URL+'GetProjectsByMaterial?name='+$scope.selectedProduct.id_product).success(function (data, status, headers,config) {
+            console.log(data);
+            $scope.infoProject = (JSON).parse(data.toString());
+            console.log("******************************************");
             console.log($scope.infoProject);
             angular.forEach($scope.infoProject, function (item) {
                 $scope.nprojects.push(item)
@@ -334,15 +494,40 @@ app.controller('Main',function($scope,$http,$cookies) {
 
     }
 
-    $scope.getProjects();
+
+
+    console.log($cookies.eng_code + " /*/*/*/*/*/*/*/*/*/*/*/");
+    if ($cookies.eng_code != 999){$scope.getProjects();}
+
 
         $scope.nstages = [];
         $scope.info = [];
         $scope.selectedStage = $scope.nstages[0];
 
     $scope.getStages = function (project) {
+        proyectos = project;
+        $scope.infotmp = [] ;
+        $scope.infoarray = [];
+        $scope.nameofClient = "";
+        $scope.phoneofClient = "";
+        $http.get(URL+'GetUSerInfo?id='+project).success(function (data, status, headers, config) {
+            $scope.infotmp = (JSON).parse(data.toString());
+
+            angular.forEach($scope.infotmp, function (item) {
+                $scope.infoarray.push(item)
+            });
+            $scope.nameofClient = $scope.infoarray[0].phone;
+            $scope.phoneofClient = $scope.infoarray[0].name;
+
+            console.log($scope.infotmp);
+
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+
+
         $cookies.project = project;
-        projectos = project;
+        proyectos = project;
         console.log($cookies.project + "******");
 
         $scope.nstages = [];
@@ -361,6 +546,96 @@ app.controller('Main',function($scope,$http,$cookies) {
         $scope.stages = $scope.nstages;
     }
 
+    $scope.closeProject = function () {
+
+
+
+        var parameter = JSON.stringify({
+            ID_Project: proyectos
+        });
+
+        console.log("Cerrando project");
+        console.log(parameter);
+        $http.post(URL+'CompleteProject',parameter).success(function (data, status, headers) {
+
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+        });
+
+
+
+    }
+
+    $scope.closeStage = function () {
+
+
+
+        var parameter = JSON.stringify({
+            ID_Stage: etapas
+        });
+
+        console.log("Cerrando project");
+        console.log(parameter);
+        $http.post(URL+'CompleteStage',parameter).success(function (data, status, headers) {
+
+            console.log("status " + status);
+            console.log("config " + data);
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+            console.log(status);
+        });
+
+
+
+    }
+
+
+
+    $scope.getStagesNextWeeks = function (project) {
+        $cookies.project = project;
+        proyectos = project;
+        console.log($cookies.project + "******");
+
+        $scope.infotmp = [] ;
+        $scope.infoarray = [];
+        $scope.nameofClient = "";
+        $scope.phoneofClient = "";
+        $http.get(URL+'GetUSerInfo?id='+project).success(function (data, status, headers, config) {
+            $scope.infotmp = (JSON).parse(data.toString());
+
+            angular.forEach($scope.infotmp, function (item) {
+                $scope.infoarray.push(item)
+            });
+            $scope.nameofClient = $scope.infoarray[0].phone;
+            $scope.phoneofClient = $scope.infoarray[0].name;
+
+            console.log($scope.infotmp);
+
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+
+
+
+
+        $scope.nstages = [];
+        $http.get(URL+'GetProductInfoFromProject?id='+project).success(function (data, status, headers, config) {
+            $scope.info = (JSON).parse(data.toString());
+            console.log($scope.info);
+            angular.forEach($scope.info, function (item) {
+                $scope.nstages.push(item)
+            });
+            console.log($scope.nstages.toString());
+
+            $scope.selectedStage = $scope.nstages[0];
+        }).error(function (data, status, headers, config) {
+            console.log(data);
+        });
+        $scope.stages = $scope.nstages;
+    }
 
 
     $scope.ninfostages = [];
@@ -375,7 +650,7 @@ app.controller('Main',function($scope,$http,$cookies) {
         $scope.infoStages = [];
         $http.get(URL+'GetInfoFromStage?id='+project).success(function (data, status, headers, config) {
             $scope.infoStages = (JSON).parse(data.toString());
-            console.log($scope.infoStages);
+            console.log($scope.infoStages[0].completed);
             angular.forEach($scope.info, function (item) {
                 $scope.ninfostages.push(item)
             });
