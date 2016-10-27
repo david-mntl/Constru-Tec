@@ -82,7 +82,7 @@ CREATE TABLE ROLExENGINEER(
 
 CREATE TABLE PROJECT(
 	ID_PROJECT int PRIMARY KEY NOT NULL DEFAULT nextval('PROJECT_seq'),
-	Name varchar(50) NOT NULL,
+	Name varchar(50) NOT NULL UNIQUE,
 	Location varchar(50) NOT NULL,
 	ID_Engineer int NOT NULL,
 	ID_Customer int NOT NULL,
