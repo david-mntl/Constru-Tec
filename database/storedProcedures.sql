@@ -71,6 +71,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--Procedure to update
+--SELECT get_contact_info_from_customer(1);
+DROP FUNCTION IF EXISTS get_contact_info_from_customer(int);
+CREATE OR REPLACE FUNCTION get_contact_info_from_customer(pID_Project int)
+RETURNS TABLE(
+	Phone varchar(15),
+	Name text
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT CUSTOMER.Phone, (CUSTOMER.Name || ' ' || CUSTOMER.Lastname1 || ' ' || CUSTOMER.Lastname2)
+	FROM PROJECT JOIN CUSTOMER ON PROJECT.ID_Customer = CUSTOMER.ID_Customer
+	WHERE PROJECT.ID_Project = pID_Project;
+	
+END;
+$$ LANGUAGE plpgsql;
+
 
 --Procedure to insert a new engineer
 --SELECT add_engineer(201505054,'El inge','Vargas','Campos,','25587878','vargas@gmail.com','ABC159','campos','123','Ingeniero');
@@ -317,12 +334,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 --Procedure to insert add comments to a stage
---SELECT add_comment_to_stage(1,"Esto es un comentario de prueba")
+--SELECT add_comments_to_stage(1,'Esto es un comentario de prueba')
 CREATE OR REPLACE FUNCTION add_comments_to_stage(pID_Stage int, pComments varchar(255))
 RETURNS TEXT AS $$
 BEGIN
-	UPDATE PROJECT_STAGE SET Comments= ((SELECT PROJECT_STAGE.Comments FROM PROJECT_STAGE
-	WHERE PROJECT_STAGE.ID_Stage = pID_Stage) || pComments )WHERE PROJECT_STAGE.ID_Stage = pID_Stage;
+	UPDATE PROJECT_STAGE SET Comments= pComments WHERE PROJECT_STAGE.ID_Stage = pID_Stage;
 
 	RETURN 'SUCCESS';
 
@@ -540,21 +556,22 @@ CREATE OR REPLACE FUNCTION get_projects_from_generic(pMode int,pID int)
 RETURNS TABLE(
 	ID_Project int,
 	Project_Name varchar(50),
-	Location varchar(50)
+	Location varchar(50),
+	Completed boolean
 	
 )AS $$
 BEGIN
 	IF (pMode = 0) THEN
 		RETURN QUERY
-		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location
+		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,PROJECT.Completed
 		FROM PROJECT WHERE PROJECT.ID_Customer = pID;
 	ELSIF(pMode = 999) THEN
 		RETURN QUERY
-		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location
+		SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,PROJECT.Completed
 		FROM PROJECT;
 	ELSIF (pMode = 1) THEN
 		RETURN QUERY
-		SELECT PROJECT.ID_Project,PROJECT.Name ,PROJECT.Location
+		SELECT PROJECT.ID_Project,PROJECT.Name ,PROJECT.Location,PROJECT.Completed
 		FROM PROJECT WHERE PROJECT.ID_Engineer = pID;
 	END IF;
 	
@@ -607,7 +624,7 @@ DROP FUNCTION IF EXISTS get_projects_next_weeks();
 CREATE OR REPLACE FUNCTION get_projects_next_weeks()
 RETURNS TABLE(
 	ID_Project int,
-	Name varchar(50),
+	Project_Name varchar(50),
 	Location varchar(50),
 	Engineer text,
 	Completed boolean,
@@ -618,7 +635,7 @@ RETURNS TABLE(
 ) AS $$
 BEGIN
 	RETURN QUERY
-	SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
+	SELECT DISTINCT ON (PROJECT.ID_Project) PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
 		(ENGINEER.Name || ' ' || ENGINEER.LastName1 || ' ' || ENGINEER.LastName2),
 		PROJECT.Completed,PROJECT.Comments,PROJECT.Details,STAGE_NAME.Name,
 		PROJECT_STAGE.Start_Date FROM PROJECT JOIN PROJECT_STAGE
@@ -634,59 +651,61 @@ $$ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_products_info_from_project(int);
 CREATE OR REPLACE FUNCTION get_products_info_from_project(pID_Project int)
 RETURNS TABLE(
-	ID_Stage int,
+	ID_Project_Stage int,
 	Stage_Name varchar(50),
-	ID_Product int,
-	Product_name varchar(50),
-	Price int,
-	Quantity int
-) AS $$
+	ID_Project int,
+	Start_Date date,
+	End_Date date,
+	Details varchar(255),
+	Completed boolean,
+	Comments varchar(255)
+	
+)AS $$
 BEGIN
 	RETURN QUERY
-	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name, PRODUCT.ID_Product,
-		PRODUCT.Name, PRODUCT.Price, PRODUCTxSTAGE.Quantity
-		FROM PROJECT JOIN PROJECT_STAGE
-		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN STAGE_NAME ON 
-		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
-		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
-		PRODUCTxSTAGE.ID_Product WHERE (PROJECT.ID_Project = pID_Project);
+	SELECT PROJECT_STAGE.ID_Stage,STAGE_NAME.Name,PROJECT_STAGE.ID_Project,
+		PROJECT_STAGE.Start_Date,PROJECT_STAGE.End_Date,PROJECT_STAGE.Details,
+		PROJECT_STAGE.Completed,PROJECT_STAGE.Comments
+		FROM PROJECT 
+		JOIN PROJECT_STAGE ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project
+		JOIN STAGE_NAME ON PROJECT_STAGE.ID_Stage_Name = STAGE_NAME.ID_Stage_Name
+		WHERE (PROJECT.ID_Project = pID_Project AND PROJECT_STAGE.Start_Date - current_date <= 15 AND PROJECT_STAGE.Start_Date - current_date > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-
 --Procedure to get all the projects that will use an especific material in the next 15 days
 --SELECT get_projects_next_weeks();
-DROP FUNCTION IF EXISTS get_projects_by_material(varchar(50));
-CREATE OR REPLACE FUNCTION get_projects_by_material(pMaterial varchar(50))
+DROP FUNCTION IF EXISTS get_projects_by_material(int);
+CREATE OR REPLACE FUNCTION get_projects_by_material(pMaterial int)
 RETURNS TABLE(
 	ID_Project int,
-	Name varchar(50),
+	Project_Name varchar(50),
 	Location varchar(50),
 	Engineer text,
 	Completed boolean,
 	Comments varchar(255),
 	Details varchar(255),
 	NextStage varchar(50),
-	Start_Date date,
-	Material_Name varchar(50),
-	Quantity int
+	Start_Date date
 	
 ) AS $$
 BEGIN
 	RETURN QUERY
-	SELECT PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
+	SELECT DISTINCT ON (PROJECT.ID_Project)
+		PROJECT.ID_Project,PROJECT.Name,PROJECT.Location,
 		(ENGINEER.Name || ' ' || ENGINEER.LastName1 || ' ' || ENGINEER.LastName2),
 		PROJECT.Completed,PROJECT.Comments,PROJECT.Details,STAGE_NAME.Name,
-		PROJECT_STAGE.Start_Date, PRODUCT.Name, PRODUCTxSTAGE.Quantity
+		PROJECT_STAGE.Start_Date
 
-		FROM PROJECT JOIN PROJECT_STAGE
-		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project JOIN ENGINEER ON
-		PROJECT.ID_Engineer=ENGINEER.ID_Engineer JOIN STAGE_NAME ON 
-		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name JOIN PRODUCTxSTAGE
-		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE JOIN PRODUCT ON PRODUCT.ID_Product = 
+		FROM PROJECT LEFT JOIN PROJECT_STAGE
+		ON PROJECT_STAGE.ID_Project = PROJECT.ID_Project LEFT JOIN ENGINEER ON
+		PROJECT.ID_Engineer=ENGINEER.ID_Engineer LEFT JOIN STAGE_NAME ON 
+		STAGE_NAME.ID_Stage_Name = PROJECT_STAGE.ID_Stage_Name LEFT JOIN PRODUCTxSTAGE
+		ON PRODUCTxSTAGE.ID_Stage = PROJECT_STAGE.ID_STAGE LEFT JOIN PRODUCT ON PRODUCT.ID_Product = 
 		PRODUCTxSTAGE.ID_Product WHERE (PROJECT_STAGE.Start_Date - current_date <= 15 AND 
 			PROJECT_STAGE.Start_Date - current_date > 0 AND
-			PRODUCT.Name = pMaterial
+			--PRODUCT.Name = pMaterial::varchar(50)
+			PRODUCT.ID_Product = pMaterial
 			);
 END;
 $$ LANGUAGE plpgsql;
