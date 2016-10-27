@@ -2,10 +2,17 @@
 var app = angular.module('App',['ngCookies','ngRoute','ngSanitize','angular-loading-bar']);
 //const URL = 'http://192.168.0.15:17476/ProductRESTService.svc/';
 //const URL = 'http://cewebserver.tyhmn8q9pa.us-west-2.elasticbeanstalk.com/ProductRESTService.svc/';
+/*
+* URL is the route of the Rest-Service
+* */
 const URL  ='http://192.168.43.115:7676/ProductRESTService.svc/';
 var NombreSeleccionado;
 var proyectos = 1 ;
 var etapas = 1;
+
+/*
+* Define the routes of the different routes of the viwes
+* */
 app.config(function($routeProvider,$httpProvider) {
 
         $routeProvider
@@ -35,7 +42,11 @@ app.config(function($routeProvider,$httpProvider) {
 
 
 });
-
+/*
+* getNames Controller have a function to
+* get the stages of a project
+* create a new Stage
+* */
 app.controller('getNames',function ($scope,$http,$cookies,$timeout) {
 
     $scope.names = [];
@@ -96,12 +107,19 @@ app.controller('getNames',function ($scope,$http,$cookies,$timeout) {
 
 
 });
-
+/*
+ * proyectoController Controller
+ * */
 app.controller('proyectoController',function ($scope,$http) {
     $scope.message = "";
 
 });
-
+/*
+ * cookieController Controller have a function to
+ * UpdateProducts to get all the available products from epatec
+ * UpdateEmployee to update the info of the employees
+ * UpdateUser to update the info of the Users
+ * */
 app.controller('cookieController',function ($scope,$cookies,$http) {
     $scope.UsernameU = $cookies.username;
     $scope.idUser = $cookies.userid;
@@ -126,11 +144,6 @@ app.controller('cookieController',function ($scope,$cookies,$http) {
 
         
     }
-
-
-
-
-
     $scope.actualizarEmpleado = function () {
         var parameter = JSON.stringify({
             ID_Engineer: $scope.idUser,
@@ -181,7 +194,24 @@ app.controller('cookieController',function ($scope,$cookies,$http) {
     
 
 });
-
+/*
+ * Main Controller have a function to
+ * addStage add new stege to the tables stages
+ * addItem add new item to the materials of a stage
+ * sendProducts send the products to the table
+ * getMaterials get all the materials of a stage
+ * getProducts get the avaliable products
+ * getProjects get the projets with the id
+ * getProjectsNextWeeks get all the project with stages in the nexts 15 days
+ * getProjectByMaterial get stages by material
+ * getStages get all the stages of project
+ * closeProject finalize a project
+ * closeStage finilize a stage
+ * getStagesNextWeeks
+ * getInfoStages
+ * refreshDetails update the details of a stage
+ * refreshComments
+ * */
 app.controller('Main',function($scope,$http,$cookies) {
 
     $scope.UsernameU = $cookies.username;
@@ -194,11 +224,6 @@ app.controller('Main',function($scope,$http,$cookies) {
     $scope.passwordUser = $cookies.password;
     $scope.eng_code = $cookies.eng_code;
     console.log($scope.eng_code);
-
-
-
-
-
     $scope.totalPresu = 0;
     $scope.newStage="";
 
@@ -218,7 +243,6 @@ app.controller('Main',function($scope,$http,$cookies) {
 
 
     }
-
     $scope.getPresupuesto = function () {
         $scope.totalPresu = 0;
         angular.forEach($scope.nmaterial, function (items) {
@@ -228,19 +252,10 @@ app.controller('Main',function($scope,$http,$cookies) {
 
 
     }
-
-
-
-
-
     $scope.nmaterial = [];
     $scope.infoMaterial = [];
     $scope.selectedMaterial = $scope.nmaterial[0];
     $scope.purchaseItems = [];
-
-
-
-
 
     angular.forEach($scope.purchaseItems, function (items) {
         angular.forEach($scope.nmaterial, function (items2) {
@@ -388,8 +403,6 @@ app.controller('Main',function($scope,$http,$cookies) {
         });
 
     }
-
-
 
     $scope.products = [];
     $scope.infoproducts = [];
@@ -715,7 +728,10 @@ app.controller('Main',function($scope,$http,$cookies) {
 
 
 });
-
+/*
+ * editController Controller only update the user
+ *
+ */
 app.controller('editController',function ($scope,$cookies, $http) {
 
 
@@ -765,7 +781,10 @@ app.controller('editController',function ($scope,$cookies, $http) {
 
 
 });
-
+/*
+ * addProject Controller only add new project
+ *
+ */
 app.controller('addProject',function ($scope,$cookies,$http) {
 
     $scope.ProjectEngID = $cookies.userid;

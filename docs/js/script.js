@@ -27,7 +27,7 @@ app.config(function($routeProvider,$httpProvider) {
 
         .otherwise({redirectTo: '/'});
 });
-
+//get the roles from the table
 app.controller('getRoles',function ($scope,$http) {
 
     $scope.sucursales = [];
@@ -72,6 +72,7 @@ app.controller('empleadoController',function ($scope) {
     $scope.message = "";
 
 });
+//redirect to the lobby
 app.controller('lobbyButton',function ($scope) {
     $scope.newDoc = function () {
         window.location.assign("pages/lobby.html")
@@ -170,25 +171,13 @@ app.controller('loginController',function ($scope,$cookies,$http,$window,$timeou
 });
 
 
-
+/*
+ * MyController Controller only update the user
+ * registerClient register new client
+ * registerEmployee register new Engineer
+ *
+ */
 app.controller("MyController",function($scope,$http,$timeout,$window) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     $scope.roles = {};
