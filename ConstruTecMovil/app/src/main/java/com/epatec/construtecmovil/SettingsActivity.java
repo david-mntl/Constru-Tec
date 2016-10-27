@@ -28,9 +28,14 @@ public class SettingsActivity extends ActionBarActivity {
                 ConnectionDataHolder connClass = ConnectionDataHolder.getInstance();
                 connClass.ipConnection = settingsIP.getText().toString();
                 connClass.portConnection = settingsPort.getText().toString();
+
+                Log.i("CLICK CLICK", boolOnline.getText().toString());
+
                 if (boolOnline.getText().toString().compareTo("true")==0)
                 {
+
                     connClass.online = true;
+                    Log.i("entro",connClass.online+"");
                 }
                 else
                     connClass.online = false;

@@ -353,6 +353,9 @@ public class ProfileActivity extends ActionBarActivity {
                 userRoleEDIT = (TextView)findViewById(R.id.userRole);
                 userEngCodeEDIT =(TextView)findViewById(R.id.userCode);
 
+                TextView userTextName = (TextView)findViewById(R.id.Name);
+                userTextName.setText(userName);
+
                 userNameEDIT.setText(userName);
                 userLN1EDIT.setText(userLN1);
                 userLN2EDIT.setText(userLN2);
